@@ -3,6 +3,7 @@ members = [
     "SMT-api",
     "pallet/SMT",
     "node/*",
+    "SMT-backend"
 ]
 
 [workspace.package]
