@@ -1,0 +1,4 @@
+
+[submodule "sparse-merkle-tree"]
+	path = sparse-merkle-tree
+	url = https://github.com/farcloud-labs/sparse-merkle-tree
