@@ -1,0 +1,15 @@
+[workspace]
+members = [
+    "SMT-api",
+    "pallet/SMT",
+    "node/*",
+]
+
+[workspace.package]
+author = "YanOctavian"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/farcloud-labs/subsmt"
+rust-version = "1.70"
+[workspace.dependencies]
+
