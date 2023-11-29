@@ -5,7 +5,9 @@ members = [
     "node/*",
     "SMT-backend"
 ]
-
+exclude = [
+    "sparse-merkle-tree"
+]
 [workspace.package]
 author = "YanOctavian"
 edition = "2021"
