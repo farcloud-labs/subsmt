@@ -1,14 +1,16 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
 
 #[cfg(test)]
-mod tests {
-    use super::*;
+mod tests;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[cfg(not(feature="derive"))]
+use parity_scale_codec_derive::{Encode, Decode};
+
+// use parity_scale_codec::{Encode, Decode};
+
+#[derive(Debug, PartialEq, Encode, Decode)]
+pub struct Student {
+    name: Vec<u8>,
+    score: u8,
+    id: u16,
 }
+
