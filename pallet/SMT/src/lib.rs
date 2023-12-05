@@ -16,6 +16,7 @@ use keccak256_hasher::Keccak256Hasher;
 
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
+mod verify;
 
 #[frame_support::pallet]
 pub mod pallet {
