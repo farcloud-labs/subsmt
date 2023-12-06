@@ -16,4 +16,14 @@ license = "Apache-2.0"
 repository = "https://github.com/farcloud-labs/subsmt"
 rust-version = "1.70"
 [workspace.dependencies]
+tiny-keccak = {version = "2.0.2", default-features = false, features = ["keccak"]}
+
+codec = { package = "parity-scale-codec", version = "3.6.5", features = ["derive"], default-features = false }
+scale-info = { version = "2.10.0", default-features = false, features = ["derive"] }
+
+# Substrate
+frame-benchmarking = { version = "24.0.0", default-features = false }
+frame-support = { version = "24.0.0", default-features = false }
+frame-system = { version = "24.0.0", default-features = false }
+
 
