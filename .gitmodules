@@ -2,3 +2,6 @@
 [submodule "sparse-merkle-tree"]
 	path = sparse-merkle-tree
 	url = https://github.com/farcloud-labs/sparse-merkle-tree
+[submodule "substrate-contracts-node"]
+	path = substrate-contracts-node
+	url = https://github.com/farcloud-labs/substrate-contracts-node.git

@@ -4,7 +4,7 @@ members = [
     "pallet/SMT",
     "node/*",
     "SMT-backend",
-    "ink-contract/SMT"
+    "ink-contract/SMT",
 ]
 exclude = [
     "sparse-merkle-tree"

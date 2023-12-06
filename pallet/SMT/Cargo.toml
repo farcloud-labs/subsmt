@@ -16,9 +16,9 @@ codec = { package = "parity-scale-codec", version = "3.6.5", features = ["derive
 scale-info = { version = "2.10.0", default-features = false, features = ["derive"] }
 
 # Substrate
-frame-benchmarking = { version = "25.0.0", default-features = false, optional = true }
-frame-support = { version = "25.0.0", default-features = false }
-frame-system = { version = "25.0.0", default-features = false }
+frame-benchmarking = { version = "24.0.0", default-features = false, optional = true }
+frame-support = { version = "24.0.0", default-features = false }
+frame-system = { version = "24.0.0", default-features = false }
 
 [dependencies.tiny-keccak]
 version = "2.0.2"
