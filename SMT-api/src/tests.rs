@@ -1,6 +1,7 @@
 use hex::encode;
 use super::*;
 use parity_scale_codec::Encode;
+use parity_scale_codec::alloc::vec::Vec;
 
 #[test]
 fn main() {

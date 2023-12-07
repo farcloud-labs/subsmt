@@ -7,7 +7,7 @@ mod keccak256_hasher;
 /// <https://docs.substrate.io/v3/runtime/frame>
 pub use pallet::*;
 use keccak256_hasher::Keccak256Hasher;
-
+use codec::{Encode, Decode};
 // #[cfg(test)]
 // mod mock;
 //
