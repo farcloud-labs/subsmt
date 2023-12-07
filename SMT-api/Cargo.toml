@@ -12,4 +12,11 @@ rust-version.workspace = true
 [dependencies]
 hex = "0.4.3"
 parity-scale-codec = "3.6.9"
-parity-scale-codec-derive = "3.6.9"
+
+[features]
+default = ["std"]
+
+std = [
+    "hex/std",
+    "parity-scale-codec/std",
+]
