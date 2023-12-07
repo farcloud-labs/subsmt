@@ -12,7 +12,7 @@ rust-version.workspace = true
 [dependencies]
 sparse-merkle-tree = {path = "../../sparse-merkle-tree", default-features = false}
 
-codec = { workspace = true }
+codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
 scale-info = { workspace = true }
 
 # Substrate
