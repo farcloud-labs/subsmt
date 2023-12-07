@@ -21,6 +21,7 @@ frame-support = { workspace = true }
 frame-system = { workspace = true }
 tiny-keccak = { workspace = true }
 
+[dev-dependencies]
 
 [features]
 default = ["std"]

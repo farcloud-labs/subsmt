@@ -5,7 +5,6 @@ members = [
     "node/*",
     "SMT-backend",
     "ink-contract/SMT",
-    "substrate-contracts-node",
 ]
 exclude = [
     "sparse-merkle-tree"
@@ -19,8 +18,8 @@ rust-version = "1.70"
 [workspace.dependencies]
 tiny-keccak = {version = "2.0.2", default-features = false, features = ["keccak"]}
 
-codec = { package = "parity-scale-codec", version = "3", features = ["derive"], default-features = false }
-scale-info = { version = "2.6", default-features = false, features = ["derive"] }
+codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
+scale-info = { version = "2.5.0", default-features = false, features = ["derive"] }
 
 # Substrate
 frame-benchmarking = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v1.0.0" }
