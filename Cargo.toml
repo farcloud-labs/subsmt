@@ -3,7 +3,7 @@ members = [
     "SMT-api",
     "pallet/SMT",
     "node/*",
-    "SMT-backend",
+#    "SMT-backend",
     "ink-contract/SMT",
 ]
 exclude = [
@@ -16,7 +16,7 @@ license = "Apache-2.0"
 repository = "https://github.com/farcloud-labs/subsmt"
 rust-version = "1.70"
 [workspace.dependencies]
-tiny-keccak = {version = "2.0.2", default-features = false, features = ["keccak"]}
+#tiny-keccak = {version = "2.0.2", default-features = false, features = ["keccak"]}
 
 #codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
 #scale-info = { version = "2.5.0", default-features = false, features = ["derive"] }
