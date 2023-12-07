@@ -1,5 +1,6 @@
 use sparse_merkle_tree::{traits::Hasher, H256, merge::{merge, MergeValue, hash_base_node}};
 use crate::keccak256_hasher::Keccak256Hasher;
+use frame_support::dispatch::Vec;
 
 
 fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> MergeValue {
