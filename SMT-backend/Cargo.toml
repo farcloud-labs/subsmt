@@ -10,3 +10,7 @@ rust-version.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+[[bin]]
+path = "./src/main.rs"
+name = "smt-backend"
