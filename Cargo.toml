@@ -3,7 +3,7 @@ members = [
     "SMT-api",
     "pallet/SMT",
     "node/*",
-#    "SMT-backend",
+    "SMT-backend",
     "ink-contract/SMT",
 ]
 exclude = [

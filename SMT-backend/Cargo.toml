@@ -10,3 +10,8 @@ rust-version.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+rocksdb = { git = "https://github.com/rust-rocksdb/rust-rocksdb", default-features = false, features = ["snappy"] }
+sparse-merkle-tree = { path = "../sparse-merkle-tree" }
+[lib]
+name = "smt_backend_lib"
+path = "src/lib.rs"
