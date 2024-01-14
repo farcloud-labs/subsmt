@@ -12,6 +12,9 @@ rust-version.workspace = true
 [dependencies]
 rocksdb = { git = "https://github.com/rust-rocksdb/rust-rocksdb", default-features = false, features = ["snappy"] }
 sparse-merkle-tree = { path = "../sparse-merkle-tree" }
+codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
+
+
 [lib]
 name = "smt_backend_lib"
 path = "src/lib.rs"

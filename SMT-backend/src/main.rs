@@ -1,4 +1,4 @@
-use rocksdb::{OptimisticTransactionDB, SingleThreaded, WriteBatchWithTransaction, WriteOptions};
+use rocksdb::{OptimisticTransactionDB, SingleThreaded, WriteBatchWithTransaction, WriteOptions, DBCommon};
 fn main() {
     // println!("Hello, world!");
     let db: OptimisticTransactionDB<SingleThreaded> = OptimisticTransactionDB::open_default("db/rocksdb").unwrap();
