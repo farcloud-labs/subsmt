@@ -67,7 +67,6 @@ mod SMT {
         }
     }
 
-
     /// This is how you'd write end-to-end (E2E) or integration tests for ink! contracts.
     ///
     /// When running these you need to make sure that you:
@@ -98,8 +97,7 @@ mod SMT {
                 .account_id;
 
             // Then
-            let get = build_message::<SmtRef>(contract_account_id.clone())
-                .call(|SMT| SMT.get());
+            let get = build_message::<SmtRef>(contract_account_id.clone()).call(|SMT| SMT.get());
             let get_result = client.call_dry_run(&ink_e2e::alice(), &get, 0, None).await;
             assert!(matches!(get_result.return_value(), false));
 
@@ -117,22 +115,19 @@ mod SMT {
                 .expect("instantiate failed")
                 .account_id;
 
-            let get = build_message::<SmtRef>(contract_account_id.clone())
-                .call(|SMT| SMT.get());
+            let get = build_message::<SmtRef>(contract_account_id.clone()).call(|SMT| SMT.get());
             let get_result = client.call_dry_run(&ink_e2e::bob(), &get, 0, None).await;
             assert!(matches!(get_result.return_value(), false));
 
             // When
-            let flip = build_message::<SmtRef>(contract_account_id.clone())
-                .call(|SMT| SMT.flip());
+            let flip = build_message::<SmtRef>(contract_account_id.clone()).call(|SMT| SMT.flip());
             let _flip_result = client
                 .call(&ink_e2e::bob(), flip, 0, None)
                 .await
                 .expect("flip failed");
 
             // Then
-            let get = build_message::<SmtRef>(contract_account_id.clone())
-                .call(|SMT| SMT.get());
+            let get = build_message::<SmtRef>(contract_account_id.clone()).call(|SMT| SMT.get());
             let get_result = client.call_dry_run(&ink_e2e::bob(), &get, 0, None).await;
             assert!(matches!(get_result.return_value(), true));
 

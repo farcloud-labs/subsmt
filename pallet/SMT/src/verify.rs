@@ -1,7 +1,21 @@
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use sparse_merkle_tree::{traits::Hasher, H256, merge::{merge, MergeValue, hash_base_node}};
 use crate::keccak256_hasher::Keccak256Hasher;
 use frame_support::dispatch::Vec;
+use serde::{Deserialize, Serialize};
 
+
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Proof<K, V> {
+    pub key: K,
+    pub value: V,
+    pub root: H256,
+    pub leave_bitmap: H256,
+    pub siblings: Vec<MergeValue>,
+}
 
 fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> MergeValue {
     if value.is_zero() {
@@ -9,7 +23,7 @@ fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> 
     } else {
         let base_key = key.parent_path(0);
         let base_node = hash_base_node::<H>(0, &base_key, &value);
-        let mut zero_bits = key;
+        let zero_bits = key;
         let res = MergeValue::MergeWithZero {
             base_node,
             zero_bits,
@@ -41,9 +55,9 @@ fn into_merge_value<H: Hasher + Default>(key: H256, value: H256, height: u8) -> 
 }
 
 pub fn verify(
-    path: H256,
-    value_hash: H256,
-    leaves_bitmap: H256,
+    path: H256, // key的hash
+    value_hash: H256, // value的hash
+    leave_bitmap: H256,
     siblings: Vec<MergeValue>,
     old_root: H256,
 ) -> bool {
@@ -62,7 +76,7 @@ pub fn verify(
 
     for i in 0..=u8::MAX {
         let parent_path = current_path.parent_path(i);
-        if leaves_bitmap.get_bit(i) {
+        if leave_bitmap.get_bit(i) {
             if n == 0 {
                 current_v = into_merge_value::<Keccak256Hasher>(path, value_hash, i);
             }
