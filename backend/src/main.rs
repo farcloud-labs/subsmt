@@ -84,14 +84,14 @@ async fn get_next_root(
     let old_proof = multi_tree
         .get_merkle_proof_old(
             info.prefix.as_ref(),
-            info.keys
+            info.kvs
                 .iter()
                 .map(|kv| kv.0.clone())
                 .collect::<Vec<SMTKey>>(),
         )
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let next_root = multi_tree
-        .get_next_root(old_proof, info.keys.clone())
+        .get_next_root(old_proof, info.kvs.clone())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",

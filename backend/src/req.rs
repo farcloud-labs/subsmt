@@ -19,7 +19,7 @@ pub struct ReqByKey<K> {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ReqByKVs<K, V> {
     pub prefix: String,
-    pub keys: Vec<(K, V)>,
+    pub kvs: Vec<(K, V)>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
