@@ -1,0 +1,30 @@
+[package]
+name = "primitives"
+version = "0.1.0"
+author.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# serde_with = { version = "3.3.0", features = ["hex"],  default-features = false}
+sparse-merkle-tree = {path = "../sparse-merkle-tree", default-features = false}
+tiny-keccak = {version = "2.0.2", default-features = false, features = ["keccak"]}
+frame-support = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v1.0.0" }
+serde = { version = "1.0.105",  features = ["derive"], default-features = false }
+codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
+
+
+[features]
+default = ["std"]
+std = [
+    "sparse-merkle-tree/std",
+    "frame-support/std",
+    "serde/std",
+    "codec/std",
+    # "serde_with/std",
+
+]
