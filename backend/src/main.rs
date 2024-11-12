@@ -57,7 +57,7 @@ async fn update(
 #[get("/get_merkle_proof")]
 async fn get_merkle_proof(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqByKey<SMTKey>>,
+    info: web::Query<ReqByKey<SMTKey>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -75,7 +75,7 @@ async fn get_merkle_proof(
 #[get("/get_next_root")]
 async fn get_next_root(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqNextRoot<SMTKey, SMTValue>>,
+    info: web::Query<ReqNextRoot<SMTKey, SMTValue>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -123,7 +123,7 @@ async fn get_root(
 #[get("/get_value")]
 async fn get_value(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqByKey<SMTKey>>,
+    info: web::Query<ReqByKey<SMTKey>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
