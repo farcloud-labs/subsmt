@@ -19,7 +19,7 @@ use smt_primitives::{
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use smt_backend_lib::req::{ReqByKey, ReqNextRoot, ReqRoot, ReqUpdate};
-use smt_backend_lib::MultiSMTStore;
+use smt_backend_lib::apis::MultiSMTStore;
 use sparse_merkle_tree::{traits::Value, H256};
 use std::path::Path;
 use std::result::Result;

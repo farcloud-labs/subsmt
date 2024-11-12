@@ -16,6 +16,7 @@ pub struct SMTStore<'a> {
     prefix: &'a [u8],
 }
 
+
 impl<'a> SMTStore<'a> {
     pub fn new(db: Arc<Database>, col: u32, prefix: &'a [u8]) -> Self {
         SMTStore {
