@@ -1,5 +1,5 @@
 [package]
-name = "SMT-backend"
+name = "smt-backend"
 version = "0.1.0"
 author.workspace = true
 edition.workspace = true
@@ -30,3 +30,8 @@ thiserror = "2.0.3"
 [lib]
 name = "smt_backend_lib"
 path = "src/lib.rs"
+
+[[bin]]
+name = "smt"
+path = "src/main.rs"
+

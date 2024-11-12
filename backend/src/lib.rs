@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
-mod default_store;
-use default_store::SMTStore;
+mod store;
+pub mod error;
+use store::SMTStore;
 use ethers::core::k256::sha2::digest::Key;
 use kvdb_rocksdb::Database;
 use pallet_SMT::{
@@ -25,6 +26,7 @@ use sparse_merkle_tree::CompiledMerkleProof;
 use std::convert::AsRef;
 use std::sync::Arc;
 pub mod kvs;
+
 
 type MultiSMT<'a, V, H: Hasher> = SparseMerkleTree<H, V, SMTStore<'a>>;
 

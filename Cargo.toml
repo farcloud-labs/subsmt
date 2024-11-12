@@ -4,8 +4,7 @@ resolver = "2"
 members = [
     "SMT-api",
     "pallet/SMT",
-    "node/*",
-    "SMT-backend",
+    "backend",
     "ink-contract/SMT",
 ]
 exclude = [

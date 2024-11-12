@@ -26,78 +26,10 @@ use std::result::Result;
 use std::sync::Mutex;
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
+use smt_backend_lib::kvs::*;
+use smt_backend_lib::error::Error;
 
-#[derive(Debug, ThisError)]
-pub enum Error {
-    #[error("Internal server error: {0}")]
-    InternalError(String),
 
-    #[error("Unexpected error occurred")]
-    UnexpectedError,
-}
-
-impl ResponseError for Error {
-    fn error_response(&self) -> HttpResponse<actix_web::body::BoxBody> {
-        match self {
-            Error::InternalError(e) => {
-                return HttpResponse::BadRequest().body(e.to_string());
-            }
-            _ => {
-                return HttpResponse::BadRequest().body("Unexpected error occurred");
-            }
-        }
-    }
-}
-
-#[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone)]
-pub struct SMTValue {
-    account: u64,
-    balance: u128,
-}
-
-#[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone)]
-pub struct SMTKey {
-    account: u64,
-}
-
-impl Value for SMTKey {
-    fn zero() -> Self {
-        SMTKey::default()
-    }
-
-    fn to_h256(&self) -> sparse_merkle_tree::H256 {
-        if self == &Default::default() {
-            return H256::zero();
-        }
-        keccak256(self.encode()).into()
-    }
-}
-
-impl Value for SMTValue {
-    fn zero() -> Self {
-        Default::default()
-    }
-
-    fn to_h256(&self) -> sparse_merkle_tree::H256 {
-        if self == &Default::default() {
-            return H256::zero();
-        }
-        return keccak256(self.encode()).into();
-    }
-}
-
-impl Into<Vec<u8>> for SMTValue {
-    fn into(self) -> Vec<u8> {
-        self.encode()
-    }
-}
-
-impl From<Vec<u8>> for SMTValue {
-    fn from(value: Vec<u8>) -> Self {
-        let a: SMTValue = Decode::decode::<&[u8]>(&mut value.as_slice()).unwrap_or_default();
-        a
-    }
-}
 
 #[get("/test")]
 async fn test() -> impl Responder {
@@ -209,13 +141,21 @@ async fn get_value(
 }
 
 #[post("/verify")]
-async fn verify(info: web::Json<Proof<SMTKey, SMTValue>>) -> Result<HttpResponse, Error> {
-    let res = smt_verify(
-        info.key.to_h256(),
-        info.value.to_h256(),
-        info.leave_bitmap,
-        info.siblings.clone(),
-        info.root,
+async fn verify(multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>, 
+    info: web::Json<Proof<SMTKey, SMTValue>>) -> Result<HttpResponse, Error> {
+    let multi_tree = multi_tree
+    .lock()
+    .map_err(|e| Error::InternalError(e.to_string()))?;
+    let res = multi_tree.verify(Proof {
+        key: info.key.clone(),
+        value: info.value.clone(),
+        leave_bitmap: info.leave_bitmap,
+        siblings: info.siblings.clone(),
+        root: info.root,
+    });
+    log::info!(
+        "{:?}",
+        format!("[Verify] info: {:?}, res: {:?}", info, res)
     );
     Ok(HttpResponse::Ok().json(res))
 }
@@ -235,7 +175,7 @@ async fn main() -> std::io::Result<()> {
             flexi_logger::Criterion::Age(Age::Day),
             Naming::TimestampsDirect,
             Cleanup::Never,
-        )
+        ) 
         .append()
         .log_to_stdout()
         .start()
@@ -248,7 +188,10 @@ async fn main() -> std::io::Result<()> {
             .service(get_merkle_proof)
             .service(get_next_root)
             .service(get_root)
+            .service(verify)
+            .service(get_value)
             .service(test)
+            
     })
     .shutdown_timeout(30)
     .bind(("127.0.0.1", 8080))?
