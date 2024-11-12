@@ -3,6 +3,7 @@
 #![allow(unused_mut)]
 
 use actix_web::middleware::Logger as ALogger;
+use serde_json;
 use actix_web::{
     cookie::time::util::weeks_in_year, get, post, web, App, HttpResponse, HttpServer, Responder,
     ResponseError,
@@ -17,7 +18,7 @@ use serde_with::serde_as;
 use smt_backend_lib::apis::MultiSMTStore;
 use smt_backend_lib::error::Error;
 use smt_backend_lib::kvs::*;
-use smt_backend_lib::req::{ReqByKey, ReqNextRoot, ReqByPrefix, ReqUpdate};
+use smt_backend_lib::req::{ReqByKey, ReqByKVs, ReqByPrefix, ReqUpdate};
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
@@ -75,7 +76,7 @@ async fn get_merkle_proof(
 #[get("/get_next_root")]
 async fn get_next_root(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Query<ReqNextRoot<SMTKey, SMTValue>>,
+    info: web::Query<ReqByKVs<SMTKey, SMTValue>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -115,7 +116,7 @@ async fn get_root(
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
-        format!("[Get Root] info: {:?}, root: {:?}", info, root)
+        format!("[Get Root] info: {:?}, root: {:?}", info, serde_json::to_string(&root))
     );
     Ok(HttpResponse::Ok().json(root))
 }

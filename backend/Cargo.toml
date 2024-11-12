@@ -25,6 +25,7 @@ thiserror = "2.0.3"
 
 sparse-merkle-tree = { path = "../sparse-merkle-tree", features = ["std"]}
 smt-primitives = {path = "../primitives"}
+hex = "0.4.3"
 
 
 [lib]
