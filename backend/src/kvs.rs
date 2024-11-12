@@ -14,18 +14,25 @@ use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
 };
+use serde_with::{DisplayFromStr};
 use sparse_merkle_tree::{traits::Value, H256};
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
 
+
+#[serde_as]
 #[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone)]
 pub struct SMTValue {
+    #[serde_as(as = "DisplayFromStr")]
     pub account: u64,
+    #[serde_as(as = "DisplayFromStr")]
     pub balance: u128,
 }
 
+#[serde_as]
 #[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone)]
 pub struct SMTKey {
+    #[serde_as(as = "DisplayFromStr")]
     pub account: u64,
 }
 

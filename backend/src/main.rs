@@ -17,7 +17,7 @@ use serde_with::serde_as;
 use smt_backend_lib::apis::MultiSMTStore;
 use smt_backend_lib::error::Error;
 use smt_backend_lib::kvs::*;
-use smt_backend_lib::req::{ReqByKey, ReqNextRoot, ReqRoot, ReqUpdate};
+use smt_backend_lib::req::{ReqByKey, ReqNextRoot, ReqByPrefix, ReqUpdate};
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
@@ -105,7 +105,7 @@ async fn get_next_root(
 #[get("/get_root")]
 async fn get_root(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Query<ReqRoot>,
+    info: web::Query<ReqByPrefix>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()

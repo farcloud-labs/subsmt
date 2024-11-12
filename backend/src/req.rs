@@ -12,6 +12,7 @@ pub struct ReqUpdate<K, V> {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ReqByKey<K> {
     pub prefix: String,
+    #[serde(flatten)]
     pub key: K,
 }
 
@@ -22,6 +23,6 @@ pub struct ReqNextRoot<K, V> {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ReqRoot {
+pub struct ReqByPrefix {
     pub prefix: String,
 }
