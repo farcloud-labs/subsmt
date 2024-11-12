@@ -1,4 +1,3 @@
-
 #![allow(dead_code)]
 #![allow(unused_imports)]
 use crate::store::SMTStore;
@@ -25,7 +24,6 @@ use sparse_merkle_tree::CompiledMerkleProof;
 use std::convert::AsRef;
 use std::sync::Arc;
 
-
 type MultiSMT<'a, V, H: Hasher> = SparseMerkleTree<H, V, SMTStore<'a>>;
 
 pub struct MultiSMTStore<K, V, H> {
@@ -33,8 +31,12 @@ pub struct MultiSMTStore<K, V, H> {
     v: PhantomData<(K, V, H)>,
 }
 
-impl<'a, K: Value + Clone + Serialize + Deserialize<'a>, V: Value + Into<Vec<u8>> + From<Vec<u8>> + Serialize + Deserialize<'a>, H: Hasher + Default>
-    MultiSMTStore<K, V, H>
+impl<
+        'a,
+        K: Value + Clone + Serialize + Deserialize<'a>,
+        V: Value + Into<Vec<u8>> + From<Vec<u8>> + Serialize + Deserialize<'a>,
+        H: Hasher + Default,
+    > MultiSMTStore<K, V, H>
 {
     pub fn open<P: AsRef<Path>>(path: P) -> io::Result<Self> {
         let db = Database::open(&Default::default(), path)?;
@@ -120,7 +122,6 @@ impl<'a, K: Value + Clone + Serialize + Deserialize<'a>, V: Value + Into<Vec<u8>
         Ok(next_root)
     }
 
-    
     // 删除某个默克尔树
     pub fn clear(&'a self, prefix: &'a [u8]) {
         let mut tx = self.store.transaction();

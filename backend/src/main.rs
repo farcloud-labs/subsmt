@@ -12,24 +12,22 @@ use ethers::utils::keccak256;
 use flexi_logger::{Age, Cleanup, Criterion, Logger, Naming, WriteMode};
 use http::status::{InvalidStatusCode, StatusCode};
 use log::{error, info};
+use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
+use smt_backend_lib::apis::MultiSMTStore;
+use smt_backend_lib::error::Error;
+use smt_backend_lib::kvs::*;
+use smt_backend_lib::req::{ReqByKey, ReqNextRoot, ReqRoot, ReqUpdate};
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
 };
-use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
-use smt_backend_lib::req::{ReqByKey, ReqNextRoot, ReqRoot, ReqUpdate};
-use smt_backend_lib::apis::MultiSMTStore;
 use sparse_merkle_tree::{traits::Value, H256};
 use std::path::Path;
 use std::result::Result;
 use std::sync::Mutex;
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
-use smt_backend_lib::kvs::*;
-use smt_backend_lib::error::Error;
-
-
 
 #[get("/test")]
 async fn test() -> impl Responder {
@@ -141,11 +139,13 @@ async fn get_value(
 }
 
 #[post("/verify")]
-async fn verify(multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>, 
-    info: web::Json<Proof<SMTKey, SMTValue>>) -> Result<HttpResponse, Error> {
+async fn verify(
+    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    info: web::Json<Proof<SMTKey, SMTValue>>,
+) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
-    .lock()
-    .map_err(|e| Error::InternalError(e.to_string()))?;
+        .lock()
+        .map_err(|e| Error::InternalError(e.to_string()))?;
     let res = multi_tree.verify(Proof {
         key: info.key.clone(),
         value: info.value.clone(),
@@ -153,10 +153,7 @@ async fn verify(multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Kecc
         siblings: info.siblings.clone(),
         root: info.root,
     });
-    log::info!(
-        "{:?}",
-        format!("[Verify] info: {:?}, res: {:?}", info, res)
-    );
+    log::info!("{:?}", format!("[Verify] info: {:?}, res: {:?}", info, res));
     Ok(HttpResponse::Ok().json(res))
 }
 
@@ -175,7 +172,7 @@ async fn main() -> std::io::Result<()> {
             flexi_logger::Criterion::Age(Age::Day),
             Naming::TimestampsDirect,
             Cleanup::Never,
-        ) 
+        )
         .append()
         .log_to_stdout()
         .start()
@@ -191,7 +188,6 @@ async fn main() -> std::io::Result<()> {
             .service(verify)
             .service(get_value)
             .service(test)
-            
     })
     .shutdown_timeout(30)
     .bind(("127.0.0.1", 8080))?

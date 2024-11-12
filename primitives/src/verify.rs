@@ -1,13 +1,14 @@
-
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use sparse_merkle_tree::{traits::Hasher, H256, merge::{merge, MergeValue, hash_base_node}};
+use sparse_merkle_tree::{
+    merge::{hash_base_node, merge, MergeValue},
+    traits::Hasher,
+    H256,
+};
 // use crate::keccak256_hasher::H;
 use frame_support::dispatch::Vec;
 use serde::{Deserialize, Serialize};
-
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Proof<K, V> {
@@ -56,13 +57,12 @@ fn into_merge_value<H: Hasher + Default>(key: H256, value: H256, height: u8) -> 
 }
 
 pub fn verify<H: Hasher + Default>(
-    path: H256, // key的hash
+    path: H256,       // key的hash
     value_hash: H256, // value的hash
     leave_bitmap: H256,
     siblings: Vec<MergeValue>,
     old_root: H256,
 ) -> bool {
-
     if siblings.len() == 0 {
         return single_leaf_into_merge_value::<H>(path, value_hash).hash::<H>() == old_root;
     }

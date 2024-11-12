@@ -1,10 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-
-
 use sparse_merkle_tree::{traits::Hasher, H256};
 use tiny_keccak::Hasher as KeccakHasher;
-use tiny_keccak::{Keccak};
+use tiny_keccak::Keccak;
 
 pub struct Keccak256Hasher(Keccak);
 

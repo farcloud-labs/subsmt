@@ -8,12 +8,12 @@ use ethers::utils::keccak256;
 use flexi_logger::{Age, Cleanup, Criterion, Logger, Naming, WriteMode};
 use http::status::{InvalidStatusCode, StatusCode};
 use log::{error, info};
+use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
 };
-use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
 use sparse_merkle_tree::{traits::Value, H256};
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
