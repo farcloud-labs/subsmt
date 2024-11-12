@@ -1,12 +1,12 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-pub mod keccak256_hasher;
+// pub mod keccak256_hasher;
 
 /// Edit this file to define custom logic or remove it if it is not needed.
 /// Learn more about FRAME and the core library of Substrate FRAME pallets:
 /// <https://docs.substrate.io/v3/runtime/frame>
 pub use pallet::*;
-use keccak256_hasher::Keccak256Hasher;
+// use keccak256_hasher::Keccak256Hasher;
 use codec::{Encode, Decode};
 // #[cfg(test)]
 // mod mock;
@@ -16,14 +16,14 @@ use codec::{Encode, Decode};
 
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
-pub mod verify;
+// pub mod verify;
 
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
 	use sparse_merkle_tree::traits::Hasher;
-	use crate::Keccak256Hasher;
+	// use crate::Keccak256Hasher;
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
@@ -83,9 +83,9 @@ pub mod pallet {
 			// Update storage.
 			<Something<T>>::put(something);
 
-			let mut a = Keccak256Hasher::default();
-			a.write_byte(8);
-			a.finish();
+			// let mut a = Keccak256Hasher::default();
+			// a.write_byte(8);
+			// a.finish();
 
 			// Emit an event.
 			Self::deposit_event(Event::SomethingStored(something, who));

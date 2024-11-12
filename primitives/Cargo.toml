@@ -1,5 +1,5 @@
 [package]
-name = "primitives"
+name = "smt-primitives"
 version = "0.1.0"
 author.workspace = true
 edition.workspace = true

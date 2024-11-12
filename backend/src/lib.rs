@@ -5,8 +5,8 @@ pub mod error;
 use store::SMTStore;
 use ethers::core::k256::sha2::digest::Key;
 use kvdb_rocksdb::Database;
-use pallet_SMT::{
-    keccak256_hasher::Keccak256Hasher,
+use smt_primitives::{
+    keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
 };
 use sparse_merkle_tree::{

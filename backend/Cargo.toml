@@ -7,11 +7,8 @@ license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-# rocksdb = { git = "https://github.com/rust-rocksdb/rust-rocksdb", default-features = false, features = ["snappy"] }
-sparse-merkle-tree = { path = "../sparse-merkle-tree" }
+
 codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
 kvdb-rocksdb = "0.19.0"
 pallet-SMT = {path = "../pallet/SMT"}
@@ -25,6 +22,9 @@ flexi_logger = "0.29.6"
 log = "0.4.22"
 http = "1.1.0"
 thiserror = "2.0.3"
+
+sparse-merkle-tree = { path = "../sparse-merkle-tree" }
+smt-primitives = {path = "../primitives"}
 
 
 [lib]

@@ -12,8 +12,8 @@ use ethers::utils::keccak256;
 use flexi_logger::{Age, Cleanup, Criterion, Logger, Naming, WriteMode};
 use http::status::{InvalidStatusCode, StatusCode};
 use log::{error, info};
-use pallet_SMT::{
-    keccak256_hasher::Keccak256Hasher,
+use smt_primitives::{
+    keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
 };
 use serde::{Deserialize, Serialize};
