@@ -33,7 +33,7 @@ pub struct MultiSMTStore<K, V, H> {
     v: PhantomData<(K, V, H)>,
 }
 
-impl<'a, K: Value + Clone, V: Value + Into<Vec<u8>> + From<Vec<u8>>, H: Hasher + Default>
+impl<'a, K: Value + Clone + Serialize + Deserialize<'a>, V: Value + Into<Vec<u8>> + From<Vec<u8>> + Serialize + Deserialize<'a>, H: Hasher + Default>
     MultiSMTStore<K, V, H>
 {
     pub fn open<P: AsRef<Path>>(path: P) -> io::Result<Self> {
@@ -120,6 +120,7 @@ impl<'a, K: Value + Clone, V: Value + Into<Vec<u8>> + From<Vec<u8>>, H: Hasher +
         Ok(next_root)
     }
 
+    
     // 删除某个默克尔树
     pub fn clear(&'a self, prefix: &'a [u8]) {
         let mut tx = self.store.transaction();
