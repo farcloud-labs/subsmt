@@ -18,10 +18,11 @@ use serde_with::{DisplayFromStr};
 use sparse_merkle_tree::{traits::Value, H256};
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
+use utoipa::{IntoParams, ToSchema};
 
 
 #[serde_as]
-#[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone)]
+#[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone, ToSchema, IntoParams)]
 pub struct SMTValue {
     #[serde_as(as = "DisplayFromStr")]
     pub account: u64,
@@ -30,7 +31,7 @@ pub struct SMTValue {
 }
 
 #[serde_as]
-#[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone)]
+#[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone, ToSchema, IntoParams)]
 pub struct SMTKey {
     #[serde_as(as = "DisplayFromStr")]
     pub account: u64,

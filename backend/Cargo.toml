@@ -26,6 +26,19 @@ thiserror = "2.0.3"
 sparse-merkle-tree = { path = "../sparse-merkle-tree", features = ["std"]}
 smt-primitives = {path = "../primitives"}
 hex = "0.4.3"
+# utoipa = "5.2.0"
+# utoipa-swagger-ui = "8.0.3"
+
+utoipa = { version = "5.2.0", features = ["actix_extras"] }
+utoipa-swagger-ui = { version ="8.0.3", features = [
+    "actix-web",
+] }
+utoipa-actix-web = { version = "0.1.2"}
+utoipa-redoc = "5.0.0"
+# utoipa-redoc = { path = "../../utoipa-redoc", features = ["actix-web"] }
+# utoipa-rapidoc = { path = "../../utoipa-rapidoc", features = ["actix-web"] }
+# utoipa-scalar = { path = "../../utoipa-scalar", features = ["actix-web"] }
+# utoipa-actix-web = { path = "../../utoipa-actix-web" }
 
 
 [lib]
