@@ -131,7 +131,7 @@ impl<'a, K: Value + Clone + Serialize + Deserialize<'a>, V: Value + Into<Vec<u8>
     }
 
     pub fn verify(&'a self, proof: Proof<K, V>) -> bool {
-        smt_verify(
+        smt_verify::<H>(
             proof.key.to_h256(),
             proof.value.to_h256(),
             proof.leave_bitmap,

@@ -2,7 +2,7 @@
 #![allow(unused_imports)]
 
 use sparse_merkle_tree::{traits::Hasher, H256, merge::{merge, MergeValue, hash_base_node}};
-use crate::keccak256_hasher::Keccak256Hasher;
+// use crate::keccak256_hasher::H;
 use frame_support::dispatch::Vec;
 use serde::{Deserialize, Serialize};
 
@@ -54,7 +54,7 @@ fn into_merge_value<H: Hasher + Default>(key: H256, value: H256, height: u8) -> 
     }
 }
 
-pub fn verify(
+pub fn verify<H: Hasher + Default>(
     path: H256, // key的hash
     value_hash: H256, // value的hash
     leave_bitmap: H256,
@@ -63,7 +63,7 @@ pub fn verify(
 ) -> bool {
 
     if siblings.len() == 0 {
-        return single_leaf_into_merge_value::<Keccak256Hasher>(path, value_hash).hash::<Keccak256Hasher>() == old_root;
+        return single_leaf_into_merge_value::<H>(path, value_hash).hash::<H>() == old_root;
     }
 
     let mut current_path = path;
@@ -78,7 +78,7 @@ pub fn verify(
         let parent_path = current_path.parent_path(i);
         if leave_bitmap.get_bit(i) {
             if n == 0 {
-                current_v = into_merge_value::<Keccak256Hasher>(path, value_hash, i);
+                current_v = into_merge_value::<H>(path, value_hash, i);
             }
             if current_path.is_right(i) {
                 left = siblings[n].clone();
@@ -101,9 +101,9 @@ pub fn verify(
             }
         }
 
-        current_v = merge::<Keccak256Hasher>(i, &parent_path, &left, &right);
+        current_v = merge::<H>(i, &parent_path, &left, &right);
 
         current_path = parent_path;
     }
-    current_v.hash::<Keccak256Hasher>() == old_root
+    current_v.hash::<H>() == old_root
 }
