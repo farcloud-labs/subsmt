@@ -11,7 +11,7 @@ rust-version.workspace = true
 
 codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
 kvdb-rocksdb = "0.19.0"
-pallet-SMT = {path = "../pallet/SMT"}
+pallet-smt = {path = "../pallet/smt"}
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_with = { version = "3.0", features = ["hex"] }
