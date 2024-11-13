@@ -35,11 +35,18 @@ pub mod test {
     fn test_hasher() {
         let mut hasher = Keccak256Hasher::default();
         hasher.write_h256(&H256::default());
-        let h = hasher.finish();
+        let h1 = hasher.finish();
 
-        let h1: H256 = keccak256(&H256::default()).into();
-        assert_eq!(h, h1)
+        let h11: H256 = keccak256(&H256::default()).into();
+        assert_eq!(h1, h11);
 
+        let b: H256 = [1u8; 32].to_vec().into();
+
+        let mut hasher1 = Keccak256Hasher::default();
+        hasher1.write_h256(&b);
+        let h2 = hasher1.finish();
+        let h22: H256 = keccak256(&b).into();
+        assert_eq!(h2, h22);
 
     }
 
