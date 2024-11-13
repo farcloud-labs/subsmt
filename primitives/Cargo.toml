@@ -17,6 +17,9 @@ codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive
 
 utoipa = { version = "5.2.0", features = ["actix_extras"]}
 
+[dev-dependencies]
+ethers = {git = "https://github.com/gakonst/ethers-rs.git"}
+
 [features]
 default = ["std"]
 std = [

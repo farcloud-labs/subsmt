@@ -24,14 +24,6 @@ cfg_if::cfg_if! {
             pub siblings: Vec<MergeValue>,
         }
 
-        // impl <K: ToSchema + ComposeSchema, V: ToSchema + ComposeSchema>IntoParams for Proof<K, V> {
-        //     fn into_params(
-        //             parameter_in_provider: impl Fn() -> Option<utoipa::openapi::path::ParameterIn>,
-        //         ) -> Vec<utoipa::openapi::path::Parameter> {
-                
-        //     }
-        // }
-
     } else {
         #[derive(Debug, Serialize, Deserialize)]
         pub struct Proof<K, V> {

@@ -26,3 +26,21 @@ impl Hasher for Keccak256Hasher {
         buf.into()
     }
 }
+
+#[cfg(test)]
+pub mod test {
+    use super::*;
+    use ethers::utils::keccak256;
+    #[test]
+    fn test_hasher() {
+        let mut hasher = Keccak256Hasher::default();
+        hasher.write_h256(&H256::default());
+        let h = hasher.finish();
+
+        let h1: H256 = keccak256(&H256::default()).into();
+        assert_eq!(h, h1)
+
+
+    }
+
+}
