@@ -55,12 +55,12 @@ struct ApiDoc;
 //     HttpResponse::Ok().body(h)
 // }
 
-#[utoipa::path(
-    tag = TODO,
-    responses(
-        (status = 200, description = "List current todo items", body = [H256])
-    )
-)]
+// #[utoipa::path(
+//     tag = TODO,
+//     responses(
+//         (status = 200, description = "List current todo items", body = [H256])
+//     )
+// )]
 #[post("/update")]
 async fn update(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
@@ -80,12 +80,12 @@ async fn update(
 }
 
 
-#[utoipa::path(
-    tag = TODO,
-    responses(
-        (status = 200, description = "List current todo items", body = [Proof<SMTKey, SMTValue>])
-    )
-)]
+// #[utoipa::path(
+//     tag = TODO,
+//     responses(
+//         (status = 200, description = "List current todo items", body = [Proof<SMTKey, SMTValue>])
+//     )
+// )]
 #[get("/get_merkle_proof")]
 async fn get_merkle_proof(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
@@ -105,12 +105,12 @@ async fn get_merkle_proof(
 }
 
 
-#[utoipa::path(
-    tag = TODO,
-    responses(
-        (status = 200, description = "List current todo items", body = [H256])
-    )
-)]
+// #[utoipa::path(
+//     tag = TODO,
+//     responses(
+//         (status = 200, description = "List current todo items", body = [H256])
+//     )
+// )]
 #[get("/get_next_root")]
 async fn get_next_root(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
@@ -141,12 +141,12 @@ async fn get_next_root(
     Ok(HttpResponse::Ok().json(next_root))
 }
 
-#[utoipa::path(
-    tag = TODO,
-    responses(
-        (status = 200, description = "List current todo items", body = [H256])
-    )
-)]
+// #[utoipa::path(
+//     tag = TODO,
+//     responses(
+//         (status = 200, description = "List current todo items", body = [H256])
+//     )
+// )]
 #[get("/get_root")]
 async fn get_root(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
@@ -165,15 +165,15 @@ async fn get_root(
     Ok(HttpResponse::Ok().json(root))
 }
 
-#[utoipa::path(
-    tag = TODO,
-    params(
-        ReqByKey<SMTKey>
-    ),
-    responses(
-        (status = 200, description = "List current todo items", body = [SMTValue])
-    )
-)]
+// #[utoipa::path(
+//     tag = TODO,
+//     params(
+//         ReqByKey<SMTKey>
+//     ),
+//     responses(
+//         (status = 200, description = "List current todo items", body = [SMTValue])
+//     )
+// )]
 #[get("/get_value")]
 async fn get_value(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
@@ -192,14 +192,14 @@ async fn get_value(
     Ok(HttpResponse::Ok().json(value))
 }
 
-#[utoipa::path(
-    tag = TODO,
-    post,
-    path = "/verify",
-    responses(
-        (status = 200, description = "List current todo items", body = [bool])
-    )
-)]
+// #[utoipa::path(
+//     tag = TODO,
+//     post,
+//     path = "/verify",
+//     responses(
+//         (status = 200, description = "List current todo items", body = [bool])
+//     )
+// )]
 #[post("/verify")]
 async fn verify(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
@@ -246,19 +246,19 @@ async fn main() -> std::io::Result<()> {
     let app = HttpServer::new(move || {
         App::new()
         .service(update)
-            .into_utoipa_app()
-            .openapi(ApiDoc::openapi())
+            // .into_utoipa_app()
+            // .openapi(ApiDoc::openapi())
             .app_data(multi_tree.clone())
             .service(get_merkle_proof)
             .service(get_next_root)
             .service(get_root)
             .service(verify)
             .service(get_value)
-            .openapi_service(|api| {
-                SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", api)
-            })
+            // .openapi_service(|api| {
+            //     SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", api)
+            // })
             // .openapi_service(|api| Redoc::with_config("/redoc", api))
-            .into_app()
+            // .into_app()
             // .service(test)
     })
     .shutdown_timeout(30)

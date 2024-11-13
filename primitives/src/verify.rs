@@ -1,28 +1,16 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
+extern crate alloc;
+
 use sparse_merkle_tree::{
     merge::{hash_base_node, merge, MergeValue},
     traits::Hasher,
     H256,
 };
-// use crate::keccak256_hasher::H;
-use frame_support::dispatch::Vec;
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
-#[cfg(feature="std")]
-use utoipa::ToSchema;
 
-#[cfg(feature="std")]
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct Proof<K, V> {
-    pub key: K,
-    pub value: V,
-    pub root: H256,
-    pub leave_bitmap: H256,
-    pub siblings: Vec<MergeValue>,
-}
-
-#[cfg(not(feature="std"))]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Proof<K, V> {
     pub key: K,

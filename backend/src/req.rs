@@ -12,10 +12,10 @@ pub struct ReqUpdate<K, V> {
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct ReqByKey<F: ComposeSchema + ToSchema + IntoParams> {
+pub struct ReqByKey<K> {
     pub prefix: String,
     // #[serde(flatten)]
-    pub key: F,
+    pub key: K,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
