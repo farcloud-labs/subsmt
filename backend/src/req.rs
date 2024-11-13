@@ -3,29 +3,38 @@ use std::fmt::Debug;
 use std::marker::PhantomData;
 use utoipa::{IntoParams, ToSchema};
 use utoipa::__dev::ComposeSchema;
+use crate::kvs::{SMTKey, SMTValue};
 
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct ReqUpdate<K, V> {
+#[derive(Debug, Serialize, Deserialize, ToSchema, IntoParams)]
+pub struct ReqUpdate {
     pub prefix: String,
-    pub key: K,
-    pub value: V,
+    pub key: SMTKey,
+    pub value: SMTValue,
 }
 
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct ReqByKey<K> {
+
+
+#[derive(Debug, Serialize, Deserialize, ToSchema, IntoParams)]
+pub struct ReqByKey {
     pub prefix: String,
     // #[serde(flatten)]
-    pub key: K,
+    pub key: SMTKey,
 }
 
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct ReqByKVs<K, V> {
+#[derive(Debug, Serialize, Deserialize, ToSchema, IntoParams)]
+pub struct ReqByKVs {
     pub prefix: String,
-    #[serde(flatten)]
-    pub kvs: Vec<(K, V)>,
+    // #[serde(flatten)]
+    pub kv: KVPair,
 }
 
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, ToSchema, IntoParams)]
+pub struct KVPair {
+    pub key: SMTKey,
+    pub value: SMTValue,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema, IntoParams)]
 pub struct ReqByPrefix {
     pub prefix: String,
 }

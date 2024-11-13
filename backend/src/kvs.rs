@@ -25,16 +25,17 @@ use utoipa::{IntoParams, ToSchema};
 #[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone, ToSchema, IntoParams)]
 pub struct SMTValue {
     #[serde_as(as = "DisplayFromStr")]
-    pub account: u64,
+    pub nonce: u64,
     #[serde_as(as = "DisplayFromStr")]
     pub balance: u128,
 }
+
 
 #[serde_as]
 #[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone, ToSchema, IntoParams)]
 pub struct SMTKey {
     #[serde_as(as = "DisplayFromStr")]
-    pub account: u64,
+    pub user_id: u64,
 }
 
 impl Value for SMTKey {

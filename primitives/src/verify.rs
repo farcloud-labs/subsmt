@@ -13,16 +13,25 @@ use serde::{Deserialize, Serialize};
 
 cfg_if::cfg_if! {
     if #[cfg(feature="std")] {
-        use utoipa::ToSchema;
+        use utoipa::{ToSchema, IntoParams, __dev::ComposeSchema};
 
         #[derive(Debug, Serialize, Deserialize, ToSchema)]
-        pub struct Proof<K, V> {
+        pub struct Proof<K: ToSchema + ComposeSchema, V: ToSchema + ComposeSchema> {
             pub key: K,
             pub value: V,
             pub root: H256,
             pub leave_bitmap: H256,
             pub siblings: Vec<MergeValue>,
         }
+
+        // impl <K: ToSchema + ComposeSchema, V: ToSchema + ComposeSchema>IntoParams for Proof<K, V> {
+        //     fn into_params(
+        //             parameter_in_provider: impl Fn() -> Option<utoipa::openapi::path::ParameterIn>,
+        //         ) -> Vec<utoipa::openapi::path::Parameter> {
+                
+        //     }
+        // }
+
     } else {
         #[derive(Debug, Serialize, Deserialize)]
         pub struct Proof<K, V> {

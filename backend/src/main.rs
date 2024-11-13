@@ -5,7 +5,6 @@
 use actix_web::middleware::Logger as ALogger;
 use serde_json;
 use actix_web::{
-    // App,
     cookie::time::util::weeks_in_year, get, post, web, HttpResponse, HttpServer, Responder,
     ResponseError,
     App,
@@ -46,18 +45,18 @@ const SMT_API: &str = "SMT API";
     )]
 struct ApiDoc;
 
-// #[utoipa::path(
-//     tag = SMT_API,
-//     path = "/update",
-//     post,
-//     responses(
-//         (status = 200, description = "List current todo items", body = [H256])
-//     )
-// )]
+#[utoipa::path(
+    tag = SMT_API,
+    params(
+    ),
+    responses(
+        (status = 200, description = "Writing data to a sparse Merkle tree", body = [H256])
+    )
+)]
 #[post("/update")]
 async fn update(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqUpdate<SMTKey, SMTValue>>,
+    info: web::Json<ReqUpdate>,
 ) -> Result<HttpResponse, Error> {
     let mut multi_tree = multi_tree
         .lock()
@@ -73,16 +72,18 @@ async fn update(
 }
 
 
-// #[utoipa::path(
-//     tag = TODO,
-//     responses(
-//         (status = 200, description = "List current todo items", body = [Proof<SMTKey, SMTValue>])
-//     )
-// )]
-#[get("/get_merkle_proof")]
+#[utoipa::path(
+    tag = SMT_API,
+    params(
+    ),
+    responses(
+        (status = 200, description = "List current todo items", body = [Proof<SMTKey, SMTValue>])
+    )
+)]
+#[post("/merkle_proof")]
 async fn get_merkle_proof(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Query<ReqByKey<SMTKey>>,
+    info: web::Json<ReqByKey>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -98,16 +99,18 @@ async fn get_merkle_proof(
 }
 
 
-// #[utoipa::path(
-//     tag = TODO,
-//     responses(
-//         (status = 200, description = "List current todo items", body = [H256])
-//     )
-// )]
-#[get("/get_next_root")]
+#[utoipa::path(
+    tag = SMT_API,
+    params(
+    ),
+    responses(
+        (status = 200, description = "List current todo items", body = [H256])
+    )
+)]
+#[post("/next_root")]
 async fn get_next_root(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Query<ReqByKVs<SMTKey, SMTValue>>,
+    info: web::Json<ReqByKVs>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -115,14 +118,11 @@ async fn get_next_root(
     let old_proof = multi_tree
         .get_merkle_proof_old(
             info.prefix.as_ref(),
-            info.kvs
-                .iter()
-                .map(|kv| kv.0.clone())
-                .collect::<Vec<SMTKey>>(),
+            vec![info.kv.key.clone()]
         )
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let next_root = multi_tree
-        .get_next_root(old_proof, info.kvs.clone())
+        .get_next_root(old_proof, vec![(info.kv.key.clone(), info.kv.value.clone())])
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -134,16 +134,18 @@ async fn get_next_root(
     Ok(HttpResponse::Ok().json(next_root))
 }
 
-// #[utoipa::path(
-//     tag = TODO,
-//     responses(
-//         (status = 200, description = "List current todo items", body = [H256])
-//     )
-// )]
-#[get("/get_root")]
+#[utoipa::path(
+    tag = SMT_API,
+    params(
+    ),
+    responses(
+        (status = 200, description = "List current todo items", body = [H256])
+    )
+)]
+#[post("/root")]
 async fn get_root(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Query<ReqByPrefix>,
+    info: web::Json<ReqByPrefix>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -158,19 +160,18 @@ async fn get_root(
     Ok(HttpResponse::Ok().json(root))
 }
 
-// #[utoipa::path(
-//     tag = TODO,
-//     params(
-//         ReqByKey<SMTKey>
-//     ),
-//     responses(
-//         (status = 200, description = "List current todo items", body = [SMTValue])
-//     )
-// )]
-#[get("/get_value")]
+#[utoipa::path(
+    tag = SMT_API,
+    params(
+    ),
+    responses(
+        (status = 200, description = "Get the user's data stored in the Merkle tree", body = [SMTValue])
+    )
+)]
+#[post("/value")]
 async fn get_value(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Query<ReqByKey<SMTKey>>,
+    info: web::Json<ReqByKey>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -185,14 +186,14 @@ async fn get_value(
     Ok(HttpResponse::Ok().json(value))
 }
 
-// #[utoipa::path(
-//     tag = TODO,
-//     post,
-//     path = "/verify",
-//     responses(
-//         (status = 200, description = "List current todo items", body = [bool])
-//     )
-// )]
+#[utoipa::path(
+    tag = SMT_API,
+    params(
+    ),
+    responses(
+        (status = 200, description = "List current todo items", body = [bool])
+    )
+)]
 #[post("/verify")]
 async fn verify(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
@@ -232,27 +233,24 @@ async fn main() -> std::io::Result<()> {
         .log_to_stdout()
         .start()
         .unwrap();
-    // use utoipa_redoc::{Redoc, FileConfig};
-    // use serde_json::json;
-    // Redoc::with_config(json!({"openapi": "3.1.0"}), FileConfig);
 
     let app = HttpServer::new(move || {
         App::new()
-        .service(update)
-            // .into_utoipa_app()
-            // .openapi(ApiDoc::openapi())
-            .app_data(multi_tree.clone())
+        .into_utoipa_app()
+            .openapi(ApiDoc::openapi())
+            .service(update)
+            .service(get_value)
             .service(get_merkle_proof)
             .service(get_next_root)
             .service(get_root)
             .service(verify)
-            .service(get_value)
-            // .openapi_service(|api| {
-            //     SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", api)
-            // })
-            // .openapi_service(|api| Redoc::with_config("/redoc", api))
-            // .into_app()
-            // .service(test)
+            .app_data(multi_tree.clone())
+            .openapi_service(|api| {
+                SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", api)
+            })
+            .into_app()
+
+            
     })
     .shutdown_timeout(30)
     .bind(("127.0.0.1", 8080))?

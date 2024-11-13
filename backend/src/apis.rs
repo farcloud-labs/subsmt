@@ -23,6 +23,7 @@ use sparse_merkle_tree::error::{Error, Result as SMTResult};
 use sparse_merkle_tree::CompiledMerkleProof;
 use std::convert::AsRef;
 use std::sync::Arc;
+use utoipa::{ToSchema, __dev::ComposeSchema};
 
 type MultiSMT<'a, V, H: Hasher> = SparseMerkleTree<H, V, SMTStore<'a>>;
 
@@ -33,8 +34,8 @@ pub struct MultiSMTStore<K, V, H> {
 
 impl<
         'a,
-        K: Value + Clone + Serialize + Deserialize<'a>,
-        V: Value + Into<Vec<u8>> + From<Vec<u8>> + Serialize + Deserialize<'a>,
+        K: Value + Clone + Serialize + ToSchema + Deserialize<'a> + ComposeSchema,
+        V: Value + Into<Vec<u8>> + From<Vec<u8>> + ToSchema + Serialize + Deserialize<'a> + ComposeSchema,
         H: Hasher + Default,
     > MultiSMTStore<K, V, H>
 {
