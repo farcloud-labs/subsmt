@@ -140,3 +140,11 @@ impl<
         )
     }
 }
+
+
+#[cfg(test)]
+pub mod test {
+    use crate::kvs::{SMTKey, SMTValue};
+    
+
+}

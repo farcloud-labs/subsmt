@@ -103,7 +103,7 @@ pub mod test {
     fn test_store() {
 
         // 打开数据库
-        let base_path = "./test_db";
+        let base_path = "./test_store_db";
         let db = Database::open(&Default::default(), Path::new(base_path)).unwrap();
         let mut store = SMTStore::new(Arc::new(db),0, "test".as_ref());
 
