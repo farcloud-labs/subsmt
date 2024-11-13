@@ -36,27 +36,20 @@ use utoipa_actix_web::AppExt;
 use utoipa_swagger_ui::SwaggerUi;
 use utoipa_redoc::{Redoc};
 
-const TODO: &str = "todo";
+const SMT_API: &str = "SMT API";
 
 #[derive(OpenApi)]
     #[openapi(
         tags(
-            (name = "todo", description = "Todo management endpoints.")
+            (name = "SMT API", description = "Provides sparse Morkel tree related APIs")
         ),
-        // modifiers(&SecurityAddon)
     )]
 struct ApiDoc;
 
-
-// #[get("/test")]
-// async fn test() -> impl Responder {
-//     let h = "hello, smt!";
-//     log::info!("{:?}", format!("[Test] info: {:?}", h));
-//     HttpResponse::Ok().body(h)
-// }
-
 // #[utoipa::path(
-//     tag = TODO,
+//     tag = SMT_API,
+//     path = "/update",
+//     post,
 //     responses(
 //         (status = 200, description = "List current todo items", body = [H256])
 //     )

@@ -8,12 +8,14 @@ repository.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+cfg-if = {version = "1"}
 serde_with = { version = "3.3.0", features = ["hex", "alloc", "macros"],  default-features = false}
 sparse-merkle-tree = {path = "../sparse-merkle-tree", default-features = false}
 tiny-keccak = {version = "2.0.2", features = ["keccak"], default-features = false}
 serde = { version = "1.0.105",  features = ["derive"], default-features = false }
 codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false}
 
+utoipa = { version = "5.2.0", features = ["actix_extras"]}
 
 [features]
 default = ["std"]

@@ -11,13 +11,29 @@ use sparse_merkle_tree::{
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Proof<K, V> {
-    pub key: K,
-    pub value: V,
-    pub root: H256,
-    pub leave_bitmap: H256,
-    pub siblings: Vec<MergeValue>,
+cfg_if::cfg_if! {
+    if #[cfg(feature="std")] {
+        use utoipa::ToSchema;
+
+        #[derive(Debug, Serialize, Deserialize, ToSchema)]
+        pub struct Proof<K, V> {
+            pub key: K,
+            pub value: V,
+            pub root: H256,
+            pub leave_bitmap: H256,
+            pub siblings: Vec<MergeValue>,
+        }
+    } else {
+        #[derive(Debug, Serialize, Deserialize)]
+        pub struct Proof<K, V> {
+            pub key: K,
+            pub value: V,
+            pub root: H256,
+            pub leave_bitmap: H256,
+            pub siblings: Vec<MergeValue>,
+        }
+    }
+    
 }
 
 fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> MergeValue {
