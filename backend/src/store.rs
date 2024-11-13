@@ -90,3 +90,46 @@ where
             .map_err(|e| Error::Store(e.to_string()))
     }
 }
+
+
+#[cfg(test)]
+pub mod test {
+    use crate::kvs::{SMTKey, SMTValue};
+    use super::*;
+    use std::path::Path;
+    use sparse_merkle_tree::{traits::Value, merge::MergeValue};
+
+    #[test]
+    fn test_store() {
+
+        // 打开数据库
+        let base_path = "./test_db";
+        let db = Database::open(&Default::default(), Path::new(base_path)).unwrap();
+        let mut store = SMTStore::new(Arc::new(db),0, "test".as_ref());
+
+        //插入叶子
+        let leaf1_key: H256= [1u8; 32].to_vec().into();
+        let leaf1 = SMTValue{ nonce: 1, balance: 99};
+        assert_eq!(store.get_leaf(&leaf1_key).unwrap(), None::<SMTValue>);
+        store.insert_leaf(leaf1_key, leaf1.clone()).unwrap();
+        assert_eq!(store.get_leaf(&leaf1_key).unwrap(), Some(leaf1));
+       <SMTStore as StoreWriteOps<SMTValue>>::remove_leaf(&mut store, &leaf1_key).unwrap();
+        assert_eq!(store.get_leaf(&leaf1_key).unwrap(), None::<SMTValue>);
+
+        // 插入
+        let node1_key: BranchKey = BranchKey::new(100, [2u8; 32].into());
+        let node1: BranchNode = BranchNode {left: MergeValue::from_h256([3u8; 32].into()), right: MergeValue::from_h256([4u8; 32].into())};
+        assert_eq!(<SMTStore as StoreReadOps<SMTValue>>::get_branch(& store, &node1_key).unwrap(), None::<BranchNode>);
+        <SMTStore as StoreWriteOps<SMTValue>>::insert_branch(&mut store, node1_key.clone(), node1.clone()).unwrap();
+        assert_eq!(<SMTStore as StoreReadOps<SMTValue>>::get_branch(& store, &node1_key).unwrap(), Some(node1.clone()));
+        <SMTStore as StoreWriteOps<SMTValue>>::remove_branch(&mut store, &node1_key.clone()).unwrap();
+        assert_eq!(<SMTStore as StoreReadOps<SMTValue>>::get_branch(& store, &node1_key).unwrap(), None::<BranchNode>);
+
+    }
+    
+
+    
+
+
+
+}
