@@ -16,7 +16,7 @@ cfg_if::cfg_if! {
         use utoipa::{ToSchema, IntoParams, __dev::ComposeSchema};
 
         #[derive(Debug, Serialize, Deserialize, ToSchema)]
-        pub struct Proof<K: ToSchema + ComposeSchema, V: ToSchema + ComposeSchema> {
+        pub struct Proof<K: ToSchema + ComposeSchema, V: ToSchema + ComposeSchema + Default> {
             pub key: K,
             pub value: V,
             pub root: H256,

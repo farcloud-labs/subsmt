@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use smt_backend_lib::apis::MultiSMTStore;
 use smt_backend_lib::error::Error;
-use smt_backend_lib::kvs::*;
+use smt_backend_lib::kv::*;
 use smt_backend_lib::req::{ReqByKey, ReqByKVs, ReqByPrefix, ReqUpdate};
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
@@ -203,6 +203,7 @@ async fn verify(
     let multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
+    let res = false; 
     let res = multi_tree.verify(Proof {
         key: info.key.clone(),
         value: info.value.clone(),

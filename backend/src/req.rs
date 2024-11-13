@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use std::marker::PhantomData;
 use utoipa::{IntoParams, ToSchema};
 use utoipa::__dev::ComposeSchema;
-use crate::kvs::{SMTKey, SMTValue};
+use crate::kv::{SMTKey, SMTValue};
 
 #[derive(Debug, Serialize, Deserialize, ToSchema, IntoParams)]
 pub struct ReqUpdate {
@@ -17,14 +17,12 @@ pub struct ReqUpdate {
 #[derive(Debug, Serialize, Deserialize, ToSchema, IntoParams)]
 pub struct ReqByKey {
     pub prefix: String,
-    // #[serde(flatten)]
     pub key: SMTKey,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema, IntoParams)]
 pub struct ReqByKVs {
     pub prefix: String,
-    // #[serde(flatten)]
     pub kv: KVPair,
 }
 

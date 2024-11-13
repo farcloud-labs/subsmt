@@ -35,7 +35,7 @@ pub struct MultiSMTStore<K, V, H> {
 impl<
         'a,
         K: Value + Clone + Serialize + ToSchema + Deserialize<'a> + ComposeSchema,
-        V: Value + Into<Vec<u8>> + From<Vec<u8>> + ToSchema + Serialize + Deserialize<'a> + ComposeSchema,
+        V: Default +Value + Into<Vec<u8>> + From<Vec<u8>> + ToSchema + Serialize + Deserialize<'a> + ComposeSchema + PartialEq,
         H: Hasher + Default,
     > MultiSMTStore<K, V, H>
 {
@@ -131,20 +131,50 @@ impl<
     }
 
     pub fn verify(&'a self, proof: Proof<K, V>) -> bool {
-        smt_verify::<H>(
-            proof.key.to_h256(),
-            proof.value.to_h256(),
-            proof.leave_bitmap,
-            proof.siblings,
-            proof.root,
-        )
+        let mut res = false;
+        if proof.value != V::default() {
+            res = smt_verify::<H>(
+                proof.key.to_h256(),
+                proof.value.to_h256(),
+                proof.leave_bitmap,
+                proof.siblings,
+                proof.root,
+            )
+        }
+        return res;
+        
     }
 }
 
+// todo 获取的值为空 不提供证明
+// todo value为默认值 验证直接false
 
 #[cfg(test)]
 pub mod test {
     use crate::kvs::{SMTKey, SMTValue};
-    
+
+    // 创建multi_tree
+
+    // 创建两个tree
+
+    // 分别取两个tree的root
+
+    // 插入一个tree数据
+
+    // 查询两个树的root 证明互不干扰
+
+    // 插入另外一个树的数据 证明两个树同样数据获得根相同
+
+    // 获取数据
+
+    // 获得证明
+
+    // 验证
+
+    // 清除数据
+
+    // 获取根
+
+    // 获取值
 
 }
