@@ -25,6 +25,7 @@ use smt_primitives::{
     verify::{verify as smt_verify, Proof},
 };
 use sparse_merkle_tree::{traits::Value, H256};
+use std::future;
 use std::path::Path;
 use std::result::Result;
 use std::sync::Mutex;
@@ -220,7 +221,8 @@ async fn main() -> std::io::Result<()> {
         MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(base_path)).unwrap(),
     ));
 
-    Logger::try_with_str("info")
+    let l = async {
+        Logger::try_with_str("info")
         .unwrap()
         .log_to_file(flexi_logger::FileSpec::default().directory("target/logs"))
         .write_mode(WriteMode::BufferAndFlush)
@@ -233,6 +235,9 @@ async fn main() -> std::io::Result<()> {
         .log_to_stdout()
         .start()
         .unwrap();
+        std::future::pending::<()>().await;
+
+    };
 
     let app = HttpServer::new(move || {
         App::new()
@@ -266,6 +271,7 @@ async fn main() -> std::io::Result<()> {
     let result = tokio::select! {
         _ = app => Ok(()),
         _ = graceful_shutdown_task => Ok(()),
+        _ = l => Ok(()),
     };
 
     result

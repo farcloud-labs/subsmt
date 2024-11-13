@@ -77,3 +77,20 @@ impl From<Vec<u8>> for SMTValue {
     }
 }
 
+// 测试是否跟
+#[cfg(test)]
+mod test {
+    use sparse_merkle_tree::traits::Value;
+    use sparse_merkle_tree::H256;
+    use super::SMTValue;
+
+    #[test]
+    fn test_value() {
+        let v = SMTValue {nonce: 1, balance: 100000};
+        let v_vec: Vec<u8> = v.clone().into();
+        assert_eq!(v, v_vec.into());
+
+        let v1: SMTValue = Default::default();
+        assert_eq!(v1.to_h256(), H256::default());
+    }
+}
