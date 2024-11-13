@@ -41,12 +41,18 @@ pub mod test {
         assert_eq!(h1, h11);
 
         let b: H256 = [1u8; 32].to_vec().into();
-
         let mut hasher1 = Keccak256Hasher::default();
         hasher1.write_h256(&b);
         let h2 = hasher1.finish();
         let h22: H256 = keccak256(&b).into();
         assert_eq!(h2, h22);
+
+        let mut hasher2 = Keccak256Hasher::default();
+        hasher2.write_byte(25u8);
+        let h2: H256 = hasher2.finish();
+        assert_eq!(h2, keccak256(25u8.to_be_bytes()).into());
+
+
 
     }
 

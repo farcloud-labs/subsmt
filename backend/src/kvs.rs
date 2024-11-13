@@ -77,7 +77,7 @@ impl From<Vec<u8>> for SMTValue {
     }
 }
 
-// 测试是否跟
+
 #[cfg(test)]
 mod test {
     use sparse_merkle_tree::traits::Value;
