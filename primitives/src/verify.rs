@@ -94,7 +94,7 @@ pub fn verify<H: Hasher + Default>(
     if value_hash.is_zero() {
         return false;
     }
-    if siblings.len() == 0 {
+    if siblings.is_empty() {
         return single_leaf_into_merge_value::<H>(path, value_hash).hash::<H>() == root;
     }
 

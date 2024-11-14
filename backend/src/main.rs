@@ -3,7 +3,7 @@
 #![allow(unused_mut)]
 
 use actix_web::middleware::Logger as ALogger;
-use serde_json;
+// use serde_json;
 use actix_web::{
     cookie::time::util::weeks_in_year, get, post, web, HttpResponse, HttpServer, Responder,
     ResponseError,
@@ -179,7 +179,7 @@ async fn get_root(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let root = multi_tree
-        .get_root(format!("{}", info.prefix.clone()).as_ref())
+        .get_root(info.prefix.clone().to_string().as_ref())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -230,7 +230,6 @@ async fn verify(
     let multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
-    let res = false; 
     let res = multi_tree.verify(Proof {
         key: info.key.clone(),
         value: info.value.clone(),

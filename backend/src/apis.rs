@@ -25,7 +25,7 @@ use std::convert::AsRef;
 use std::sync::Arc;
 use utoipa::{ToSchema, __dev::ComposeSchema};
 
-type MultiSMT<'a, V, H: Hasher> = SparseMerkleTree<H, V, SMTStore<'a>>;
+type MultiSMT<'a, V, H> = SparseMerkleTree<H, V, SMTStore<'a>>;
 
 pub struct MultiSMTStore<K, V, H> {
     store: Arc<Database>,
@@ -56,7 +56,7 @@ impl<
     pub fn update(&'a self, prefix: &'a [u8], key: K, value: V) -> SMTResult<H256> {
         let mut tree = self.new_tree_with_store(prefix)?;
         let h = tree.update(key.to_h256(), value)?;
-        Ok(h.clone())
+        Ok(*h)
     }
 
     pub fn update_all(&'a self, prefix: &'a [u8], kvs: Vec<(K, V)>) -> SMTResult<H256> {
@@ -67,13 +67,13 @@ impl<
 
         let mut tree = self.new_tree_with_store(prefix)?;
         let root = tree.update_all(kvs)?;
-        Ok(root.clone())
+        Ok(*root)
     }
 
     // 获取根
     pub fn get_root(&'a self, prefix: &'a [u8]) -> Result<H256> {
         let tree = self.new_tree_with_store(prefix)?;
-        Ok(tree.root().clone())
+        Ok(*tree.root())
     }
 
     // 获取值
@@ -97,8 +97,8 @@ impl<
             value: value.clone(),
             path: key.to_h256(),
             value_hash: value.to_h256(),
-            root: tree.root().clone(),
-            leave_bitmap: leave_bitmap,
+            root: *tree.root(),
+            leave_bitmap,
             siblings: siblings.clone(),
         })
     }
@@ -144,7 +144,7 @@ impl<
                 proof.root,
             )
         }
-        return res;
+        res
         
     }
 }

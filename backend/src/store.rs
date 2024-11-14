@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use sparse_merkle_tree::{
     error::Error,
     traits::{StoreReadOps, StoreWriteOps, Value},

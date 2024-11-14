@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 use actix_web::{
     cookie::time::util::weeks_in_year, get, post, web, App, HttpResponse, HttpServer, Responder,
     ResponseError,
@@ -16,10 +17,10 @@ impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse<actix_web::body::BoxBody> {
         match self {
             Error::InternalError(e) => {
-                return HttpResponse::BadRequest().body(e.to_string());
+                HttpResponse::BadRequest().body(e.to_string())
             }
             _ => {
-                return HttpResponse::BadRequest().body("Unexpected error occurred");
+                HttpResponse::BadRequest().body("Unexpected error occurred")
             }
         }
     }

@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use actix_web::middleware::Logger as ALogger;
 use actix_web::{
     cookie::time::util::weeks_in_year, get, post, web, App, HttpResponse, HttpServer, Responder,
@@ -43,7 +44,7 @@ impl Value for SMTKey {
     }
 
     fn to_h256(&self) -> sparse_merkle_tree::H256 {
-        return keccak256(self.encode()).into(); 
+        keccak256(self.encode()).into()
     }
 }
 
@@ -56,13 +57,19 @@ impl Value for SMTValue {
         if self == &Default::default() {
             return H256::zero();
         }
-        return keccak256(self.encode()).into();
+        keccak256(self.encode()).into()
     }
 }
 
-impl Into<Vec<u8>> for SMTValue {
-    fn into(self) -> Vec<u8> {
-        self.encode()
+// impl Into<Vec<u8>> for SMTValue {
+//     fn into(self) -> Vec<u8> {
+//         self.encode()
+//     }
+// }
+
+impl From<SMTValue> for Vec<u8> {
+    fn from(value: SMTValue) -> Self {
+        value.encode()
     }
 }
 
