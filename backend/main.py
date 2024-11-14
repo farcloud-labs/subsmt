@@ -4,7 +4,7 @@ import json
 
 url = "http://localhost:8080/";
 
-key1 = {"user_id": "1000"}
+key1 = {"user_id": 1000}
 value1 = {
             "nonce": 1,
             "balance": 10000000000000
