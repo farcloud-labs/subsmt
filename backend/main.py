@@ -6,14 +6,14 @@ url = "http://localhost:8080/";
 
 key1 = {"user_id": "1000"}
 value1 = {
-            "nonce": "1",
-            "balance": "10000000000000"
+            "nonce": 1,
+            "balance": 10000000000000
         }
 
-key2 = {"user_id": "1001"}
+key2 = {"user_id": 1001}
 value2 = {
-            "nonce": "1",
-            "balance": "10000000000001"
+            "nonce": 1,
+            "balance": 10000000000001
         }
 
 prefix = "test"
