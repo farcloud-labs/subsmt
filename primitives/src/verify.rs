@@ -84,6 +84,10 @@ pub fn verify<H: Hasher + Default>(
     siblings: Vec<MergeValue>,
     old_root: H256,
 ) -> bool {
+
+    if value_hash.is_zero() {
+        return false;
+    }
     if siblings.len() == 0 {
         return single_leaf_into_merge_value::<H>(path, value_hash).hash::<H>() == old_root;
     }
