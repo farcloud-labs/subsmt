@@ -34,8 +34,7 @@ pub struct SMTValue {
 #[serde_as]
 #[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone, ToSchema, IntoParams)]
 pub struct SMTKey {
-    // #[serde_as(as = "DisplayFromStr")]
-    pub user_id: u64,
+    pub address: String,
 }
 
 impl Value for SMTKey {

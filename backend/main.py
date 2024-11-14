@@ -4,15 +4,15 @@ import json
 
 url = "http://localhost:8080/";
 
-user1_id = 1000
-user2_id = 1001
+user1_address = "1000"
+user2_address = "1001"
 prefix = "test"
 balance = "1000000000000000000"
 
 
 def update_key1(path: str):
     j1 = {
-        "user_id": user1_id,
+        "address": user1_address,
         "balance": balance,
         "nonce": 1,
         "prefix": prefix
@@ -22,7 +22,7 @@ def update_key1(path: str):
 
 def update_key2(path: str):
     j2 = {
-        "user_id": user2_id,
+        "address": user2_address,
         "balance": balance,
         "nonce": 1,
         "prefix": prefix
@@ -33,7 +33,7 @@ def update_key2(path: str):
 
 def get_merkel_proof(path: str):
     j = {
-        "user_id": user1_id,
+        "address": user1_address,
         "prefix": prefix
     }
     p = post(path, j)
@@ -42,7 +42,7 @@ def get_merkel_proof(path: str):
 
 def get_next_root(path: str):
     j = {
-        "user_id": user2_id,
+        "address": user2_address,
         "balance": balance,
         "nonce": 1,
         "prefix": prefix
@@ -56,7 +56,7 @@ def get_next_root(path: str):
 
 def get_value(path: str):
     j = {
-        "user_id": user1_id,
+        "address": user1_address,
         "prefix": prefix
     }
     print("user1 的叶子值是: \n", post(path, j))

@@ -171,9 +171,9 @@ pub mod test {
         assert_eq!(multi_tree.get_root(tree2).unwrap(), H256::zero());
 
         // 插入一个tree数据
-        let tree1_key1 = SMTKey{user_id: 1};
+        let tree1_key1 = SMTKey{address: "1".to_string()};
         let tree1_value1: SMTValue = SMTValue{nonce: 1, balance: 99};
-        let tree1_key2 = SMTKey{user_id: 2};
+        let tree1_key2 = SMTKey{address: "2".to_string()};
         let tree1_value2: SMTValue = SMTValue{nonce: 2, balance: 97};
 
         assert_eq!(multi_tree.get_value(tree1, tree1_key1.clone()).unwrap(), SMTValue::default());
@@ -213,7 +213,7 @@ pub mod test {
         let mut kvs: Vec<(SMTKey, SMTValue)> = vec![];
         
         for i in 1..2 {
-            kvs.push((SMTKey{user_id: i as u64}, SMTValue {nonce: i as u64, balance: i as u128}));
+            kvs.push((SMTKey{address: i.to_string()}, SMTValue {nonce: i as u64, balance: i as u128}));
         }
 
         for kv in kvs.clone() {
