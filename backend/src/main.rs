@@ -19,7 +19,7 @@ use serde_with::serde_as;
 use smt_backend_lib::apis::MultiSMTStore;
 use smt_backend_lib::error::Error;
 use smt_backend_lib::kv::*;
-use smt_backend_lib::req::{ReqByKey, ReqByKVs, ReqByPrefix, ReqUpdate};
+use smt_backend_lib::req::{ReqByKey, ReqByKVs, ReqByPrefix, ReqUpdate, KVPair};
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
@@ -57,7 +57,7 @@ struct ApiDoc;
 #[post("/update")]
 async fn update_value(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqUpdate>,
+    info: web::Json<ReqUpdate<SMTKey, SMTValue>>,
 ) -> Result<HttpResponse, Error> {
     let mut multi_tree = multi_tree
         .lock()
@@ -84,7 +84,7 @@ async fn update_value(
 #[post("/remove")]
 async fn remove_value(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqByKey>,
+    info: web::Json<ReqByKey<SMTKey>>,
 ) -> Result<HttpResponse, Error> {
     let mut multi_tree = multi_tree
         .lock()
@@ -111,7 +111,7 @@ async fn remove_value(
 #[post("/merkle_proof")]
 async fn get_merkle_proof(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqByKey>,
+    info: web::Json<ReqByKey<SMTKey>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -138,7 +138,7 @@ async fn get_merkle_proof(
 #[post("/next_root")]
 async fn get_next_root(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqByKVs>,
+    info: web::Json<ReqByKVs<KVPair<SMTKey, SMTValue>>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
@@ -199,7 +199,7 @@ async fn get_root(
 #[post("/value")]
 async fn get_value(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
-    info: web::Json<ReqByKey>,
+    info: web::Json<ReqByKey<SMTKey>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
