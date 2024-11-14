@@ -55,7 +55,8 @@ impl<
     // 给某个默克尔树插入值
     pub fn update(&'a self, prefix: &'a [u8], key: K, value: V) -> SMTResult<H256> {
         let mut tree = self.new_tree_with_store(prefix)?;
-        tree.update(key.to_h256(), value).copied()
+        let h = tree.update(key.to_h256(), value)?;
+        Ok(h.clone())
     }
 
     pub fn update_all(&'a self, prefix: &'a [u8], kvs: Vec<(K, V)>) -> SMTResult<H256> {
@@ -146,35 +147,120 @@ impl<
     }
 }
 
-// todo 获取的值为空 不提供证明
-// todo value为默认值 验证直接false
 
 #[cfg(test)]
 pub mod test {
-    use crate::kvs::{SMTKey, SMTValue};
+    use crate::kv::{SMTKey, SMTValue};
+    use super::*;
+    use actix_web::web;
+    use std::sync::Mutex;
+    #[test]
+    fn test_apis() {
+            // 创建multi_tree
+        let base_path = "./apis_test_db";
+        let multi_tree = MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(base_path)).unwrap();
 
-    // 创建multi_tree
+        let tree1: &[u8]= "tree1".as_ref();
+        let tree2: &[u8]= "tree2".as_ref();
 
-    // 创建两个tree
+        multi_tree.new_tree_with_store(tree1).unwrap();
+        multi_tree.new_tree_with_store(tree2).unwrap();
 
-    // 分别取两个tree的root
+        // 分别取两个tree的root
+        assert_eq!(multi_tree.get_root(tree1).unwrap(), H256::zero());
+        assert_eq!(multi_tree.get_root(tree2).unwrap(), H256::zero());
 
-    // 插入一个tree数据
+        // 插入一个tree数据
+        let tree1_key1 = SMTKey{user_id: 1};
+        let tree1_value1: SMTValue = SMTValue{nonce: 1, balance: 99};
+        let tree1_key2 = SMTKey{user_id: 2};
+        let tree1_value2: SMTValue = SMTValue{nonce: 2, balance: 97};
 
-    // 查询两个树的root 证明互不干扰
+        assert_eq!(multi_tree.get_value(tree1, tree1_key1.clone()).unwrap(), SMTValue::default());
+        assert_eq!(multi_tree.get_root(tree1).unwrap(), H256::zero());
+        multi_tree.update(tree1, tree1_key1.clone(), tree1_value1.clone()).unwrap();
+        assert_eq!(multi_tree.get_value(tree1, tree1_key1.clone()).unwrap(), tree1_value1.clone());
+        let proof = multi_tree.get_merkle_proof(tree1.clone(), tree1_key1.clone()).unwrap();
+        assert_eq!(multi_tree.verify(proof), true);
+        // remove 
+        multi_tree.update(tree1, tree1_key1.clone(), SMTValue::default()).unwrap();
+        assert_eq!(multi_tree.get_value(tree1, tree1_key1.clone()).unwrap(), SMTValue::default());
+        assert_eq!(multi_tree.get_root(tree1).unwrap(), H256::zero());
+        multi_tree.update(tree1, tree1_key1.clone(), tree1_value1.clone()).unwrap();
+        let tree1_root1 = multi_tree.get_root(tree1).unwrap();
+        multi_tree.update(tree1, tree1_key2.clone(), tree1_value2.clone()).unwrap();
+        let tree1_root2 = multi_tree.get_root(tree2).unwrap();
+        assert_ne!(tree1_root1, tree1_root2);
+        assert_eq!(multi_tree.get_root(tree2).unwrap(), H256::zero());
 
-    // 插入另外一个树的数据 证明两个树同样数据获得根相同
+        let tree2_root1 = multi_tree.update(tree2, tree1_key1.clone(), tree1_value1.clone()).unwrap();
+        multi_tree.update(tree2, tree1_key2.clone(), tree1_value2.clone()).unwrap();
+        assert_eq!(tree1_root1, tree2_root1);
+        assert_eq!(multi_tree.get_root(tree1).unwrap(), multi_tree.get_root(tree2).unwrap());
+        let tree2_proof1 = multi_tree.get_merkle_proof(tree2, tree1_key2.clone()).unwrap();
+        assert_eq!(multi_tree.verify(tree2_proof1), true);
+        
+        // clear
+        multi_tree.clear(tree1);
+        assert_eq!(multi_tree.get_value(tree1, tree1_key2.clone()).unwrap(), SMTValue::default());
+        assert_eq!(multi_tree.get_value(tree2, tree1_key2.clone()).unwrap(), tree1_value2.clone());
+        multi_tree.clear(tree2);
+        assert_eq!(multi_tree.get_value(tree2, tree1_key2.clone()).unwrap(), SMTValue::default());
+        assert_eq!(multi_tree.get_value(tree2, tree1_key1.clone()).unwrap(), SMTValue::default());
+        assert_eq!(multi_tree.get_root(tree2).unwrap(), H256::zero());
+        let mut kvs: Vec<(SMTKey, SMTValue)> = vec![];
+        
+        for i in 1..2 {
+            kvs.push((SMTKey{user_id: i as u64}, SMTValue {nonce: i as u64, balance: i as u128}));
+        }
 
-    // 获取数据
+        for kv in kvs.clone() {
+            multi_tree.update(tree2, kv.0.clone(), kv.1.clone()).unwrap();
+            let p = multi_tree.get_merkle_proof(tree2, kv.0.clone()).unwrap();
+            assert_eq!(multi_tree.verify(p), true);
+        }
 
-    // 获得证明
+        
 
-    // 验证
+        // upfate_all出了问题
+        multi_tree.update_all(tree1, kvs.clone()).unwrap();
+        // for kv in kvs.clone() {
+        //     multi_tree.update(tree1, kv.0.clone(), kv.1.clone()).unwrap();
+        //     let p = multi_tree.get_merkle_proof(tree1, kv.0.clone()).unwrap();
+        //     assert_eq!(multi_tree.verify(p), true);
+        // }
+        assert_eq!(multi_tree.get_root(tree1).unwrap(), multi_tree.get_root(tree2).unwrap());
 
-    // 清除数据
+        
 
-    // 获取根
 
-    // 获取值
+        
+
+
+
+
+
+        
+
+
+
+        // 查询两个树的root 证明互不干扰
+
+        // 插入另外一个树的数据 证明两个树同样数据获得根相同
+
+        // 获取数据
+
+        // 获得证明
+
+        // 验证
+
+        // 清除数据
+
+        // 获取根
+
+        // 获取值
+
+    }
+    
 
 }
