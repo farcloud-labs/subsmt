@@ -55,7 +55,7 @@ struct ApiDoc;
     )
 )]
 #[post("/update")]
-async fn update(
+async fn update_value(
     multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<ReqUpdate>,
 ) -> Result<HttpResponse, Error> {
@@ -68,6 +68,33 @@ async fn update(
     log::info!(
         "{:#?}",
         format!("[Update] info: {:#?}, root: {:?}", info, root)
+    );
+    Ok(HttpResponse::Ok().json(root))
+}
+
+
+#[utoipa::path(
+    tag = SMT_API,
+    params(
+    ),
+    responses(
+        (status = 200, description = "Writing data to a sparse Merkle tree", body = [H256])
+    )
+)]
+#[post("/remove")]
+async fn remove_value(
+    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    info: web::Json<ReqByKey>,
+) -> Result<HttpResponse, Error> {
+    let mut multi_tree = multi_tree
+        .lock()
+        .map_err(|e| Error::InternalError(e.to_string()))?;
+    let root = multi_tree
+        .update(info.prefix.as_ref(), info.key.clone(), Default::default())
+        .map_err(|e| Error::InternalError(e.to_string()))?;
+    log::info!(
+        "{:#?}",
+        format!("[Remove] info: {:#?}, root: {:?}", info, root)
     );
     Ok(HttpResponse::Ok().json(root))
 }
@@ -215,6 +242,32 @@ async fn verify(
     Ok(HttpResponse::Ok().json(res))
 }
 
+
+#[utoipa::path(
+    tag = SMT_API,
+    params(
+    ),
+    responses(
+        (status = 200, description = "List current todo items", body = [H256])
+    )
+)]
+#[post("/clear")]
+async fn clear(
+    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    info: web::Json<ReqByPrefix>,
+) -> Result<HttpResponse, Error> {
+    let multi_tree = multi_tree
+        .lock()
+        .map_err(|e| Error::InternalError(e.to_string()))?;
+    
+    multi_tree.clear(info.prefix.as_ref());
+    let root = multi_tree.get_root(info.prefix.as_ref()).map_err(|e| Error::InternalError(e.to_string()))?;
+    log::info!("{:?}", format!("[Clear] info: {:?}, res: {:?}", info, root));
+    Ok(HttpResponse::Ok().json(root))
+
+}
+
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let base_path = "./db";
@@ -244,12 +297,14 @@ async fn main() -> std::io::Result<()> {
         App::new()
         .into_utoipa_app()
             .openapi(ApiDoc::openapi())
-            .service(update)
+            .service(update_value)
             .service(get_value)
             .service(get_merkle_proof)
             .service(get_next_root)
             .service(get_root)
             .service(verify)
+            .service(remove_value)
+            .service(clear)
             .app_data(multi_tree.clone())
             .openapi_service(|api| {
                 SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", api)
