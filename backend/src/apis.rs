@@ -188,6 +188,8 @@ pub mod test {
         assert_eq!(multi_tree.get_root(tree1).unwrap(), H256::zero());
         multi_tree.update(tree1, tree1_key1.clone(), tree1_value1.clone()).unwrap();
         let tree1_root1 = multi_tree.get_root(tree1).unwrap();
+        let old_proof = multi_tree.get_merkle_proof_old(tree1, vec![tree1_key2.clone()]).unwrap();
+        let next_root = multi_tree.get_next_root(old_proof.clone(), vec![(tree1_key2.clone(), tree1_value2.clone())]).unwrap();
         multi_tree.update(tree1, tree1_key2.clone(), tree1_value2.clone()).unwrap();
         let tree1_root2 = multi_tree.get_root(tree2).unwrap();
         assert_ne!(tree1_root1, tree1_root2);
