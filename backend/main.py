@@ -4,70 +4,62 @@ import json
 
 url = "http://localhost:8080/";
 
-key1 = {"user_id": 1000}
-value1 = {
-            "nonce": 1,
-            "balance": 10000000000000
-        }
-
-key2 = {"user_id": 1001}
-value2 = {
-            "nonce": 1,
-            "balance": 10000000000001
-        }
-
+user1_id = 1000
+user2_id = 1001
 prefix = "test"
+balance = "1000000000000000000"
 
 
 def update_key1(path: str):
     j1 = {
-        "key": key1,
-        "prefix": prefix,
-        "value": value1,
+        "user_id": user1_id,
+        "balance": balance,
+        "nonce": 1,
+        "prefix": prefix
     }
     
-    print("key1 更新数据后root是: \n", post(path, j1))
+    print("user1 更新数据后root是: \n", post(path, j1))
 
 def update_key2(path: str):
     j2 = {
-        "key": key2,
-        "prefix": prefix,
-        "value": value2,
+        "user_id": user2_id,
+        "balance": balance,
+        "nonce": 1,
+        "prefix": prefix
     }
 
-    print("key2 更新数据后root是:\n", post(path, j2))
+    print("user2 更新数据后root是:\n", post(path, j2))
     
 
 def get_merkel_proof(path: str):
     j = {
-        "key": key1,
+        "user_id": user1_id,
         "prefix": prefix
     }
     p = post(path, j)
-    print("key1的默克尔证明是: \n", p)
+    print("user1 的默克尔证明是: \n", p)
     return p
 
 def get_next_root(path: str):
     j = {
-        "prefix": prefix,
-        "kv": {
-            "key": key2,
-            "value": value2
-        }
+        "user_id": user2_id,
+        "balance": balance,
+        "nonce": 1,
+        "prefix": prefix
         
     }
     next_root = post(path, j);
-    print("预计key2更新后root值是: \n", next_root)
+    print("预计 user2 更新后root值是: \n", next_root)
     return next_root
 
 
 
 def get_value(path: str):
     j = {
-        "key": key1,
+        "user_id": user1_id,
         "prefix": prefix
     }
-    print("key1的叶子值是: \n", post(path, j))
+    print("user1 的叶子值是: \n", post(path, j))
 
 def post(path: str, j: dict):
     r = url + path
@@ -79,7 +71,7 @@ def post(path: str, j: dict):
         return f"失败状态： {response.status_code}, 失败信息： {response.text}。"
 
 def verify(path: str, proof: dict):
-    print(f"key1验证结果是: \n {post(path, proof)}")
+    print(f"user1验证结果是: \n {post(path, proof)}")
     
 
 def main():
