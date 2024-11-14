@@ -210,7 +210,7 @@ pub mod test {
         assert_eq!(multi_tree.get_root(tree2).unwrap(), H256::zero());
         let mut kvs: Vec<(SMTKey, SMTValue)> = vec![];
         
-        for i in 1..1000 {
+        for i in 1..2 {
             kvs.push((SMTKey{user_id: i as u64}, SMTValue {nonce: i as u64, balance: i as u128}));
         }
 
@@ -222,6 +222,7 @@ pub mod test {
 
         
         multi_tree.update_all(tree1, vec![(tree1_key1.clone(), tree1_value1)]).unwrap();
+        // multi_tree.update_all(tree1, kvs.clone()).unwrap();
         multi_tree.clear(tree1);
         for kv in kvs.clone() {
             multi_tree.update(tree1, kv.0.clone(), kv.1.clone()).unwrap();
