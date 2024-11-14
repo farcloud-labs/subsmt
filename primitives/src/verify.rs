@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
+#![allow(clippy::collapsible_else_if)]
 
 extern crate alloc;
 
@@ -53,12 +54,11 @@ fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> 
         let base_key = key.parent_path(0);
         let base_node = hash_base_node::<H>(0, &base_key, &value);
         let zero_bits = key;
-        let res = MergeValue::MergeWithZero {
+         MergeValue::MergeWithZero {
             base_node,
             zero_bits,
             zero_count: 0,
-        };
-        res
+        }
     }
 }
 
