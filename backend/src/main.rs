@@ -234,6 +234,8 @@ async fn verify(
     let res = multi_tree.verify(Proof {
         key: info.key.clone(),
         value: info.value.clone(),
+        path: info.key.to_h256(),
+        value_hash: info.value.to_h256(),
         leave_bitmap: info.leave_bitmap,
         siblings: info.siblings.clone(),
         root: info.root,

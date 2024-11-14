@@ -113,7 +113,7 @@ pub mod test {
         assert_eq!(store.get_leaf(&leaf1_key).unwrap(), None::<SMTValue>);
         store.insert_leaf(leaf1_key, leaf1.clone()).unwrap();
         assert_eq!(store.get_leaf(&leaf1_key).unwrap(), Some(leaf1));
-       <SMTStore as StoreWriteOps<SMTValue>>::remove_leaf(&mut store, &leaf1_key).unwrap();
+        <SMTStore as StoreWriteOps<SMTValue>>::remove_leaf(&mut store, &leaf1_key).unwrap();
         assert_eq!(store.get_leaf(&leaf1_key).unwrap(), None::<SMTValue>);
 
         // 插入

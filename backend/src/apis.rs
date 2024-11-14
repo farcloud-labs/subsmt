@@ -35,7 +35,7 @@ pub struct MultiSMTStore<K, V, H> {
 impl<
         'a,
         K: Value + Clone + Serialize + ToSchema + Deserialize<'a> + ComposeSchema,
-        V: Default +Value + Into<Vec<u8>> + From<Vec<u8>> + ToSchema + Serialize + Deserialize<'a> + ComposeSchema + PartialEq,
+        V: Default +Value + Into<Vec<u8>> + From<Vec<u8>> + ToSchema + Serialize + Deserialize<'a> + ComposeSchema + PartialEq + Clone,
         H: Hasher + Default,
     > MultiSMTStore<K, V, H>
 {
@@ -93,8 +93,10 @@ impl<
         let value = self.get_value(prefix, key.clone())?;
 
         Ok(Proof {
-            key: key,
-            value: value,
+            key: key.clone(),
+            value: value.clone(),
+            path: key.to_h256(),
+            value_hash: value.to_h256(),
             root: tree.root().clone(),
             leave_bitmap: leave_bitmap,
             siblings: siblings.clone(),
@@ -135,8 +137,8 @@ impl<
         let mut res = false;
         if proof.value != V::default() {
             res = smt_verify::<H>(
-                proof.key.to_h256(),
-                proof.value.to_h256(),
+                proof.path,
+                proof.value_hash,
                 proof.leave_bitmap,
                 proof.siblings,
                 proof.root,

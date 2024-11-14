@@ -74,6 +74,7 @@ def verify(path: str, proof: dict):
     print(f"user1验证结果是: \n {post(path, proof)}")
     
 
+# todo 进一步测试
 def main():
     update_key1("update")
     print("--"*50)

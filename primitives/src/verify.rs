@@ -22,6 +22,8 @@ cfg_if::cfg_if! {
             pub key: K,
             #[serde(flatten)]
             pub value: V,
+            pub path: H256,
+            pub value_hash: H256,
             pub root: H256,
             pub leave_bitmap: H256,
             pub siblings: Vec<MergeValue>,
@@ -30,8 +32,12 @@ cfg_if::cfg_if! {
     } else {
         #[derive(Debug, Serialize, Deserialize)]
         pub struct Proof<K, V> {
+            #[serde(flatten)]
             pub key: K,
+            #[serde(flatten)]
             pub value: V,
+            pub path: H256,
+            pub value_hash: H256,
             pub root: H256,
             pub leave_bitmap: H256,
             pub siblings: Vec<MergeValue>,
@@ -82,14 +88,14 @@ pub fn verify<H: Hasher + Default>(
     value_hash: H256, // value的hash
     leave_bitmap: H256,
     siblings: Vec<MergeValue>,
-    old_root: H256,
+    root: H256,
 ) -> bool {
 
     if value_hash.is_zero() {
         return false;
     }
     if siblings.len() == 0 {
-        return single_leaf_into_merge_value::<H>(path, value_hash).hash::<H>() == old_root;
+        return single_leaf_into_merge_value::<H>(path, value_hash).hash::<H>() == root;
     }
 
     let mut current_path = path;
@@ -131,5 +137,5 @@ pub fn verify<H: Hasher + Default>(
 
         current_path = parent_path;
     }
-    current_v.hash::<H>() == old_root
+    current_v.hash::<H>() == root
 }
