@@ -44,10 +44,7 @@ impl Value for SMTKey {
     }
 
     fn to_h256(&self) -> sparse_merkle_tree::H256 {
-        if self == &Default::default() {
-            return H256::zero();
-        }
-        keccak256(self.encode()).into()
+        return keccak256(self.encode()).into(); 
     }
 }
 
