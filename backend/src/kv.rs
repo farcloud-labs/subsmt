@@ -26,7 +26,7 @@ use utoipa::{IntoParams, ToSchema};
 pub struct SMTValue {
     // #[serde_as(as = "DisplayFromStr")]
     pub nonce: u64,
-    // #[serde_as(as = "DisplayFromStr")]
+    #[serde_as(as = "DisplayFromStr")]
     pub balance: u128,
 }
 
