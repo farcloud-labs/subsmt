@@ -8,6 +8,7 @@ use sparse_merkle_tree::{
     traits::Hasher,
     H256,
 };
+use serde;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 
@@ -17,7 +18,9 @@ cfg_if::cfg_if! {
 
         #[derive(Debug, Serialize, Deserialize, ToSchema)]
         pub struct Proof<K: ToSchema + ComposeSchema, V: ToSchema + ComposeSchema + Default> {
+            #[serde(flatten)]
             pub key: K,
+            #[serde(flatten)]
             pub value: V,
             pub root: H256,
             pub leave_bitmap: H256,
