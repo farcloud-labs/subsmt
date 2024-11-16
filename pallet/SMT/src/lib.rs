@@ -20,6 +20,8 @@ mod benchmarking;
 pub mod pallet {
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
+	use primitives::*;
+	use sparse_merkle_tree::H256;
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
@@ -48,6 +50,12 @@ pub mod pallet {
 		/// Event documentation should end with an array that provides descriptive names for event
 		/// parameters. [something, who]
 		SomethingStored(u32, T::AccountId),
+		SMTVerify {
+			account: T::AccountId,
+			path: H256,
+			value_hash: H256,
+			root: H256,
+		},
 	}
 
 	// Errors inform users that something went wrong.

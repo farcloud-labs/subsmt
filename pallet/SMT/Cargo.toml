@@ -29,6 +29,8 @@ frame-system = { git="https://github.com/paritytech/polkadot-sdk", branch="relea
 # local
 primitives = { path = "../../primitives", package = "smt-primitives", default-features = false }
 
+sparse-merkle-tree = {path = "../../sparse-merkle-tree", default-features = false}
+
 [dev-dependencies]
 sp-core = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.13.0" }
 sp-io = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.13.0" }
@@ -52,6 +54,7 @@ std = [
 	"sp-io/std",
 	"sp-runtime/std",
 	"primitives/std",
+	"sparse-merkle-tree/std",
 ]
 try-runtime = [
 	"frame-support/try-runtime",
