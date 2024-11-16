@@ -9,9 +9,9 @@ use serde_with::DisplayFromStr;
 use scale_info::prelude::{string::String, vec::Vec};
 use sha3::Digest;
 // use sp_crypto_hashing::keccak_256;
-use sparse_merkle_tree::{traits::Value, H256};
-use sha3::Keccak256;
 use scale_info::prelude::fmt::Debug;
+use sha3::Keccak256;
+use sparse_merkle_tree::{traits::Value, H256};
 
 cfg_if::cfg_if! {
     if #[cfg(feature="std")] {

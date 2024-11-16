@@ -1,5 +1,4 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-
 #![allow(dead_code)]
 #![allow(unused_imports)]
 #![allow(clippy::collapsible_else_if)]
@@ -10,6 +9,7 @@ extern crate alloc;
 
 use alloc::vec::Vec;
 use codec::{Decode, Encode};
+use scale_info::prelude::fmt::Debug;
 use scale_info::TypeInfo;
 use serde;
 use serde::{Deserialize, Serialize};
@@ -18,7 +18,6 @@ use sparse_merkle_tree::{
     traits::Hasher,
     H256,
 };
-use scale_info::prelude::fmt::Debug;
 
 cfg_if::cfg_if! {
     if #[cfg(feature="std")] {
