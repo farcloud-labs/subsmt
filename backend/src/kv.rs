@@ -22,6 +22,7 @@ use tokio::signal::ctrl_c;
 use utoipa::{IntoParams, ToSchema};
 
 
+
 #[serde_as]
 #[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone, ToSchema, IntoParams)]
 pub struct SMTValue {

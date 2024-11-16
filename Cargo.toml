@@ -2,7 +2,7 @@
 [workspace]
 resolver = "2"
 members = [
-    # "pallet/smt",
+    "pallet/smt",
     "backend",
     # "ink-contract/smt",
     "primitives",

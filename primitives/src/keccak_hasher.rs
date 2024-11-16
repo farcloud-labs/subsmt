@@ -52,8 +52,6 @@ pub mod test {
         let h2: H256 = hasher2.finish();
         assert_eq!(h2, keccak256(25u8.to_be_bytes()).into());
 
-
-
     }
 
 }
