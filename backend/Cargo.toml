@@ -8,10 +8,8 @@ repository.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-
 codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
 kvdb-rocksdb = "0.19.0"
-# pallet-smt = {path = "../pallet/smt"}
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_with = { version = "3.0", features = ["hex"] }
@@ -29,20 +27,12 @@ scale-info = { version = "2.11.1", features = [
 sparse-merkle-tree = { path = "../sparse-merkle-tree", features = ["std"]}
 smt-primitives = {path = "../primitives"}
 hex = "0.4.3"
-# utoipa = "5.2.0"
-# utoipa-swagger-ui = "8.0.3"
-
 utoipa = { version = "5.2.0", features = ["actix_extras"] }
 utoipa-swagger-ui = { version ="8.0.3", features = [
     "actix-web",
 ] }
 utoipa-actix-web = { version = "0.1.2"}
 utoipa-redoc = "5.0.0"
-# utoipa-redoc = { path = "../../utoipa-redoc", features = ["actix-web"] }
-# utoipa-rapidoc = { path = "../../utoipa-rapidoc", features = ["actix-web"] }
-# utoipa-scalar = { path = "../../utoipa-scalar", features = ["actix-web"] }
-# utoipa-actix-web = { path = "../../utoipa-actix-web" }
-
 
 [lib]
 name = "smt_backend_lib"

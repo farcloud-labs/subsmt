@@ -1,5 +1,5 @@
 #![allow(unused_imports)]
-use crate::kv::{SMTKey, SMTValue};
+use smt_primitives::kv::{SMTKey, SMTValue};
 use serde;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;

@@ -17,7 +17,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use smt_backend_lib::apis::MultiSMTStore;
 use smt_backend_lib::error::Error;
-use smt_backend_lib::kv::*;
+use smt_primitives::kv::*;
 use smt_backend_lib::req::{KVPair, ReqByKVs, ReqByKey, ReqByPrefix, ReqUpdate};
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
