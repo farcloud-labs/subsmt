@@ -23,7 +23,7 @@ utoipa = { version = "5.2.0", features = ["actix_extras"], optional = true}
 sha3 = { version = "0.10.0", default-features = false }
 
 [dev-dependencies]
-ethers = {git = "https://github.com/gakonst/ethers-rs.git", default-features = false}
+ethers = {git = "https://github.com/gakonst/ethers-rs.git"}
 
 [features]
 default = ["std"]
@@ -35,5 +35,5 @@ std = [
     "scale-info/std",
     # "sp-crypto-hashing/std",
     "sha3/std",
-    "utoipa",
+    "utoipa", # 不是这个库的问题
 ]

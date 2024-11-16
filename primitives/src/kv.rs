@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "std"), no_std)]
 use codec::{Decode, Encode};
 // use ethers::utils::keccak256;
 use scale_info::TypeInfo;
