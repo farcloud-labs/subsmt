@@ -22,7 +22,7 @@ pub mod pallet {
     use frame_system::pallet_prelude::*;
     use primitives::verify::{self, Proof};
     use scale_info::prelude::fmt::Debug;
-    use sparse_merkle_tree::{
+    use primitives::sparse_merkle_tree::{
         traits::{Hasher, Value},
         H256,
     };

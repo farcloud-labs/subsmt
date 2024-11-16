@@ -29,7 +29,7 @@ getrandom = { version = "0.2", features = ["js"], default-features = false }
 # local
 primitives = { path = "../../primitives", package = "smt-primitives", default-features = false }
 
-sparse-merkle-tree = {path = "../../sparse-merkle-tree", default-features = false}
+# sparse-merkle-tree = {path = "../../sparse-merkle-tree", default-features = false}
 
 [dev-dependencies]
 sp-core = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.14.0" }
@@ -56,7 +56,7 @@ std = [
 	"sp-io/std",
 	"sp-runtime/std",
 	"primitives/std",
-	"sparse-merkle-tree/std",
+	# "sparse-merkle-tree/std",
 ]
 try-runtime = [
 	"frame-support/try-runtime",
