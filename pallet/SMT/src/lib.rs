@@ -39,7 +39,7 @@ pub mod pallet {
 
         type SMTValue: Value + Default + Debug + Clone + TypeInfo + Encode + Decode + PartialEq;
 
-        type Hasher: Hasher + Default;
+        type SMTHasher: Hasher + Default;
         // type BeforeVerify:
 
         // type AfterVerify:
@@ -144,7 +144,7 @@ pub mod pallet {
             proof: Proof<T::SMTKey, T::SMTValue>,
         ) -> DispatchResultWithPostInfo {
             ensure!(
-                verify::verify::<T::Hasher>(
+                verify::verify::<T::SMTHasher>(
                     proof.path,
                     proof.value_hash,
                     proof.leave_bitmap,
