@@ -1,4 +1,3 @@
-
 use codec::{Decode, Encode};
 // use ethers::utils::keccak256;
 use scale_info::TypeInfo;
@@ -6,12 +5,14 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use serde_with::DisplayFromStr;
 // use sp_core::Hasher::keccak256;
-use sparse_merkle_tree::{traits::Value, H256};
-use sp_crypto_hashing::keccak_256;
 use scale_info::prelude::{string::String, vec::Vec};
+use sha3::Digest;
+// use sp_crypto_hashing::keccak_256;
+use sparse_merkle_tree::{traits::Value, H256};
+use sha3::Keccak256;
+use scale_info::prelude::fmt::Debug;
 
-
-cfg_if::cfg_if!{
+cfg_if::cfg_if! {
     if #[cfg(feature="std")] {
         use utoipa::{IntoParams, ToSchema};
         #[serde_as]
@@ -93,11 +94,10 @@ cfg_if::cfg_if!{
         pub struct SMTKey {
             pub address: String,
         }
-        
+
     }
 
 }
-
 
 impl Value for SMTKey {
     fn zero() -> Self {
@@ -105,7 +105,10 @@ impl Value for SMTKey {
     }
 
     fn to_h256(&self) -> sparse_merkle_tree::H256 {
-        keccak_256(self.encode().as_ref()).into()
+        let mut k = Keccak256::new();
+        k.update(&self.encode().as_slice());
+        let r: [u8; 32] = k.finalize().into();
+        r.into()
     }
 }
 
@@ -118,7 +121,10 @@ impl Value for SMTValue {
         if self == &Default::default() {
             return H256::zero();
         }
-        keccak_256(self.encode().as_ref()).into()
+        let mut k = Keccak256::new();
+        k.update(&self.encode().as_slice());
+        let r: [u8; 32] = k.finalize().into();
+        r.into()
     }
 }
 

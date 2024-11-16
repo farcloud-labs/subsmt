@@ -1,7 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use sparse_merkle_tree::{traits::Hasher, H256};
 use sha3::{Digest, Keccak256};
+use sparse_merkle_tree::{traits::Hasher, H256};
 
 pub struct Keccak256Hasher(Keccak256);
 

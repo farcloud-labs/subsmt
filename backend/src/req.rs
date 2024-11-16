@@ -1,7 +1,7 @@
 #![allow(unused_imports)]
-use smt_primitives::kv::{SMTKey, SMTValue};
 use serde;
 use serde::{Deserialize, Serialize};
+use smt_primitives::kv::{SMTKey, SMTValue};
 use std::fmt::Debug;
 use std::marker::PhantomData;
 use utoipa::__dev::ComposeSchema;

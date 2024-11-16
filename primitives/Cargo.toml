@@ -19,11 +19,11 @@ scale-info = { version = "2.11.1", default-features = false, features = [
 utoipa = { version = "5.2.0", features = ["actix_extras"], optional = true}
 
 # substarte
-sp-crypto-hashing = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.13.0", default-features = false}
+# sp-crypto-hashing = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.13.0", default-features = false}
 sha3 = { version = "0.10.0", default-features = false }
 
 [dev-dependencies]
-ethers = {git = "https://github.com/gakonst/ethers-rs.git"}
+ethers = {git = "https://github.com/gakonst/ethers-rs.git", default-features = false}
 
 [features]
 default = ["std"]
@@ -33,7 +33,7 @@ std = [
     "codec/std",
     "serde_with/std",
     "scale-info/std",
-    "sp-crypto-hashing/std",
+    # "sp-crypto-hashing/std",
     "sha3/std",
     "utoipa",
 ]

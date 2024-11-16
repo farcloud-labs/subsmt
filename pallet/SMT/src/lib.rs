@@ -20,9 +20,12 @@ mod benchmarking;
 pub mod pallet {
     use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
     use frame_system::pallet_prelude::*;
-    use primitives::*;
+    use primitives::verify::{self, Proof};
     use scale_info::prelude::fmt::Debug;
-    use sparse_merkle_tree::{traits::Value, H256};
+    use sparse_merkle_tree::{
+        traits::{Hasher, Value},
+        H256,
+    };
 
     /// Configure the pallet by specifying the parameters and types on which it depends.
     #[pallet::config]
@@ -36,6 +39,7 @@ pub mod pallet {
 
         type SMTValue: Value + Default + Debug + Clone + TypeInfo + Encode + Decode + PartialEq;
 
+        type Hasher: Hasher + Default;
         // type BeforeVerify:
 
         // type AfterVerify:
@@ -73,6 +77,7 @@ pub mod pallet {
         NoneValue,
         /// Errors should have helpful documentation associated with them.
         StorageOverflow,
+        SMTVerifyFaild,
     }
 
     #[pallet::hooks]
@@ -108,7 +113,8 @@ pub mod pallet {
             origin: OriginFor<T>,
             proof: verify::Proof<T::SMTKey, T::SMTValue>,
         ) -> DispatchResultWithPostInfo {
-            todo!()
+            let who = ensure_signed(origin)?;
+            Self::do_verify(who, proof)
         }
 
         // /// An example dispatchable that may throw a custom error.
@@ -130,5 +136,30 @@ pub mod pallet {
         //         }
         //     }
         // }
+    }
+
+    impl<T: Config> Pallet<T> {
+        pub fn do_verify(
+            who: T::AccountId,
+            proof: Proof<T::SMTKey, T::SMTValue>,
+        ) -> DispatchResultWithPostInfo {
+            ensure!(
+                verify::verify::<T::Hasher>(
+                    proof.path,
+                    proof.value_hash,
+                    proof.leave_bitmap,
+                    proof.siblings,
+                    proof.root,
+                ) == true,
+                Error::<T>::SMTVerifyFaild
+            );
+            Self::deposit_event(Event::<T>::SMTVerify {
+                account: who,
+                path: proof.path,
+                root: proof.root,
+            });
+
+            Ok(().into())
+        }
     }
 }
