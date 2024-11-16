@@ -1,31 +1,31 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use sparse_merkle_tree::{traits::Hasher, H256};
-use tiny_keccak::Hasher as KeccakHasher;
-use tiny_keccak::Keccak;
+use sha3::{Digest, Keccak256};
 
-pub struct Keccak256Hasher(Keccak);
+pub struct Keccak256Hasher(Keccak256);
 
 impl Default for Keccak256Hasher {
     fn default() -> Self {
-        Keccak256Hasher(Keccak::v256())
+        Keccak256Hasher(Keccak256::new())
     }
 }
 
 impl Hasher for Keccak256Hasher {
     fn write_h256(&mut self, h: &H256) {
-        self.0.update(h.as_slice());
+        self.0.update(h.as_ref());
     }
     fn write_byte(&mut self, b: u8) {
-        self.0.update(&[b][..]);
+        self.0.update(&[b][..])
     }
 
     fn finish(self) -> H256 {
-        let mut buf = [0u8; 32];
-        self.0.finalize(&mut buf);
-        buf.into()
+        let a: [u8; 32] = self.0.finalize().into();
+        a.into()
     }
 }
+
+// 需要测一遍看看是否对得上
 
 #[cfg(test)]
 pub mod test {

@@ -11,13 +11,18 @@ rust-version.workspace = true
 cfg-if = {version = "1"}
 serde_with = { version = "3.3.0", features = ["hex", "alloc", "macros"],  default-features = false}
 sparse-merkle-tree = {path = "../sparse-merkle-tree", default-features = false}
-tiny-keccak = {version = "2.0.2", features = ["keccak"], default-features = false}
 serde = { version = "1.0.105",  features = ["derive"], default-features = false }
 codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false}
 scale-info = { version = "2.11.1", default-features = false, features = [
 	"derive",
 ] }
 utoipa = { version = "5.2.0", features = ["actix_extras"]}
+
+# substarte
+sp-crypto-hashing = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.13.0", default-features = false}
+sha3 = { version = "0.10.0", default-features = false }
+# use sp_
+# keccak = { version = "0.1", default-features = false }
 
 [dev-dependencies]
 ethers = {git = "https://github.com/gakonst/ethers-rs.git"}
@@ -30,5 +35,7 @@ std = [
     "codec/std",
     "serde_with/std",
     "scale-info/std",
+    "sp-crypto-hashing/std",
+    "sha3/std",
 
 ]

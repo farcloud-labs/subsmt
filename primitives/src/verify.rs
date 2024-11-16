@@ -35,7 +35,7 @@ cfg_if::cfg_if! {
         }
 
     } else {
-        #[derive(Debug, Serialize, Deserialize + Clone, TypeInfo, PartialEq)]
+        #[derive(Debug, Serialize, Deserialize,Clone, TypeInfo, PartialEq)]
         pub struct Proof<K: Debug + Clone + TypeInfo, V: Default + Debug + Clone + TypeInfo> {
             #[serde(flatten)]
             pub key: K,
