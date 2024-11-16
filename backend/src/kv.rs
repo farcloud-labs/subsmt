@@ -9,22 +9,34 @@ use ethers::utils::keccak256;
 use flexi_logger::{Age, Cleanup, Criterion, Logger, Naming, WriteMode};
 use http::status::{InvalidStatusCode, StatusCode};
 use log::{error, info};
+use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
+use serde_with::DisplayFromStr;
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
 };
-use serde_with::{DisplayFromStr};
 use sparse_merkle_tree::{traits::Value, H256};
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
 use utoipa::{IntoParams, ToSchema};
 
-
-
 #[serde_as]
-#[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone, ToSchema, IntoParams)]
+#[derive(
+    Encode,
+    Decode,
+    Debug,
+    Serialize,
+    Deserialize,
+    Default,
+    PartialEq,
+    Eq,
+    Clone,
+    ToSchema,
+    IntoParams,
+    TypeInfo,
+)]
 pub struct SMTValue {
     // #[serde_as(as = "DisplayFromStr")]
     pub nonce: u64,
@@ -32,9 +44,21 @@ pub struct SMTValue {
     pub balance: u128,
 }
 
-
 #[serde_as]
-#[derive(Encode, Decode, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Clone, ToSchema, IntoParams)]
+#[derive(
+    Encode,
+    Decode,
+    Debug,
+    Serialize,
+    Deserialize,
+    Default,
+    PartialEq,
+    Eq,
+    Clone,
+    ToSchema,
+    IntoParams,
+    TypeInfo,
+)]
 pub struct SMTKey {
     pub address: String,
 }
@@ -81,16 +105,18 @@ impl From<Vec<u8>> for SMTValue {
     }
 }
 
-
 #[cfg(test)]
 mod test {
+    use super::SMTValue;
     use sparse_merkle_tree::traits::Value;
     use sparse_merkle_tree::H256;
-    use super::SMTValue;
 
     #[test]
     fn test_value() {
-        let v = SMTValue {nonce: 1, balance: 100000};
+        let v = SMTValue {
+            nonce: 1,
+            balance: 100000,
+        };
         let v_vec: Vec<u8> = v.clone().into();
         assert_eq!(v, v_vec.into());
 

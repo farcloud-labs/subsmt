@@ -16,12 +16,8 @@ pub enum Error {
 impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse<actix_web::body::BoxBody> {
         match self {
-            Error::InternalError(e) => {
-                HttpResponse::BadRequest().body(e.to_string())
-            }
-            _ => {
-                HttpResponse::BadRequest().body("Unexpected error occurred")
-            }
+            Error::InternalError(e) => HttpResponse::BadRequest().body(e.to_string()),
+            _ => HttpResponse::BadRequest().body("Unexpected error occurred"),
         }
     }
 }

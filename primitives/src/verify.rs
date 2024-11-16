@@ -4,21 +4,25 @@
 
 extern crate alloc;
 
+use core::fmt::Debug;
+
+use alloc::vec::Vec;
+use codec::{Decode, Encode};
+use scale_info::TypeInfo;
+use serde;
+use serde::{Deserialize, Serialize};
 use sparse_merkle_tree::{
     merge::{hash_base_node, merge, MergeValue},
     traits::Hasher,
     H256,
 };
-use serde;
-use alloc::vec::Vec;
-use serde::{Deserialize, Serialize};
 
 cfg_if::cfg_if! {
     if #[cfg(feature="std")] {
         use utoipa::{ToSchema, IntoParams, __dev::ComposeSchema};
 
-        #[derive(Debug, Serialize, Deserialize, ToSchema)]
-        pub struct Proof<K: ToSchema + ComposeSchema, V: ToSchema + ComposeSchema + Default> {
+        #[derive(Debug, Serialize, Deserialize, ToSchema, Clone, Encode, Decode, TypeInfo, PartialEq)]
+        pub struct Proof<K: Debug + Clone + TypeInfo, V: Default + Debug + Clone + TypeInfo> {
             #[serde(flatten)]
             pub key: K,
             #[serde(flatten)]
@@ -31,8 +35,8 @@ cfg_if::cfg_if! {
         }
 
     } else {
-        #[derive(Debug, Serialize, Deserialize)]
-        pub struct Proof<K, V> {
+        #[derive(Debug, Serialize, Deserialize + Clone, TypeInfo, PartialEq)]
+        pub struct Proof<K: Debug + Clone + TypeInfo, V: Default + Debug + Clone + TypeInfo> {
             #[serde(flatten)]
             pub key: K,
             #[serde(flatten)]
@@ -44,7 +48,7 @@ cfg_if::cfg_if! {
             pub siblings: Vec<MergeValue>,
         }
     }
-    
+
 }
 
 fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> MergeValue {
@@ -54,7 +58,7 @@ fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> 
         let base_key = key.parent_path(0);
         let base_node = hash_base_node::<H>(0, &base_key, &value);
         let zero_bits = key;
-         MergeValue::MergeWithZero {
+        MergeValue::MergeWithZero {
             base_node,
             zero_bits,
             zero_count: 0,
@@ -90,7 +94,6 @@ pub fn verify<H: Hasher + Default>(
     siblings: Vec<MergeValue>,
     root: H256,
 ) -> bool {
-
     if value_hash.is_zero() {
         return false;
     }

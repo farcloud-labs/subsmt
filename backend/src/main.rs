@@ -5,9 +5,8 @@
 use actix_web::middleware::Logger as ALogger;
 // use serde_json;
 use actix_web::{
-    cookie::time::util::weeks_in_year, get, post, web, HttpResponse, HttpServer, Responder,
+    cookie::time::util::weeks_in_year, get, post, web, App, HttpResponse, HttpServer, Responder,
     ResponseError,
-    App,
 };
 use codec::{Decode, Encode};
 use ethers::utils::keccak256;
@@ -19,7 +18,7 @@ use serde_with::serde_as;
 use smt_backend_lib::apis::MultiSMTStore;
 use smt_backend_lib::error::Error;
 use smt_backend_lib::kv::*;
-use smt_backend_lib::req::{ReqByKey, ReqByKVs, ReqByPrefix, ReqUpdate, KVPair};
+use smt_backend_lib::req::{KVPair, ReqByKVs, ReqByKey, ReqByPrefix, ReqUpdate};
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
@@ -31,15 +30,15 @@ use std::result::Result;
 use std::sync::Mutex;
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
-use utoipa::{OpenApi, ToSchema, IntoParams};
+use utoipa::{IntoParams, OpenApi, ToSchema};
 use utoipa_actix_web::AppExt;
+use utoipa_redoc::Redoc;
 use utoipa_swagger_ui::SwaggerUi;
-use utoipa_redoc::{Redoc};
 
 const SMT_API: &str = "SMT API";
 
 #[derive(OpenApi)]
-    #[openapi(
+#[openapi(
         tags(
             (name = "SMT API", description = "Provides sparse Morkel tree related APIs")
         ),
@@ -72,7 +71,6 @@ async fn update_value(
     Ok(HttpResponse::Ok().json(root))
 }
 
-
 #[utoipa::path(
     tag = SMT_API,
     params(
@@ -98,7 +96,6 @@ async fn remove_value(
     );
     Ok(HttpResponse::Ok().json(root))
 }
-
 
 #[utoipa::path(
     tag = SMT_API,
@@ -126,7 +123,6 @@ async fn get_merkle_proof(
     Ok(HttpResponse::Ok().json(proof))
 }
 
-
 #[utoipa::path(
     tag = SMT_API,
     params(
@@ -144,13 +140,13 @@ async fn get_next_root(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let old_proof = multi_tree
-        .get_merkle_proof_old(
-            info.prefix.as_ref(),
-            vec![info.kv.key.clone()]
-        )
+        .get_merkle_proof_old(info.prefix.as_ref(), vec![info.kv.key.clone()])
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let next_root = multi_tree
-        .get_next_root(old_proof, vec![(info.kv.key.clone(), info.kv.value.clone())])
+        .get_next_root(
+            old_proof,
+            vec![(info.kv.key.clone(), info.kv.value.clone())],
+        )
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -183,7 +179,11 @@ async fn get_root(
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
-        format!("[Get Root] info: {:?}, root: {:?}", info, serde_json::to_string(&root))
+        format!(
+            "[Get Root] info: {:?}, root: {:?}",
+            info,
+            serde_json::to_string(&root)
+        )
     );
     Ok(HttpResponse::Ok().json(root))
 }
@@ -243,7 +243,6 @@ async fn verify(
     Ok(HttpResponse::Ok().json(res))
 }
 
-
 #[utoipa::path(
     tag = SMT_API,
     params(
@@ -260,14 +259,14 @@ async fn clear(
     let multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
-    
+
     multi_tree.clear(info.prefix.as_ref());
-    let root = multi_tree.get_root(info.prefix.as_ref()).map_err(|e| Error::InternalError(e.to_string()))?;
+    let root = multi_tree
+        .get_root(info.prefix.as_ref())
+        .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!("{:?}", format!("[Clear] info: {:?}, res: {:?}", info, root));
     Ok(HttpResponse::Ok().json(root))
-
 }
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -278,25 +277,24 @@ async fn main() -> std::io::Result<()> {
 
     let l = async {
         Logger::try_with_str("info")
-        .unwrap()
-        .log_to_file(flexi_logger::FileSpec::default().directory("target/logs"))
-        .write_mode(WriteMode::BufferAndFlush)
-        .rotate(
-            flexi_logger::Criterion::Age(Age::Day),
-            Naming::TimestampsDirect,
-            Cleanup::Never,
-        )
-        .append()
-        .log_to_stdout()
-        .start()
-        .unwrap();
+            .unwrap()
+            .log_to_file(flexi_logger::FileSpec::default().directory("target/logs"))
+            .write_mode(WriteMode::BufferAndFlush)
+            .rotate(
+                flexi_logger::Criterion::Age(Age::Day),
+                Naming::TimestampsDirect,
+                Cleanup::Never,
+            )
+            .append()
+            .log_to_stdout()
+            .start()
+            .unwrap();
         std::future::pending::<()>().await;
-
     };
 
     let app = HttpServer::new(move || {
         App::new()
-        .into_utoipa_app()
+            .into_utoipa_app()
             .openapi(ApiDoc::openapi())
             .service(update_value)
             .service(get_value)
@@ -311,8 +309,6 @@ async fn main() -> std::io::Result<()> {
                 SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", api)
             })
             .into_app()
-
-            
     })
     .shutdown_timeout(30)
     .bind(("127.0.0.1", 8080))?

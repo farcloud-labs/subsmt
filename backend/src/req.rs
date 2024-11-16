@@ -1,11 +1,11 @@
 #![allow(unused_imports)]
+use crate::kv::{SMTKey, SMTValue};
+use serde;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use std::marker::PhantomData;
-use utoipa::{IntoParams, ToSchema};
 use utoipa::__dev::ComposeSchema;
-use crate::kv::{SMTKey, SMTValue};
-use serde;
+use utoipa::{IntoParams, ToSchema};
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct ReqUpdate<K, V> {
@@ -15,8 +15,6 @@ pub struct ReqUpdate<K, V> {
     #[serde(flatten)]
     pub value: V,
 }
-
-
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct ReqByKey<K> {
