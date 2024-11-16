@@ -22,9 +22,9 @@ use scale_info::prelude::fmt::Debug;
 
 cfg_if::cfg_if! {
     if #[cfg(feature="std")] {
-        // use utoipa::{ToSchema, IntoParams, __dev::ComposeSchema};
+        use utoipa::{ToSchema, IntoParams, __dev::ComposeSchema};
 
-        #[derive(Debug, Serialize, Deserialize, Clone, Encode, Decode, TypeInfo, PartialEq)]
+        #[derive(Debug, Serialize, Deserialize, Clone, Encode, Decode, TypeInfo, PartialEq, ToSchema)]
         pub struct Proof<K: Debug + Clone + TypeInfo, V: Default + Debug + Clone + TypeInfo> {
             #[serde(flatten)]
             pub key: K,
