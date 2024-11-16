@@ -21,7 +21,7 @@ pub mod pallet {
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
 	use primitives::*;
-	use sparse_merkle_tree::H256;
+	use sparse_merkle_tree::{H256, traits::Value};
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
@@ -30,6 +30,12 @@ pub mod pallet {
 		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 		/// A type representing the weights required by the dispatchables of this pallet.
 		type WeightInfo: crate::weights::WeightInfo;
+
+		type SMTKey: Value;
+
+		type SMTValue: Value;
+
+
 	}
 
 	#[pallet::pallet]
