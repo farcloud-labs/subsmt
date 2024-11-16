@@ -53,7 +53,6 @@ pub mod pallet {
 		SMTVerify {
 			account: T::AccountId,
 			path: H256,
-			value_hash: H256,
 			root: H256,
 		},
 	}
