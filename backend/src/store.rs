@@ -95,7 +95,7 @@ where
 #[cfg(test)]
 pub mod test {
     use super::*;
-    use crate::kv::{SMTKey, SMTValue};
+    use smt_primitives::kv::{SMTKey, SMTValue};
     use sparse_merkle_tree::{merge::MergeValue, traits::Value};
     use std::path::Path;
 

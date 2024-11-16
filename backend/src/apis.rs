@@ -163,7 +163,7 @@ impl<
 #[cfg(test)]
 pub mod test {
     use super::*;
-    use crate::kv::{SMTKey, SMTValue};
+    use smt_primitives::kv::{SMTKey, SMTValue};
     use actix_web::web;
     use std::sync::Mutex;
     #[test]
