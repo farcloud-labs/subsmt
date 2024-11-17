@@ -44,6 +44,7 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
+    #[pallet::without_storage_info]
     pub struct Pallet<T>(_);
 
     // Pallets use events to inform users when important changes are made.
