@@ -18,6 +18,7 @@ mod benchmarking;
 
 #[frame_support::pallet]
 pub mod pallet {
+    use core::convert::TryInto;
     use crate::weights::WeightInfo;
     use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
     use frame_system::pallet_prelude::*;
@@ -44,7 +45,6 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
-    #[pallet::without_storage_info]
     pub struct Pallet<T>(_);
 
     // Pallets use events to inform users when important changes are made.

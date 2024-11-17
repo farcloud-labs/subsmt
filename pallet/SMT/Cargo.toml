@@ -1,11 +1,10 @@
 [package]
 name = "pallet-smt"
 version = "0.1.0"
-author.workspace = true
 edition.workspace = true
+author.workspace = true
 license.workspace = true
 repository.workspace = true
-rust-version.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [package.metadata.docs.rs]
@@ -13,7 +12,7 @@ targets = ["x86_64-unknown-linux-gnu"]
 
 
 [dependencies]
-codec = { package = "parity-scale-codec", version = "=3.6.9", default-features = false, features = [
+codec = { package = "parity-scale-codec", version = "3.6.9", default-features = false, features = [
 	"derive",
 ] }
 scale-info = { version = "2.10.0", default-features = false, features = [
@@ -21,20 +20,18 @@ scale-info = { version = "2.10.0", default-features = false, features = [
 ] }
 
 # frame deps
-frame-benchmarking = { version = "32.0.0", default-features = false, optional = true }
-frame-support = { version = "32.0.0", default-features = false }
-frame-system = { version = "32.0.0", default-features = false }
-getrandom = { version = "0.2", features = ["js"], default-features = false }
+frame-benchmarking = { workspace = true, optional = true,default-features = false }
+frame-support = { workspace = true ,default-features = false}
+frame-system = {workspace = true ,default-features = false}
+# getrandom = { version = "0.2", features = ["js"], default-features = false }
 
 # local
 primitives = { path = "../../primitives", package = "smt-primitives", default-features = false }
 
-# sparse-merkle-tree = {path = "../../sparse-merkle-tree", default-features = false}
-
 [dev-dependencies]
-sp-core = { version = "32.0.0" }
-sp-io = { version = "34.0.0"}
-sp-runtime = { version = "35.0.0" }
+sp-core = { workspace = true }
+sp-io = { workspace = true}
+sp-runtime = { workspace = true }
 smt-backend = {path = "../../backend"}
 
 [features]
@@ -46,18 +43,16 @@ runtime-benchmarks = [
 	"sp-runtime/runtime-benchmarks",
 ]
 std = [
-	"getrandom/std",
+	# "getrandom/std",
 	"codec/std",
 	"scale-info/std",
 	"frame-benchmarking?/std",
 	"frame-support/std",
 	"frame-system/std",
-	# "scale-info/std",
 	"sp-core/std",
 	"sp-io/std",
 	"sp-runtime/std",
 	"primitives/std",
-	# "sparse-merkle-tree/std",
 ]
 try-runtime = [
 	"frame-support/try-runtime",

@@ -1,11 +1,10 @@
 [package]
 name = "smt-primitives"
 version = "0.1.0"
-author.workspace = true
 edition.workspace = true
+author.workspace = true
 license.workspace = true
 repository.workspace = true
-rust-version.workspace = true
 
 [dependencies]
 cfg-if = {version = "1"}
@@ -17,9 +16,6 @@ scale-info = { version = "2.10.0", default-features = false, features = [
 	"derive",
 ] }
 utoipa = { version = "5.2.0", features = ["actix_extras"], optional = true}
-
-# substarte
-# sp-crypto-hashing = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.13.0", default-features = false}
 sha3 = { version = "0.10.0", default-features = false }
 
 [dev-dependencies]
