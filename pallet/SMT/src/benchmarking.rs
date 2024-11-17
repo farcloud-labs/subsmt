@@ -7,31 +7,18 @@ use crate::Pallet as Template;
 use frame_benchmarking::v2::*;
 use frame_system::RawOrigin;
 use primitives::kv::{SMTKey, SMTValue};
+use mock::creat_db_and_get_proof;
 
 #[benchmarks]
 mod benchmarks {
     use super::*;
 
     #[benchmark]
-    fn do_something() {
-        let value = 100u32;
+    fn smt_verify() {
+        let proof = creat_db_and_get_proof(3);
         let caller: T::AccountId = whitelisted_caller();
         #[extrinsic_call]
-        do_something(RawOrigin::Signed(caller), value);
-
-        assert_eq!(Something::<T>::get(), Some(value));
-    }
-
-    
-
-    #[benchmark]
-    fn cause_error() {
-        Something::<T>::put(100u32);
-        let caller: T::AccountId = whitelisted_caller();
-        #[extrinsic_call]
-        cause_error(RawOrigin::Signed(caller));
-
-        assert_eq!(Something::<T>::get(), Some(101u32));
+        smt_verify(RawOrigin::Signed(caller), p);
     }
 
     impl_benchmark_test_suite!(Template, crate::mock::new_test_ext(), crate::mock::Test);

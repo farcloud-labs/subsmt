@@ -11,8 +11,6 @@ use primitives::{keccak_hasher::Keccak256Hasher, kv::{SMTKey, SMTValue}, verify:
 type Block = frame_system::mocking::MockBlock<Test>;
 
 
-// 创建数据库并且获得10条证明
-// 获取两条数据
 pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
     let base_path = "./smt_mock_db";
     let multi_tree =
