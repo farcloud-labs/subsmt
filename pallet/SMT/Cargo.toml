@@ -21,9 +21,9 @@ scale-info = { version = "2.11.1", default-features = false, features = [
 ] }
 
 # frame deps
-frame-benchmarking = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.14.0", default-features = false, optional = true }
-frame-support = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.14.0", default-features = false }
-frame-system = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.14.0", default-features = false }
+frame-benchmarking = { version = "32.0.0", default-features = false, optional = true }
+frame-support = { version = "32.0.0", default-features = false }
+frame-system = { version = "32.0.0", default-features = false }
 getrandom = { version = "0.2", features = ["js"], default-features = false }
 
 # local
@@ -32,9 +32,9 @@ primitives = { path = "../../primitives", package = "smt-primitives", default-fe
 # sparse-merkle-tree = {path = "../../sparse-merkle-tree", default-features = false}
 
 [dev-dependencies]
-sp-core = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.14.0" }
-sp-io = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.14.0" }
-sp-runtime = { git="https://github.com/paritytech/polkadot-sdk", branch="release-polkadot-v1.14.0" }
+sp-core = { version = "32.0.0" }
+sp-io = { version = "34.0.0"}
+sp-runtime = { version = "35.0.0" }
 smt-backend = {path = "../../backend"}
 
 [features]
