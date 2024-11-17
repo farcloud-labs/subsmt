@@ -2,22 +2,13 @@ use crate::{mock::*, Error, Something};
 use frame_support::{assert_noop, assert_ok};
 
 #[test]
-fn it_works_for_default_value() {
+fn it_works_for_smt_verify() {
     new_test_ext().execute_with(|| {
         // Dispatch a signed extrinsic.
-        assert_ok!(TemplateModule::do_something(RuntimeOrigin::signed(1), 42));
-        // Read pallet storage and assert an expected result.
-        assert_eq!(Something::<Test>::get(), Some(42));
-    });
-}
-
-#[test]
-fn correct_error_for_none_value() {
-    new_test_ext().execute_with(|| {
-        // Ensure the expected error is thrown when no value is present.
-        assert_noop!(
-            TemplateModule::cause_error(RuntimeOrigin::signed(1)),
-            Error::<Test>::NoneValue
-        );
+        let proofs = creat_db_and_get_proof(100 as u8);
+        let who = RuntimeOrigin::signed(1);
+        for p in proofs {
+            assert_ok!(TemplateModule::smt_verify(who.clone(), p));
+        }
     });
 }
