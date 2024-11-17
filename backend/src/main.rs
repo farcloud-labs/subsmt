@@ -15,19 +15,18 @@ use http::status::{InvalidStatusCode, StatusCode};
 use log::{error, info};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
-use smt_backend_lib::apis::MultiSMTStore;
-use smt_backend_lib::error::Error;
-use smt_backend_lib::req::{KVPair, ReqByKVs, ReqByKey, ReqByPrefix, ReqUpdate};
-use smt_primitives::kv::*;
+use smt_backend_lib::{
+    apis::MultiSMTStore,
+    error::Error,
+    req::{KVPair, ReqByKVs, ReqByKey, ReqByPrefix, ReqUpdate},
+};
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
+    kv::*,
     verify::{verify as smt_verify, Proof},
 };
 use sparse_merkle_tree::{traits::Value, H256};
-use std::future;
-use std::path::Path;
-use std::result::Result;
-use std::sync::Mutex;
+use std::{future, path::Path, result::Result, sync::Mutex};
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
 use utoipa::{IntoParams, OpenApi, ToSchema};

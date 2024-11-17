@@ -1,36 +1,52 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-
 // 如何表达事件？？？
 #[ink::contract]
 mod smt {
-    use smt_primitives::kv::{SMTKey, SMTValue};
-    use smt_primitives::verify::Proof;
-    use smt_primitives::verify::verify as smt_verify;
-    use smt_primitives::keccak_hasher::Keccak256Hasher;
-
+    use smt_primitives::{
+        keccak_hasher::Keccak256Hasher,
+        kv::{SMTKey, SMTValue},
+        sparse_merkle_tree::H256,
+        verify::{verify as smt_verify, Proof},
+    };
 
     /// Defines the storage of your contract.
     /// Add new fields to the below struct in order
     /// to add new static storage fields to your contract.
     #[ink(storage)]
+    #[derive(Default)]
     pub struct Smt;
 
-    impl Default for Smt {
-        fn default() -> Self {
-            Self::new()
-        }
+    #[ink(event)]
+    pub struct SMTVerify {
+        who: AccountId,
+        #[ink(topic)]
+        path: H256,
+        #[ink(topic)]
+        root: H256,
     }
-    
+
+    pub type Result<T> = core::result::Result<T, Error>;
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[ink::scale_derive(Encode, Decode, TypeInfo)]
+    pub enum Error {
+        SMTVerifyFaild,
+    }
+
+    // impl Default for Smt {
+    //     fn default() -> Self {
+    //         Self::new()
+    //     }
+    // }
+
     impl Smt {
-        
         /// Constructor that initializes the `bool` value to the given `init_value`.
         #[ink(constructor)]
         pub fn new() -> Self {
             Self::default()
         }
 
-    
         /// Constructor that initializes the `bool` value to `false`.
         ///
         /// Constructors can delegate to other constructors.
@@ -40,14 +56,28 @@ mod smt {
         }
 
         #[ink(message)]
-        pub fn smt_verify(&self, proof: Proof<SMTKey, SMTValue>) -> bool {
-            smt_verify::<Keccak256Hasher>(
+        pub fn smt_verify(&self, proof: Proof<SMTKey, SMTValue>) -> Result<()> {
+            self.do_verify(proof)
+        }
+
+        fn do_verify(&self, proof: Proof<SMTKey, SMTValue>) -> Result<()> {
+            let from = self.env().caller();
+            if !smt_verify::<Keccak256Hasher>(
                 proof.path,
                 proof.value_hash,
                 proof.leave_bitmap,
                 proof.siblings,
-                proof.root
+                proof.root,
             )
+            {
+                return Err(Error::SMTVerifyFaild);
+            }
+            Self::env().emit_event(SMTVerify {
+                who: from,
+                path: proof.path,
+                root: proof.root,
+            });
+            Ok(())
         }
     }
 
@@ -75,7 +105,6 @@ mod smt {
             assert_eq!(smt.get(), true);
         }
     }
-
 
     /// This is how you'd write end-to-end (E2E) or integration tests for ink! contracts.
     ///

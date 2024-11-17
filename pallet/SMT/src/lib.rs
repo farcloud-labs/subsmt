@@ -18,15 +18,17 @@ mod benchmarking;
 
 #[frame_support::pallet]
 pub mod pallet {
-    use core::convert::TryInto;
     use crate::weights::WeightInfo;
+    use core::convert::TryInto;
     use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
     use frame_system::pallet_prelude::*;
-    use primitives::sparse_merkle_tree::{
-        traits::{Hasher, Value},
-        H256,
+    use primitives::{
+        sparse_merkle_tree::{
+            traits::{Hasher, Value},
+            H256,
+        },
+        verify::{self, Proof},
     };
-    use primitives::verify::{self, Proof};
     use scale_info::prelude::fmt::Debug;
 
     /// Configure the pallet by specifying the parameters and types on which it depends.

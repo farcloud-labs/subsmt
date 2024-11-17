@@ -5,8 +5,7 @@ use sparse_merkle_tree::{
     traits::{StoreReadOps, StoreWriteOps, Value},
     BranchKey, BranchNode, H256,
 };
-use std::marker::PhantomData;
-use std::sync::Arc;
+use std::{marker::PhantomData, sync::Arc};
 
 use codec::{Decode, Encode};
 // use rocksdb::{DBCommon, DB, DBWithThreadMode, OptimisticTransactionDB, ThreadMode};

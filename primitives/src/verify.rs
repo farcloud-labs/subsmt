@@ -11,10 +11,8 @@ extern crate alloc;
 
 use alloc::vec::Vec;
 use codec::{Decode, Encode};
-use scale_info::prelude::fmt::Debug;
-use scale_info::TypeInfo;
-use serde;
-use serde::{Deserialize, Serialize};
+use scale_info::{prelude::fmt::Debug, TypeInfo};
+use serde::{self, Deserialize, Serialize};
 use sparse_merkle_tree::{
     merge::{hash_base_node, merge, MergeValue},
     traits::Hasher,

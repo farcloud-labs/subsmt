@@ -1,11 +1,8 @@
 #![allow(unused_imports)]
-use serde;
-use serde::{Deserialize, Serialize};
+use serde::{self, Deserialize, Serialize};
 use smt_primitives::kv::{SMTKey, SMTValue};
-use std::fmt::Debug;
-use std::marker::PhantomData;
-use utoipa::__dev::ComposeSchema;
-use utoipa::{IntoParams, ToSchema};
+use std::{fmt::Debug, marker::PhantomData};
+use utoipa::{IntoParams, ToSchema, __dev::ComposeSchema};
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct ReqUpdate<K, V> {

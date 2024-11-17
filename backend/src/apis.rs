@@ -13,18 +13,16 @@ use sparse_merkle_tree::{
     traits::{Hasher, Value},
     SparseMerkleTree, H256,
 };
-use std::marker::PhantomData;
-use std::path::Path;
-use std::{fmt::Debug, io};
+use std::{fmt::Debug, io, marker::PhantomData, path::Path};
 
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
-use sparse_merkle_tree::error::Result;
-use sparse_merkle_tree::error::{Error, Result as SMTResult};
-use sparse_merkle_tree::CompiledMerkleProof;
-use std::convert::AsRef;
-use std::sync::Arc;
+use sparse_merkle_tree::{
+    error::{Error, Result, Result as SMTResult},
+    CompiledMerkleProof,
+};
+use std::{convert::AsRef, sync::Arc};
 use utoipa::{ToSchema, __dev::ComposeSchema};
 
 type MultiSMT<'a, V, H> = SparseMerkleTree<H, V, SMTStore<'a>>;

@@ -3,8 +3,7 @@ use codec::{Decode, Encode};
 // use ethers::utils::keccak256;
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
-use serde_with::DisplayFromStr;
+use serde_with::{serde_as, DisplayFromStr};
 // use sp_core::Hasher::keccak256;
 use scale_info::prelude::{string::String, vec::Vec};
 use sha3::Digest;
@@ -151,8 +150,7 @@ impl From<Vec<u8>> for SMTValue {
 #[cfg(test)]
 mod test {
     use super::SMTValue;
-    use sparse_merkle_tree::traits::Value;
-    use sparse_merkle_tree::H256;
+    use sparse_merkle_tree::{traits::Value, H256};
 
     #[test]
     fn test_value() {
