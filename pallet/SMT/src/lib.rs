@@ -18,15 +18,15 @@ mod benchmarking;
 
 #[frame_support::pallet]
 pub mod pallet {
+    use crate::weights::WeightInfo;
     use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
     use frame_system::pallet_prelude::*;
-    use primitives::verify::{self, Proof};
-    use scale_info::prelude::fmt::Debug;
-    use crate::weights::WeightInfo;
     use primitives::sparse_merkle_tree::{
         traits::{Hasher, Value},
         H256,
     };
+    use primitives::verify::{self, Proof};
+    use scale_info::prelude::fmt::Debug;
 
     /// Configure the pallet by specifying the parameters and types on which it depends.
     #[pallet::config]
@@ -41,7 +41,6 @@ pub mod pallet {
         type SMTValue: Value + Default + Debug + Clone + TypeInfo + Encode + Decode + PartialEq;
 
         type SMTHasher: Hasher + Default;
-
     }
 
     #[pallet::pallet]
@@ -52,7 +51,6 @@ pub mod pallet {
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
-
         SMTVerify {
             account: T::AccountId,
             path: H256,
@@ -74,9 +72,7 @@ pub mod pallet {
     // Dispatchable functions must be annotated with a weight and must return a DispatchResult.
     #[pallet::call]
     impl<T: Config> Pallet<T> {
-
-
-        #[pallet::call_index(2)]
+        #[pallet::call_index(0)]
         #[pallet::weight(T::WeightInfo::smt_verify().saturating_mul(proof.siblings.len() as u64))]
         pub fn smt_verify(
             origin: OriginFor<T>,
@@ -85,7 +81,6 @@ pub mod pallet {
             let who = ensure_signed(origin)?;
             Self::do_verify(who, proof)
         }
-
     }
 
     impl<T: Config> Pallet<T> {

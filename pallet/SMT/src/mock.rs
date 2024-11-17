@@ -1,20 +1,23 @@
 use frame_support::{derive_impl, parameter_types, traits::Everything};
 use frame_system as system;
+use primitives::{
+    keccak_hasher::Keccak256Hasher,
+    kv::{SMTKey, SMTValue},
+    verify::Proof,
+};
+use smt_backend_lib::apis::MultiSMTStore;
 use sp_core::H256;
 use sp_runtime::{
     traits::{BlakeTwo256, IdentityLookup},
     BuildStorage,
 };
-use smt_backend_lib::apis::MultiSMTStore;
 use std::path::Path;
-use primitives::{keccak_hasher::Keccak256Hasher, kv::{SMTKey, SMTValue}, verify::Proof};
 type Block = frame_system::mocking::MockBlock<Test>;
-
 
 pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
     let base_path = "./smt_mock_db";
     let multi_tree =
-            MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(base_path)).unwrap();
+        MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(base_path)).unwrap();
     // 创建一个tree
     let tree = "tree1";
     multi_tree.clear(tree.as_ref());
@@ -36,20 +39,23 @@ pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
         multi_tree
             .update(tree.as_ref(), kv.0.clone(), kv.1.clone())
             .unwrap();
-        let p = multi_tree.get_merkle_proof(tree.as_ref(), kv.0.clone()).unwrap();
+        let p = multi_tree
+            .get_merkle_proof(tree.as_ref(), kv.0.clone())
+            .unwrap();
         println!("{:#?}", p.clone());
         assert_eq!(multi_tree.verify(p), true);
     }
 
     let mut proofs: Vec<Proof<SMTKey, SMTValue>> = vec![];
     for kv in kvs.clone() {
-        let proof = multi_tree.get_merkle_proof(tree.as_ref(), kv.0.clone()).unwrap();
+        let proof = multi_tree
+            .get_merkle_proof(tree.as_ref(), kv.0.clone())
+            .unwrap();
         proofs.push(proof);
     }
 
     proofs
-    }
-
+}
 
 // Configure a mock runtime to test the pallet.
 frame_support::construct_runtime!(
@@ -59,7 +65,6 @@ frame_support::construct_runtime!(
         TemplateModule: crate::{Pallet, Call, Storage, Event<T>},
     }
 );
-
 
 parameter_types! {
     pub const SS58Prefix: u8 = 42;

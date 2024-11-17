@@ -6,8 +6,8 @@ use super::*;
 use crate::Pallet as Template;
 use frame_benchmarking::v2::*;
 use frame_system::RawOrigin;
-use primitives::kv::{SMTKey, SMTValue};
 use mock::creat_db_and_get_proof;
+use primitives::kv::{SMTKey, SMTValue};
 
 #[benchmarks]
 mod benchmarks {
