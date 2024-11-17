@@ -3,6 +3,7 @@
 #![allow(unused_imports)]
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::legacy_numeric_constants)]
+#![allow(clippy::arithmetic_side_effects)]
 
 extern crate alloc;
 
