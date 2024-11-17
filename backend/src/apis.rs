@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
+#![allow(elided_named_lifetimes)]
 use crate::store::SMTStore;
 use ethers::core::k256::sha2::digest::Key;
 use kvdb_rocksdb::Database;

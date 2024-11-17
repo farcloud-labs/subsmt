@@ -20,7 +20,7 @@ rust-version = "1.75"
 
 [workspace.dependencies]
 
-frame-benchmarking = { version = "32.0.0", optional = true,default-features = false }
+frame-benchmarking = { version = "32.0.0", default-features = false }
 frame-support = { version = "32.0.0",default-features = false}
 frame-system = {version = "32.0.0",default-features = false}
 sp-core = { version = "32.0.0" }
