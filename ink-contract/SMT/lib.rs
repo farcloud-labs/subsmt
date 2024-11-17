@@ -1,7 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 #[ink::contract]
-mod SMT {
+mod smt {
 
     /// Defines the storage of your contract.
     /// Add new fields to the below struct in order
@@ -53,19 +53,20 @@ mod SMT {
         /// We test if the default constructor does its job.
         #[ink::test]
         fn default_works() {
-            let SMT = Smt::default();
-            assert_eq!(SMT.get(), false);
+            let smt = Smt::default();
+            assert_eq!(smt.get(), false);
         }
 
         /// We test a simple use case of our contract.
         #[ink::test]
         fn it_works() {
-            let mut SMT = Smt::new(false);
-            assert_eq!(SMT.get(), false);
-            SMT.flip();
-            assert_eq!(SMT.get(), true);
+            let mut smt = Smt::new(false);
+            assert_eq!(smt.get(), false);
+            smt.flip();
+            assert_eq!(smt.get(), true);
         }
     }
+
 
     /// This is how you'd write end-to-end (E2E) or integration tests for ink! contracts.
     ///
@@ -78,7 +79,7 @@ mod SMT {
         use super::*;
 
         /// A helper function used for calling contract messages.
-        use ink_e2e::build_message;
+        use ink_e2e::ContractsBackend;
 
         /// The End-to-End test `Result` type.
         type E2EResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
@@ -87,48 +88,51 @@ mod SMT {
         #[ink_e2e::test]
         async fn default_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             // Given
-            let constructor = SmtRef::default();
+            let mut constructor = SmtRef::default();
 
             // When
-            let contract_account_id = client
-                .instantiate("SMT", &ink_e2e::alice(), constructor, 0, None)
+            let contract = client
+                .instantiate("smt", &ink_e2e::alice(), &mut constructor)
+                .submit()
                 .await
-                .expect("instantiate failed")
-                .account_id;
+                .expect("instantiate failed");
+            let call_builder = contract.call_builder::<Smt>();
 
             // Then
-            let get = build_message::<SmtRef>(contract_account_id.clone()).call(|SMT| SMT.get());
-            let get_result = client.call_dry_run(&ink_e2e::alice(), &get, 0, None).await;
+            let get = call_builder.get();
+            let get_result = client.call(&ink_e2e::alice(), &get).dry_run().await?;
             assert!(matches!(get_result.return_value(), false));
 
             Ok(())
         }
 
-        /// We test that we can read and write a value from the on-chain contract contract.
+        /// We test that we can read and write a value from the on-chain contract.
         #[ink_e2e::test]
         async fn it_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             // Given
-            let constructor = SmtRef::new(false);
-            let contract_account_id = client
-                .instantiate("SMT", &ink_e2e::bob(), constructor, 0, None)
+            let mut constructor = SmtRef::new(false);
+            let contract = client
+                .instantiate("smt", &ink_e2e::bob(), &mut constructor)
+                .submit()
                 .await
-                .expect("instantiate failed")
-                .account_id;
+                .expect("instantiate failed");
+            let mut call_builder = contract.call_builder::<Smt>();
 
-            let get = build_message::<SmtRef>(contract_account_id.clone()).call(|SMT| SMT.get());
-            let get_result = client.call_dry_run(&ink_e2e::bob(), &get, 0, None).await;
+            let get = call_builder.get();
+            let get_result = client.call(&ink_e2e::bob(), &get).dry_run().await?;
             assert!(matches!(get_result.return_value(), false));
 
             // When
-            let flip = build_message::<SmtRef>(contract_account_id.clone()).call(|SMT| SMT.flip());
+            let flip = call_builder.flip();
             let _flip_result = client
-                .call(&ink_e2e::bob(), flip, 0, None)
+                .call(&ink_e2e::bob(), &flip)
+                .submit()
                 .await
                 .expect("flip failed");
 
             // Then
-            let get = build_message::<SmtRef>(contract_account_id.clone()).call(|SMT| SMT.get());
-            let get_result = client.call_dry_run(&ink_e2e::bob(), &get, 0, None).await;
+            let get = call_builder.get();
+            let get_result = client.call(&ink_e2e::bob(), &get).dry_run().await?;
             assert!(matches!(get_result.return_value(), true));
 
             Ok(())
