@@ -8,7 +8,7 @@ repository.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-codec = { package = "parity-scale-codec", version = "3.6.1", features = ["derive"], default-features = false }
+codec = { package = "parity-scale-codec", version = "=3.6.9", features = ["derive"], default-features = false }
 kvdb-rocksdb = "0.19.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -21,7 +21,7 @@ log = "0.4.22"
 http = "1.1.0"
 thiserror = "2.0.3"
 
-scale-info = { version = "2.11.1", features = [
+scale-info = { version = "2.10.0", features = [
 	"derive",
 ] }
 sparse-merkle-tree = { path = "../sparse-merkle-tree", features = ["std"]}
