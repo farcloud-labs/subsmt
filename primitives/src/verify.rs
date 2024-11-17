@@ -2,6 +2,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 #![allow(clippy::collapsible_else_if)]
+#![allow(clippy::legacy_numeric_constants)]
 
 extern crate alloc;
 

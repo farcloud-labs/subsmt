@@ -96,7 +96,7 @@ pub mod pallet {
                     proof.leave_bitmap,
                     proof.siblings,
                     proof.root,
-                ) == true,
+                ),
                 Error::<T>::SMTVerifyFaild
             );
             Self::deposit_event(Event::<T>::SMTVerify {

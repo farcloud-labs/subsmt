@@ -107,7 +107,7 @@ impl Value for SMTKey {
 
     fn to_h256(&self) -> sparse_merkle_tree::H256 {
         let mut k = Keccak256::new();
-        k.update(&self.encode().as_slice());
+        k.update(self.encode().as_slice());
         let r: [u8; 32] = k.finalize().into();
         r.into()
     }
@@ -123,7 +123,7 @@ impl Value for SMTValue {
             return H256::zero();
         }
         let mut k = Keccak256::new();
-        k.update(&self.encode().as_slice());
+        k.update(self.encode().as_slice());
         let r: [u8; 32] = k.finalize().into();
         r.into()
     }

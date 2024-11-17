@@ -1,4 +1,5 @@
 #![allow(unused_imports)]
+#![allow(clippy::needless_lifetimes)]
 use sparse_merkle_tree::{
     error::Error,
     traits::{StoreReadOps, StoreWriteOps, Value},
@@ -86,7 +87,7 @@ where
 
     fn get_leaf(&self, leaf_key: &H256) -> Result<Option<V>, Error> {
         self.inner
-            .get(self.col, &[self.prefix, &leaf_key.as_slice()].concat())
+            .get(self.col, &[self.prefix, leaf_key.as_slice()].concat())
             .map(|s| s.map(|v| v.into()))
             .map_err(|e| Error::Store(e.to_string()))
     }
