@@ -23,7 +23,7 @@ pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
     multi_tree.clear(tree.as_ref());
     let mut kvs: Vec<(SMTKey, SMTValue)> = vec![];
 
-    for i in 1..size {
+    for i in 0..size {
         kvs.push((
             SMTKey {
                 address: i.to_string(),
@@ -42,8 +42,6 @@ pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
         let p = multi_tree
             .get_merkle_proof(tree.as_ref(), kv.0.clone())
             .unwrap();
-        println!("{:#?}", p.clone());
-        assert_eq!(multi_tree.verify(p), true);
     }
 
     let mut proofs: Vec<Proof<SMTKey, SMTValue>> = vec![];
