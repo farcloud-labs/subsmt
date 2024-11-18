@@ -13,6 +13,8 @@ smt-primitives = { path = "../../primitives",  default-features = false}
 
 [dev-dependencies]
 ink_e2e = { version = "5.0.0" }
+smt-backend = {path = "../../backend"}
+
 
 [lib]
 path = "lib.rs"

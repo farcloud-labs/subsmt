@@ -47,14 +47,6 @@ mod smt {
             Self::default()
         }
 
-        /// Constructor that initializes the `bool` value to `false`.
-        ///
-        /// Constructors can delegate to other constructors.
-        #[ink(constructor)]
-        pub fn default() -> Self {
-            Self::new()
-        }
-
         #[ink(message)]
         pub fn smt_verify(&self, proof: Proof<SMTKey, SMTValue>) -> Result<()> {
             self.do_verify(proof)
@@ -68,8 +60,7 @@ mod smt {
                 proof.leave_bitmap,
                 proof.siblings,
                 proof.root,
-            )
-            {
+            ) {
                 return Err(Error::SMTVerifyFaild);
             }
             Self::env().emit_event(SMTVerify {
@@ -88,21 +79,65 @@ mod smt {
     mod tests {
         /// Imports all the definitions from the outer scope so we can use them here.
         use super::*;
+        use smt_backend_lib::apis::MultiSMTStore;
+        use smt_primitives::{
+            keccak_hasher::Keccak256Hasher,
+            kv::{SMTKey, SMTValue},
+            verify::Proof,
+        };
+        use std::path::Path;
 
-        /// We test if the default constructor does its job.
-        #[ink::test]
-        fn default_works() {
-            let smt = Smt::default();
-            assert_eq!(smt.get(), false);
+        pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
+            let base_path = "./smt_ink_test_db";
+            let multi_tree =
+                MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(base_path))
+                    .unwrap();
+            // 创建一个tree
+            let tree = "tree1";
+            multi_tree.clear(tree.as_ref());
+            let mut kvs: Vec<(SMTKey, SMTValue)> = vec![];
+
+            for i in 0..size {
+                kvs.push((
+                    SMTKey {
+                        address: i.to_string(),
+                    },
+                    SMTValue {
+                        nonce: i as u64,
+                        balance: i as u128,
+                    },
+                ));
+            }
+
+            for kv in kvs.clone() {
+                multi_tree
+                    .update(tree.as_ref(), kv.0.clone(), kv.1.clone())
+                    .unwrap();
+                let p = multi_tree
+                    .get_merkle_proof(tree.as_ref(), kv.0.clone())
+                    .unwrap();
+            }
+
+            let mut proofs: Vec<Proof<SMTKey, SMTValue>> = vec![];
+            for kv in kvs.clone() {
+                let proof = multi_tree
+                    .get_merkle_proof(tree.as_ref(), kv.0.clone())
+                    .unwrap();
+                proofs.push(proof);
+            }
+
+            proofs
         }
 
-        /// We test a simple use case of our contract.
         #[ink::test]
-        fn it_works() {
-            let mut smt = Smt::new(false);
-            assert_eq!(smt.get(), false);
-            smt.flip();
-            assert_eq!(smt.get(), true);
+        fn smt_verify_works() {
+            let smt = Smt::new();
+            let proofs = creat_db_and_get_proof(2);
+            assert_ne!(smt.smt_verify(proofs[0].clone()), Ok(()));
+            proofs[1..].iter().for_each(|p| {
+                // ;
+                assert_eq!(smt.smt_verify(p.clone()), Ok(()));
+            });
         }
     }
 
