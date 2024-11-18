@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 #![allow(unexpected_cfgs)]
-// 如何表达事件？？？
+
+
 #[ink::contract]
 mod smt {
     use smt_primitives::{
@@ -34,14 +35,9 @@ mod smt {
         SMTVerifyFaild,
     }
 
-    // impl Default for Smt {
-    //     fn default() -> Self {
-    //         Self::new()
-    //     }
-    // }
 
     impl Smt {
-        /// Constructor that initializes the `bool` value to the given `init_value`.
+
         #[ink(constructor)]
         pub fn new() -> Self {
             Self::default()
