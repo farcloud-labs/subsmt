@@ -144,6 +144,7 @@ mod smt {
     mod e2e_tests {
         /// Imports all the definitions from the outer scope so we can use them here.
         use super::*;
+        use crate::smt::tests::creat_db_and_get_proof;
 
         /// A helper function used for calling contract messages.
         use ink_e2e::ContractsBackend;
@@ -164,13 +165,14 @@ mod smt {
 
             let proofs = creat_db_and_get_proof(2);
 
-            let verify = call_builder.smt_verify(proofs[1]);
+            let verify = call_builder.smt_verify(proofs[1].clone());
             let _flip_result = client
                 .call(&ink_e2e::bob(), &verify)
                 .submit()
                 .await
                 .expect("verify failed");
             // 判断成功或者失败
+
             Ok(())
         }
     }
