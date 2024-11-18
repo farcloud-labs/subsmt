@@ -1,5 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
-
+#![allow(unexpected_cfgs)]
 // 如何表达事件？？？
 #[ink::contract]
 mod smt {
@@ -77,6 +77,7 @@ mod smt {
     /// The below code is technically just normal Rust code.
     #[cfg(test)]
     mod tests {
+        #![allow(unused_imports)]
         /// Imports all the definitions from the outer scope so we can use them here.
         use super::*;
         use smt_backend_lib::apis::MultiSMTStore;
@@ -112,9 +113,6 @@ mod smt {
             for kv in kvs.clone() {
                 multi_tree
                     .update(tree.as_ref(), kv.0.clone(), kv.1.clone())
-                    .unwrap();
-                let p = multi_tree
-                    .get_merkle_proof(tree.as_ref(), kv.0.clone())
                     .unwrap();
             }
 

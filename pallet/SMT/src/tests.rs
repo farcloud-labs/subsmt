@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use crate::{mock::*, Error};
 use frame_support::{assert_err, assert_noop, assert_ok};
 use primitives::verify::Proof;

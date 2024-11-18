@@ -39,9 +39,6 @@ pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
         multi_tree
             .update(tree.as_ref(), kv.0.clone(), kv.1.clone())
             .unwrap();
-        let p = multi_tree
-            .get_merkle_proof(tree.as_ref(), kv.0.clone())
-            .unwrap();
     }
 
     let mut proofs: Vec<Proof<SMTKey, SMTValue>> = vec![];

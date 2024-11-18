@@ -174,7 +174,8 @@ pub mod test {
 
         let tree1: &[u8] = "tree1".as_ref();
         let tree2: &[u8] = "tree2".as_ref();
-
+        multi_tree.clear(tree1);
+        multi_tree.clear(tree2);
         multi_tree.new_tree_with_store(tree1).unwrap();
         multi_tree.new_tree_with_store(tree2).unwrap();
 
@@ -211,7 +212,7 @@ pub mod test {
             tree1_value1.clone()
         );
         let proof = multi_tree
-            .get_merkle_proof(tree1.clone(), tree1_key1.clone())
+            .get_merkle_proof(tree1, tree1_key1.clone())
             .unwrap();
         assert_eq!(multi_tree.verify(proof), true);
         // remove
@@ -230,7 +231,7 @@ pub mod test {
         let old_proof = multi_tree
             .get_merkle_proof_old(tree1, vec![tree1_key2.clone()])
             .unwrap();
-        let next_root = multi_tree
+        let _next_root = multi_tree
             .get_next_root(
                 old_proof.clone(),
                 vec![(tree1_key2.clone(), tree1_value2.clone())],
