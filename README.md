@@ -14,16 +14,23 @@ It can be applied in scenarios where Sparse Merkle Trees are used to save on-cha
 7. verify
 8. clear
 
-## **dev**
+***
+
+## **DEV**
+
+Clone the project
+```
+git clone https://github.com/farcloud-labs/subsmt.git
+```
+
 
 ```
+cd subsmt 
 submodule update --init --recursive.
 ```
 ### build
 
-```
-git clone https://github.com/farcloud-labs/subsmt.git
-```
+
 ```
 cargo build --release
 ```
