@@ -20,6 +20,10 @@ It can be applied in scenarios where Sparse Merkle Trees are used to save on-cha
 submodule update --init --recursive.
 ```
 ### build
+
+```
+git clone https://github.com/farcloud-labs/subsmt.git
+```
 ```
 cargo build --release
 ```
@@ -30,6 +34,12 @@ cargo build --release
 ```
 cargo test
 ```
+
+## docker
+todo
+
+## License
+This project is licensed under the LICENSE_APACHE2. See the [LICENSE](./LICENSE) file for details.
 
 
 
