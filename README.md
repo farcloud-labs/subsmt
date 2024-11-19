@@ -28,8 +28,24 @@ git clone https://github.com/farcloud-labs/subsmt.git
 cargo build --release
 ```
 
+### run
+
+```
+cargo run
+```
+or 
+```
+./target/release/smt
+```
+
 ### Testing
 
+#### Manual Testing
+[http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui/)
+
+![swagger-ui](./docs/images/swagger.jpg)
+
+#### Unit Test Case
 
 ```
 cargo test
