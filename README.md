@@ -28,8 +28,13 @@ It can be applied in scenarios where Sparse Merkle Trees are used to save on-cha
     "nonce": 1,
     "prefix": "test"
     }'
-    # result: "9978dd715a13f27c42fc832b6997cfd7013341790e651eb3781d4a7706e3a323"
    ```
+    result: 
+    ```bash
+    "9978dd715a13f27c42fc832b6997cfd7013341790e651eb3781d4a7706e3a323"
+    ```
+    
+
 2. get_value
     ``` bash
     curl -X 'POST' \
@@ -38,7 +43,8 @@ It can be applied in scenarios where Sparse Merkle Trees are used to save on-cha
     -H 'Content-Type: application/json' \
     -d '{
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
-    "prefix": "test"
+    "prefix": "test" 
+    }'
     ```
     result:
     ```bash
