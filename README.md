@@ -176,7 +176,7 @@ cd subsmt
 submodule update --init --recursive.
 ```
 
-> As a developer, you don't even need to understand the specific implementation of the sparse Merkle tree, you can simply write a small amount of code to customize and extend your own Merkle tree backend. If you have such a need, you can modify the code in [these few places](./docs/).
+> As a developer, you don't even need to understand the specific implementation of the sparse Merkle tree, you can simply write a small amount of code to customize and extend your own Merkle tree backend. If you have such a need, you can modify the code in [these few places](./docs/customize_your_backend.md).
 
 
 ### build
