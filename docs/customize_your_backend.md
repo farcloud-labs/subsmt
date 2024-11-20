@@ -1,4 +1,4 @@
-s a developer, you don't even need to understand the specific implementation of the sparse Merkle tree, you can simply write a small amount of code to customize and extend your own Merkle tree backend. If you have such a need, you can modify the code in these few places.
+As a developer, you don't even need to understand the specific implementation of the sparse Merkle tree, you can simply write a small amount of code to customize and extend your own Merkle tree backend. If you have such a need, you can modify the code in these few places.
 
 ## change your kv
 [https://github.com/farcloud-labs/subsmt/blob/main/primitives/src/kv.rs](https://github.com/farcloud-labs/subsmt/blob/main/primitives/src/kv.rs)
