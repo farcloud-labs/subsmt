@@ -15,6 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! You can think of this backend as a KVDB, but it also provides Merkle proofs for the existence or non-existence of data.  
+//! Here, define the data structures for your key and value, as they determine how data is stored in the database.  
+//! Your key will ultimately be hashed, and this hash will determine the path of your value in the Merkle tree.
+
 #![cfg_attr(not(feature = "std"), no_std)]
 use codec::{Decode, Encode};
 // use ethers::utils::keccak256;
@@ -31,6 +35,7 @@ use sparse_merkle_tree::{traits::Value, H256};
 
 cfg_if::cfg_if! {
     if #[cfg(feature="std")] {
+        /// The data structure of the value in the KVDB, which determines the type of data you store in the Merkle tree.
         use utoipa::{IntoParams, ToSchema};
         #[serde_as]
         #[derive(
@@ -69,10 +74,12 @@ cfg_if::cfg_if! {
             IntoParams,
             TypeInfo,
         )]
+        /// The key in the KVDB, which determines for whom you are storing data.
         pub struct SMTKey {
             pub address: String,
         }
     } else {
+        /// The data structure of the value in the KVDB, which determines the type of data you store in the Merkle tree.
         #[serde_as]
         #[derive(
             Encode,
@@ -95,6 +102,7 @@ cfg_if::cfg_if! {
             pub balance: u128,
         }
 
+        /// The key in the KVDB, which determines for whom you are storing data.
         #[serde_as]
         #[derive(
             Encode,
@@ -116,6 +124,7 @@ cfg_if::cfg_if! {
 
 }
 
+/// How the key in the KVDB is computed into a hash value.
 impl Value for SMTKey {
     fn zero() -> Self {
         SMTKey::default()
@@ -129,6 +138,7 @@ impl Value for SMTKey {
     }
 }
 
+/// How the value in the KVDB is computed into a hash value.
 impl Value for SMTValue {
     fn zero() -> Self {
         Default::default()
@@ -145,11 +155,6 @@ impl Value for SMTValue {
     }
 }
 
-// impl Into<Vec<u8>> for SMTValue {
-//     fn into(self) -> Vec<u8> {
-//         self.encode()
-//     }
-// }
 
 impl From<SMTValue> for Vec<u8> {
     fn from(value: SMTValue) -> Self {

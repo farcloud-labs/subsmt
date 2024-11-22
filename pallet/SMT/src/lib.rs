@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! This template will be responsible for verifying Merkle tree proofs on-chain. We follow the principle of minimizing on-chain computation and storage resources as much as possible, providing only the verification method.  
+//! The advantage of Merkle trees lies precisely in this approach.  
+//! The Merkle tree proof is provided by the `merkle_proof` API from the SMT backend.
+
 #![cfg_attr(not(feature = "std"), no_std)]
 
-/// Edit this file to define custom logic or remove it if it is not needed.
-/// Learn more about FRAME and the core library of Substrate FRAME pallets:
-/// <https://docs.substrate.io/v3/runtime/frame>
 pub use pallet::*;
 
 #[cfg(test)]
@@ -55,11 +56,11 @@ pub mod pallet {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
         /// A type representing the weights required by the dispatchables of this pallet.
         type WeightInfo: crate::weights::WeightInfo;
-
+        /// The data type of the Key in the KVDB.
         type SMTKey: Value + Default + Debug + Clone + TypeInfo + Encode + Decode + PartialEq;
-
+        /// The data type of the value in the KVDB.
         type SMTValue: Value + Default + Debug + Clone + TypeInfo + Encode + Decode + PartialEq;
-
+        /// The hash algorithm chosen for this Merkle tree off-chain.
         type SMTHasher: Hasher + Default;
     }
 
@@ -71,9 +72,13 @@ pub mod pallet {
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
+        /// Merkle proof verification passed.
         SMTVerify {
+            /// Who submitted the proof to the blockchain.
             account: T::AccountId,
+            /// The path of the leaf being proven.
             path: H256,
+            /// root hash
             root: H256,
         },
     }
@@ -81,6 +86,7 @@ pub mod pallet {
     // Errors inform users that something went wrong.
     #[pallet::error]
     pub enum Error<T> {
+        /// Merkle proof verification failed.
         SMTVerifyFaild,
     }
 
@@ -92,8 +98,12 @@ pub mod pallet {
     // Dispatchable functions must be annotated with a weight and must return a DispatchResult.
     #[pallet::call]
     impl<T: Config> Pallet<T> {
+
+        /**
+         * Verify the Merkle proof provided off-chain.
+         */
         #[pallet::call_index(0)]
-        #[pallet::weight(T::WeightInfo::smt_verify().saturating_mul(proof.siblings.len() as u64))]
+        #[pallet::weight(T::WeightInfo::smt_verify().saturating_mul(1_u64 + proof.siblings.len() as u64))]
         pub fn smt_verify(
             origin: OriginFor<T>,
             proof: verify::Proof<T::SMTKey, T::SMTValue>,

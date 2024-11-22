@@ -15,6 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! An SMT backend based on Actix and Swagger-UI, providing RPC for external service calls.
+//! A single database can create multiple Merkle trees.
+
 #![allow(dead_code)]
 #![allow(unused_imports)]
 #![allow(unused_mut)]
@@ -63,12 +66,13 @@ const SMT_API: &str = "SMT API";
     )]
 struct ApiDoc;
 
+/// Insert a value into a specific Merkle tree.
 #[utoipa::path(
     tag = SMT_API,
     params(
     ),
     responses(
-        (status = 200, description = "Writing data to a sparse Merkle tree", body = [H256])
+        (status = 200, description = "Insert a value into a specific Merkle tree.", body = [H256])
     )
 )]
 #[post("/update")]
@@ -89,12 +93,13 @@ async fn update_value(
     Ok(HttpResponse::Ok().json(root))
 }
 
+/// Remove a value by key
 #[utoipa::path(
     tag = SMT_API,
     params(
     ),
     responses(
-        (status = 200, description = "Writing data to a sparse Merkle tree", body = [H256])
+        (status = 200, description = "Remove a value by key", body = [H256])
     )
 )]
 #[post("/remove")]
@@ -115,12 +120,13 @@ async fn remove_value(
     Ok(HttpResponse::Ok().json(root))
 }
 
+/// Get the Merkle proof.
 #[utoipa::path(
     tag = SMT_API,
     params(
     ),
     responses(
-        (status = 200, description = "List current todo items", body = [Proof<SMTKey, SMTValue>])
+        (status = 200, description = "Get the Merkle proof.", body = [Proof<SMTKey, SMTValue>])
     )
 )]
 #[post("/merkle_proof")]
@@ -141,12 +147,13 @@ async fn get_merkle_proof(
     Ok(HttpResponse::Ok().json(proof))
 }
 
+/// Before data is updated, the future value of the root hash can be calculated in advance.
 #[utoipa::path(
     tag = SMT_API,
     params(
     ),
     responses(
-        (status = 200, description = "List current todo items", body = [H256])
+        (status = 200, description = "Before data is updated, the future value of the root hash can be calculated in advance.", body = [H256])
     )
 )]
 #[post("/next_root")]
@@ -176,12 +183,13 @@ async fn get_next_root(
     Ok(HttpResponse::Ok().json(next_root))
 }
 
+/// Get the root hash.
 #[utoipa::path(
     tag = SMT_API,
     params(
     ),
     responses(
-        (status = 200, description = "List current todo items", body = [H256])
+        (status = 200, description = "Get the root hash.", body = [H256])
     )
 )]
 #[post("/root")]
@@ -206,12 +214,13 @@ async fn get_root(
     Ok(HttpResponse::Ok().json(root))
 }
 
+/// Get the value of a specific key in a particular tree.
 #[utoipa::path(
     tag = SMT_API,
     params(
     ),
     responses(
-        (status = 200, description = "Get the user's data stored in the Merkle tree", body = [SMTValue])
+        (status = 200, description = "Get the value of a specific key in a particular tree.", body = [SMTValue])
     )
 )]
 #[post("/value")]
@@ -232,12 +241,13 @@ async fn get_value(
     Ok(HttpResponse::Ok().json(value))
 }
 
+/// Verify the Merkle proof.
 #[utoipa::path(
     tag = SMT_API,
     params(
     ),
     responses(
-        (status = 200, description = "List current todo items", body = [bool])
+        (status = 200, description = "Verify the Merkle proof.", body = [bool])
     )
 )]
 #[post("/verify")]
@@ -261,12 +271,13 @@ async fn verify(
     Ok(HttpResponse::Ok().json(res))
 }
 
+/// Delete a specific Merkle tree.
 #[utoipa::path(
     tag = SMT_API,
     params(
     ),
     responses(
-        (status = 200, description = "List current todo items", body = [H256])
+        (status = 200, description = "Delete a specific Merkle tree.", body = [H256])
     )
 )]
 #[post("/clear")]

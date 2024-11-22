@@ -15,6 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Verify the Merkle proof.  
+//! This provides a more user-friendly method of verifying the Merkle proof, rather than just a sequence of `Vec<u8>` that cannot be directly parsed back into the original data.  
+//! It enables you to perform more actions on-chain.
+
 #![cfg_attr(not(feature = "std"), no_std)]
 #![allow(dead_code)]
 #![allow(unused_imports)]
@@ -70,6 +74,7 @@ cfg_if::cfg_if! {
 
 }
 
+/// When there is only one value in the database (i.e., only one leaf, and the other leaves are empty), how to compute the root.
 fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> MergeValue {
     if value.is_zero() {
         MergeValue::from_h256(value)
@@ -106,9 +111,11 @@ fn into_merge_value<H: Hasher + Default>(key: H256, value: H256, height: u8) -> 
     }
 }
 
+/// Verify the Merkle proof,  
+/// including the verification when there is only one leaf (which differs slightly from multi-leaf cases).
 pub fn verify<H: Hasher + Default>(
-    path: H256,       // key的hash
-    value_hash: H256, // value的hash
+    path: H256,      
+    value_hash: H256,
     leave_bitmap: H256,
     siblings: Vec<MergeValue>,
     root: H256,

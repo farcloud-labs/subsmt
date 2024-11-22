@@ -15,6 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Provide APIs related to SMT (Sparse Merkle Tree).  
+//! Implement persistent storage for SMT.  
+//! A single database can store multiple Merkle trees, and they do not interfere with each other.
+
 pub mod apis;
 pub mod error;
 pub mod req;

@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Store the Merkle tree data in a KVDB (Key-Value Database).
+
 #![allow(unused_imports)]
 #![allow(clippy::needless_lifetimes)]
 use sparse_merkle_tree::{

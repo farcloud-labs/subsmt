@@ -15,9 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Provide APIs, including database creation, creation of multiple Merkle trees, and Merkle tree-related operations.
+
 #![allow(dead_code)]
 #![allow(unused_imports)]
-#![allow(elided_named_lifetimes)]
+
 use crate::store::SMTStore;
 use ethers::core::k256::sha2::digest::Key;
 use kvdb_rocksdb::Database;
@@ -44,6 +46,7 @@ use utoipa::{ToSchema, __dev::ComposeSchema};
 
 type MultiSMT<'a, V, H> = SparseMerkleTree<H, V, SMTStore<'a>>;
 
+/// Multiple Merkle trees are stored in a KV database.
 pub struct MultiSMTStore<K, V, H> {
     store: Arc<Database>,
     v: PhantomData<(K, V, H)>,
@@ -67,6 +70,7 @@ impl<
         H: Hasher + Default,
     > MultiSMTStore<K, V, H>
 {
+    /// Open the KV database, create it if it does not exist.
     pub fn open<P: AsRef<Path>>(path: P) -> io::Result<Self> {
         let db = Database::open(&Default::default(), path)?;
         Ok(Self {
@@ -75,18 +79,20 @@ impl<
         })
     }
 
+    /// Create or open a new tree.
     pub fn new_tree_with_store(&'a self, prefix: &'a [u8]) -> Result<MultiSMT<V, H>> {
         let db = SMTStore::new(self.store.clone(), Default::default(), prefix);
         MultiSMT::new_with_store(db)
     }
 
-    // 给某个默克尔树插入值
+    /// Insert a value into a specific Merkle tree.
     pub fn update(&'a self, prefix: &'a [u8], key: K, value: V) -> SMTResult<H256> {
         let mut tree = self.new_tree_with_store(prefix)?;
         let h = tree.update(key.to_h256(), value)?;
         Ok(*h)
     }
 
+    /// Insert multiple values into a Merkle tree at once.
     pub fn update_all(&'a self, prefix: &'a [u8], kvs: Vec<(K, V)>) -> SMTResult<H256> {
         let kvs = kvs
             .into_iter()
@@ -98,20 +104,20 @@ impl<
         Ok(*root)
     }
 
-    // 获取根
+    /// Get the root hash.
     pub fn get_root(&'a self, prefix: &'a [u8]) -> Result<H256> {
         let tree = self.new_tree_with_store(prefix)?;
         Ok(*tree.root())
     }
 
-    // 获取值
+    /// Get the value of a specific key in a particular tree.
     pub fn get_value(&'a self, prefix: &'a [u8], key: K) -> Result<V> {
         let tree = self.new_tree_with_store(prefix)?;
         let value = tree.get(&key.to_h256())?;
         Ok(value)
     }
 
-    // 获取证明
+    /// Get the Merkle proof.
     pub fn get_merkle_proof(&'a self, prefix: &'a [u8], key: K) -> Result<Proof<K, V>> {
         let tree = self.new_tree_with_store(prefix)?;
         let proof = tree.merkle_proof(vec![key.to_h256()])?;
@@ -131,6 +137,7 @@ impl<
         })
     }
 
+    /// Get the Merkle proof, the return value is `Vec<u8>`, which is not developer-friendly and may be inefficient for on-chain gas or functionality.
     pub fn get_merkle_proof_old(&'a self, prefix: &'a [u8], keys: Vec<K>) -> SMTResult<Vec<u8>> {
         let tree = self.new_tree_with_store(prefix)?;
         let keys = keys
@@ -143,6 +150,7 @@ impl<
         Ok(proof.0)
     }
 
+    /// Before data is updated, the future value of the root hash can be calculated in advance.
     pub fn get_next_root(&'a self, old_proof: Vec<u8>, next_kvs: Vec<(K, V)>) -> Result<H256> {
         let p = CompiledMerkleProof(old_proof);
         let kvs = next_kvs
@@ -154,13 +162,14 @@ impl<
         Ok(next_root)
     }
 
-    // 删除某个默克尔树
+    /// Delete a specific Merkle tree.
     pub fn clear(&'a self, prefix: &'a [u8]) {
         let mut tx = self.store.transaction();
         tx.delete_prefix(Default::default(), prefix);
         self.store.write(tx).unwrap();
     }
 
+    /// Verify the Merkle proof.
     pub fn verify(&'a self, proof: Proof<K, V>) -> bool {
         let mut res = false;
         if proof.value != V::default() {

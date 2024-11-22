@@ -15,11 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+//! Typically, the computation of the Merkle tree root, as well as proof generation and verification, relies on a specific hash algorithm. 
+//! This algorithm is responsible for transforming complex data structures encountered along the path into a hash value. In SMT, hash computations are needed for data types like `[u8; 32]` and `u8`. 
+//! In this project, Keccak256 will be used by default, primarily considering Ethereum compatibility. However, you can choose other hash algorithms based on the specific requirements of your project.
+
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use sha3::{Digest, Keccak256};
 use sparse_merkle_tree::{traits::Hasher, H256};
 
+/// Choose the Keccak256 algorithm to compute the hash values for `[u8; 32]` and `u8` data.
 pub struct Keccak256Hasher(Keccak256);
 
 impl Default for Keccak256Hasher {
@@ -42,7 +48,6 @@ impl Hasher for Keccak256Hasher {
     }
 }
 
-// 需要测一遍看看是否对得上
 
 #[cfg(test)]
 pub mod test {

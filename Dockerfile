@@ -10,8 +10,8 @@ RUN cargo build --release
 FROM docker.io/library/ubuntu:22.04
 LABEL description="A sparse Merkle tree backend compatible with the Polkadot ecosystem." \
 	io.parity.image.type="builder" \
-	io.parity.image.authors="YanOctavian" \
-	io.parity.image.vendor="YanOctavian" 
+	io.parity.image.authors="yanoctavian" \
+	io.parity.image.vendor="yanoctavian" 
 WORKDIR /smt
 ENV DB_PATH=/data/db
 ENV LOG_PATH=/data/logs

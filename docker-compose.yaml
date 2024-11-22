@@ -2,7 +2,7 @@ version: '1.0.0'
 
 services:
   smt_backend:
-    image: smt:latest
+    image: yanoctavian/smt:latest
     volumes:
       - .:/data
     networks:
