@@ -225,6 +225,12 @@ docker buildx build -t smt:latest . --load
 docker-compose up
 ```
 
+or
+
+```
+docker run -it --name smt-backend -p 8080:8080 smt:latest
+```
+
 ### stop docker
 ```
 docker-compose down
