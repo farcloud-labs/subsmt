@@ -1,0 +1,17 @@
+version: '1.0.0'
+
+services:
+  smt_backend:
+    image: smt:latest
+    volumes:
+      - .:/data
+    networks:
+      - smt_network
+    ports:
+      - 8080:8080
+  # smt_chain:
+  #   image: 
+    
+networks:
+  smt_network:
+    driver: bridge

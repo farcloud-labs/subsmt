@@ -11,6 +11,7 @@ Cargo.lock
 **/*.rs.bk
 **/db
 **/*db
+**logs**
 
 *db
 

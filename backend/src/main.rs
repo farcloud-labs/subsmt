@@ -20,6 +20,8 @@ use smt_backend_lib::{
     error::Error,
     req::{KVPair, ReqByKVs, ReqByKey, ReqByPrefix, ReqUpdate},
 };
+use std::env;
+use dotenv::dotenv;
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     kv::*,
@@ -269,27 +271,30 @@ async fn clear(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let base_path = "./db";
+    dotenv().ok();
+    let base_path =env::var("DB_PATH").unwrap();
+    let log_path =env::var("LOG_PATH").unwrap();
     let multi_tree = web::Data::new(Mutex::new(
-        MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(base_path)).unwrap(),
+        MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(&base_path)).unwrap(),
     ));
+    print!("log path: {:?}", log_path);
 
-    let l = async {
-        Logger::try_with_str("info")
-            .unwrap()
-            .log_to_file(flexi_logger::FileSpec::default().directory("target/logs"))
-            .write_mode(WriteMode::BufferAndFlush)
-            .rotate(
-                flexi_logger::Criterion::Age(Age::Day),
-                Naming::TimestampsDirect,
-                Cleanup::Never,
-            )
-            .append()
-            .log_to_stdout()
-            .start()
-            .unwrap();
-        std::future::pending::<()>().await;
-    };
+    // let l = async {
+    Logger::try_with_str("info")
+        .unwrap()
+        .log_to_file(flexi_logger::FileSpec::default().directory(log_path))
+        // .write_mode(WriteMode::BufferAndFlush)
+        .rotate(
+            flexi_logger::Criterion::Age(Age::Day),
+            Naming::TimestampsDirect,
+            Cleanup::Never,
+        )
+        .append()
+        .log_to_stdout()
+        .start()
+        .unwrap();
+    // std::future::pending::<()>().await;
+    // };
 
     let app = HttpServer::new(move || {
         App::new()
@@ -310,7 +315,7 @@ async fn main() -> std::io::Result<()> {
             .into_app()
     })
     .shutdown_timeout(30)
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run();
 
     let graceful_shutdown = async {
@@ -323,7 +328,7 @@ async fn main() -> std::io::Result<()> {
     let result = tokio::select! {
         _ = app => Ok(()),
         _ = graceful_shutdown_task => Ok(()),
-        _ = l => Ok(()),
+        // _ = l => Ok(()),
     };
 
     result
