@@ -6,6 +6,7 @@ It can be applied in scenarios where Sparse Merkle Trees are used to save on-cha
 ## Tech stack
 * rust
 * python
+* ink
 * polkadot-sdk
 * actix-web
 * swagger-ui
@@ -165,7 +166,10 @@ It can be applied in scenarios where Sparse Merkle Trees are used to save on-cha
 
 ## **DEV**
 
-Clone the project
+### install environment
+[https://docs.substrate.io/install/](https://docs.substrate.io/install/)
+
+### Clone the project
 ```
 git clone https://github.com/farcloud-labs/subsmt.git
 ```
