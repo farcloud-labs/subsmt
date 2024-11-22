@@ -210,7 +210,7 @@ or
 #### Unit Test Case
 
 ```
-cargo test
+cargo test -- --nocapture
 ```
 
 ## docker
