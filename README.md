@@ -220,7 +220,15 @@ cargo test
 docker buildx build -t smt:latest . --load
 ```
 
-todo
+### run docker
+```
+docker-compose up
+```
+
+### stop docker
+```
+docker-compose down
+```
 
 ## License
 This project is licensed under the LICENSE_APACHE2. See the [LICENSE](./LICENSE) file for details.
