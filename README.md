@@ -213,11 +213,18 @@ or
 cargo test -- --nocapture
 ```
 
+## document
+
+```bash
+cargo doc --open
+```
+
 ## docker
 
 ### local build 
 ```
 docker buildx build -t smt:latest . --load
+> docker buildx build --platform linux/arm64,linux/amd64 -t yanoctavian/smt:latest . --push 
 ```
 
 ### run docker

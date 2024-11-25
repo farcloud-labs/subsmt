@@ -53,8 +53,10 @@ cfg_if::cfg_if! {
             TypeInfo,
         )]
         pub struct SMTValue {
+            /// The nonce value of the user account.
             // #[serde_as(as = "DisplayFromStr")]
             pub nonce: u64,
+            /// The balance of the user account.
             #[serde_as(as = "DisplayFromStr")]
             pub balance: u128,
         }
@@ -76,6 +78,7 @@ cfg_if::cfg_if! {
         )]
         /// The key in the KVDB, which determines for whom you are storing data.
         pub struct SMTKey {
+            /// The on-chain user address.
             pub address: String,
         }
     } else {
@@ -96,8 +99,10 @@ cfg_if::cfg_if! {
             TypeInfo,
         )]
         pub struct SMTValue {
+            /// The nonce value of the user account.
             // #[serde_as(as = "DisplayFromStr")]
             pub nonce: u64,
+             /// The balance of the user account.
             #[serde_as(as = "DisplayFromStr")]
             pub balance: u128,
         }
@@ -117,6 +122,7 @@ cfg_if::cfg_if! {
             TypeInfo,
         )]
         pub struct SMTKey {
+            /// The on-chain user address.
             pub address: String,
         }
 

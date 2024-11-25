@@ -27,9 +27,6 @@
 #![allow(clippy::arithmetic_side_effects)]
 
 extern crate alloc;
-
-// use core::fmt::Debug;
-
 use alloc::vec::Vec;
 use codec::{Decode, Encode};
 use scale_info::{prelude::fmt::Debug, TypeInfo};
@@ -44,30 +41,46 @@ cfg_if::cfg_if! {
     if #[cfg(feature="std")] {
         use utoipa::{ToSchema, IntoParams, __dev::ComposeSchema};
 
+        /// Merkle proof.
         #[derive(Debug, Serialize, Deserialize, Clone, Encode, Decode, TypeInfo, PartialEq, ToSchema)]
         pub struct Proof<K: Debug + Clone + TypeInfo, V: Default + Debug + Clone + TypeInfo> {
+            /// The key in the KVDB.
             #[serde(flatten)]
             pub key: K,
+            /// The value in the KVDB.
             #[serde(flatten)]
             pub value: V,
+            /// The Merkle leaf's path (i.e., the hash value of the key).
             pub path: H256,
+            /// The hash value of the Merkle leaf (i.e., the hash value of the value).
             pub value_hash: H256,
+            /// Merkle root hash.
             pub root: H256,
+            /// Path marker, indicating where hashing should be performed.
             pub leave_bitmap: H256,
+            /// Branches encountered on the leave_bitmap that need to be hashed. They correspond one-to-one with the leave_bitmap.
             pub siblings: Vec<MergeValue>,
         }
 
     } else {
+         /// Merkle proof.
         #[derive(Debug, Serialize, Deserialize, Clone, Encode, Decode, TypeInfo, PartialEq)]
         pub struct Proof<K: Debug + Clone + TypeInfo, V: Default + Debug + Clone + TypeInfo> {
+            /// The key in the KVDB.
             #[serde(flatten)]
             pub key: K,
+            /// The value in the KVDB.
             #[serde(flatten)]
             pub value: V,
+            /// The Merkle leaf's path (i.e., the hash value of the key).
             pub path: H256,
+            /// The hash value of the Merkle leaf (i.e., the hash value of the value).
             pub value_hash: H256,
+            /// Merkle root hash.
             pub root: H256,
+            /// Path marker, indicating where hashing should be performed.
             pub leave_bitmap: H256,
+            /// Branches encountered on the leave_bitmap that need to be hashed. They correspond one-to-one with the leave_bitmap.
             pub siblings: Vec<MergeValue>,
         }
     }
@@ -75,7 +88,7 @@ cfg_if::cfg_if! {
 }
 
 /// When there is only one value in the database (i.e., only one leaf, and the other leaves are empty), how to compute the root.
-fn single_leaf_into_merge_value<H: Hasher + Default>(key: H256, value: H256) -> MergeValue {
+fn single_leaf_verify<H: Hasher + Default>(key: H256, value: H256) -> MergeValue {
     if value.is_zero() {
         MergeValue::from_h256(value)
     } else {
@@ -114,7 +127,7 @@ fn into_merge_value<H: Hasher + Default>(key: H256, value: H256, height: u8) -> 
 /// Verify the Merkle proof,  
 /// including the verification when there is only one leaf (which differs slightly from multi-leaf cases).
 pub fn verify<H: Hasher + Default>(
-    path: H256,      
+    path: H256, 
     value_hash: H256,
     leave_bitmap: H256,
     siblings: Vec<MergeValue>,
@@ -124,7 +137,7 @@ pub fn verify<H: Hasher + Default>(
         return false;
     }
     if siblings.is_empty() {
-        return single_leaf_into_merge_value::<H>(path, value_hash).hash::<H>() == root;
+        return single_leaf_verify::<H>(path, value_hash).hash::<H>() == root;
     }
 
     let mut current_path = path;

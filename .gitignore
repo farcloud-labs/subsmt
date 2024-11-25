@@ -12,6 +12,7 @@ Cargo.lock
 **/db
 **/*db
 **logs**
+logs
 
 *db
 
