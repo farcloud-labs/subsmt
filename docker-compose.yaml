@@ -9,6 +9,19 @@ services:
       - smt_network
     ports:
       - 8080:8080
+  # smt_node:
+  #   image: yanoctavian/smt-node:latest
+  #   volumes:
+  #     - ./data:/data
+  #   ports:
+  #     - 9944:9944
+  #     - 9933:9933
+  #     - 30333:30333
+  #   command: ["/usr/local/bin/substrate-node", "--dev"]
+  #   # , "--rpc-cors", "all", "--rpc-methods", "Unsafe", "--unsafe-rpc-external"
+
+  #   networks:
+  #     - smt_network
   smt_node:
     image: yanoctavian/smt-node:latest
     volumes:
@@ -17,7 +30,7 @@ services:
       - 9944:9944
       - 9933:9933
       - 30333:30333
-    command: ["/usr/local/bin/substrate-node", "--dev"]
+    command: ["/usr/local/bin/substrate-node", "--dev",  "--rpc-cors", "all", "--rpc-methods", "Unsafe", "--unsafe-rpc-external"]
     # , "--rpc-cors", "all", "--rpc-methods", "Unsafe", "--unsafe-rpc-external"
 
     networks:
