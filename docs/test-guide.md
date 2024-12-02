@@ -14,7 +14,7 @@ This project has undergone comprehensive testing and is suitable for production 
 ### install  Rust environment
 
 [https://docs.substrate.io/install/](https://docs.substrate.io/install/)
-> "Follow this document to set up your Rust environment."
+> Follow this document to set up your Rust environment.
 ### clone project
 ```
 git clone git clone https://github.com/farcloud-labs/subsmt.git
