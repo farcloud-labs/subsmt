@@ -41,14 +41,14 @@ cargo tarpaulin --out Html --output-dir ./docs --exclude-files ./sparse-merkle-t
 
 ```
 > [test report](./tarpaulin-report.html)
-## 手动测试
-### 启动docker
+## Manual testing
+### Start Docker
 ```
 docker-compose up
 ```
 
-### swagger-ui测试
+### swagger-ui testing
 
-### 链上测试
+### On-chain testing
 
 
