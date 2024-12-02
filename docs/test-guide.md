@@ -17,7 +17,7 @@ This project has undergone comprehensive testing and is suitable for production 
 > Follow this document to set up your Rust environment.
 ### clone project
 ```
-git clone git clone https://github.com/farcloud-labs/subsmt.git
+git clone https://github.com/farcloud-labs/subsmt.git
 
 cd subsmt 
 git submodule update --init --recursive
