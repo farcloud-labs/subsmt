@@ -18,7 +18,7 @@ services:
       - 9944:9944
       - 9933:9933
       - 30333:30333
-    command: ["/usr/local/bin/substrate-node", "--dev",  "--rpc-cors", "all", "--rpc-methods", "Unsafe", "--unsafe-rpc-external"]
+    command: ["/usr/local/bin/substrate-node", "--dev",  "--rpc-cors", "all", "--rpc-methods", "Unsafe", "--unsafe-rpc-external", "--base-path", "/data"]
 
     networks:
       - smt_network
