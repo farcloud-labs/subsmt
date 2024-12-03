@@ -45,8 +45,11 @@ docker-compose up
 
 ### swagger-ui testing
 
+The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
+
 [http://localhost:8080/swagger-ui/#](http://localhost:8080/swagger-ui/#)
-1. update_value
+1. `update_value`  
+   > Be used to insert, update, or delete a specific Merkle leaf value.
 
     Request body:
     ```
@@ -65,6 +68,8 @@ docker-compose up
     "9978dd715a13f27c42fc832b6997cfd7013341790e651eb3781d4a7706e3a323"
     ```
 2. get_value
+   > Here, you can retrieve the value that was inserted in step 1.
+
    Request body:
    ```
    {
@@ -81,7 +86,9 @@ docker-compose up
     }
 
    ```
-3. get_merkle_proof
+3. `get_merkle_proof`
+   > This API can retrieve the Merkle proof for a specific key, which can be submitted to the blockchain for verification.
+
    Request body:
    ```
    {
@@ -104,7 +111,9 @@ docker-compose up
     }
 
    ```
-4. verify
+4. `verify`
+   > This API can verify the Merkle proof obtained in step 3, return  `true` indicates the proof is valid.
+   
    Request body:
    ```
    {
@@ -123,7 +132,9 @@ docker-compose up
    ```
    true
    ```
-5. remove_value
+5. `remove_value`
+   > Delete a specific leaf value. Here, we are removing the value inserted in step 1.Return the Merkle tree root hash after the deletion.
+
    Request body:
    ```
    {
@@ -137,7 +148,9 @@ docker-compose up
    ```
    "0000000000000000000000000000000000000000000000000000000000000000"
    ```
-6. get_next_root
+6. `get_next_root`
+   > Suppose you want to update a leaf value but don't want to actually perform the update. However, you'd like to know the updated Merkle tree root hash. This API is very useful for that.
+
    Request body:
    ```
    {
@@ -153,7 +166,9 @@ docker-compose up
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
    ```
-7. update_value
+7. `update_value`
+   > Here, we insert the value from step 6 and return the actual Merkle tree root hash. We find that it matches the result from step 6, indicating that the step 6 test has passed.
+
    Request body:
    ```
    {
@@ -168,7 +183,8 @@ docker-compose up
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
    ```
-8. get_root
+8. `get_root`
+   > Retrieve the Merkle tree root hash. The value here should be the same as in step 7.
    Request body:
    ```
    {
@@ -181,7 +197,9 @@ docker-compose up
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
    ```
-9. clear
+9.  `clear`
+    > Delete all the leaves in the Merkle tree and return the Merkle tree root hash after the deletion. Return the Merkle root, which must be the value '0000000000000000000000000000000000000000000000000000000000000000'.
+
     Request body:
    ```
    {
@@ -197,6 +215,8 @@ docker-compose up
 
    
 ### On-chain testing
+Submit the Merkle proof obtained in step 3 to the blockchain for verification.
+[explorer](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/explorer)
 
 ```
 {
@@ -210,6 +230,8 @@ docker-compose up
     "siblings": []
 }
 ```
+
+> Note: the path, value_hash, root, and leaf_bitmap here should have the `0x` prefix.
 
 ![verify_on_chain](./images/verify_on_chain.jpg)
 
