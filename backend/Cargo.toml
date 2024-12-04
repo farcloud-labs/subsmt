@@ -33,6 +33,7 @@ utoipa-swagger-ui = { version ="8.0.3", features = [
 utoipa-actix-web = { version = "0.1.2"}
 utoipa-redoc = "5.0.0"
 dotenv = "0.15.0"
+clap = { version = "4.5.22", features = ["derive"]}
 
 [lib]
 name = "smt_backend_lib"

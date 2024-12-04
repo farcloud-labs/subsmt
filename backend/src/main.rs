@@ -55,6 +55,9 @@ use utoipa::{IntoParams, OpenApi, ToSchema};
 use utoipa_actix_web::AppExt;
 use utoipa_redoc::Redoc;
 use utoipa_swagger_ui::SwaggerUi;
+use smt_backend_lib::cli::Args;
+use clap::Parser;
+
 
 const SMT_API: &str = "SMT API";
 
@@ -299,6 +302,8 @@ async fn clear(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let args = Args::parse();
+    let database: String = args.database;
     dotenv().ok();
     let base_path =env::var("DB_PATH").unwrap();
     let log_path =env::var("LOG_PATH").unwrap();
