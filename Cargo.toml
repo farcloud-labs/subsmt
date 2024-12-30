@@ -19,7 +19,7 @@ rust-version = "1.75"
 
 
 [workspace.dependencies]
-
+getrandom = { version = "0.2.15", features = ["js"]}
 frame-benchmarking = { git="https://github.com/paritytech/polkadot-sdk", branch="stable2409", default-features = false }
 frame-support = { git="https://github.com/paritytech/polkadot-sdk", branch="stable2409",default-features = false}
 frame-system = {git="https://github.com/paritytech/polkadot-sdk", branch="stable2409",default-features = false}
