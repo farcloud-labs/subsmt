@@ -40,7 +40,7 @@ impl<'a> SMTStore<'a> {
     pub fn new(db: Arc<Database>, col: u32, prefix: &'a [u8]) -> Self {
         SMTStore {
             inner: db,
-            col,
+            col, // fixme 默认是1
             prefix,
         }
     }

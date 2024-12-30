@@ -302,6 +302,7 @@ async fn clear(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // fixme 
     let args = Args::parse();
     let database: String = args.database;
     dotenv().ok();
