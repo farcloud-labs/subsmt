@@ -64,7 +64,7 @@ impl ParityStore {
     }
 
     /// Reset a column by removing all its data
-    pub fn reset_column(mut self, column: u8) -> Result<Self, StoreError> {
+    pub fn reset_column(self, column: u8) -> Result<Self, StoreError> {
         // Create options with same configuration
         let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
         

@@ -19,6 +19,7 @@ flexi_logger = "0.29.6"
 log = "0.4.22"
 http = "1.1.0"
 thiserror = "2.0.3"
+tempfile = "3.19.1" 
 
 scale-info = { version = "2.10.0", features = [
 	"derive",
