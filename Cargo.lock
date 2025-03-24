@@ -4620,6 +4620,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "lz4"
+version = "1.28.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a20b523e860d03443e98350ceaac5e71c6ba89aea7d960769ec3ce37f4de5af4"
+dependencies = [
+ "lz4-sys",
+]
+
+[[package]]
+name = "lz4-sys"
+version = "1.11.1+lz4-1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bd8c0d6c6ed0cd30b3652886bb8711dc4bb01d637a68105a3d5158039b418e6"
+dependencies = [
+ "cc",
+ "libc",
+]
+
+[[package]]
 name = "macro_magic"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4701,6 +4720,15 @@ name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
+
+[[package]]
+name = "memmap2"
+version = "0.5.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83faa42c0a078c393f6b29d5db232d8be22776a891f8f56e5284faee4a20b327"
+dependencies = [
+ "libc",
+]
 
 [[package]]
 name = "memory-db"
@@ -5427,6 +5455,26 @@ dependencies = [
  "rand_core 0.6.4",
  "serde",
  "unicode-normalization",
+]
+
+[[package]]
+name = "parity-db"
+version = "0.5.0"
+source = "git+https://github.com/paritytech/parity-db.git?branch=master#ee51351b21621b2105786832d0b576f0d0d14eec"
+dependencies = [
+ "blake2",
+ "crc32fast",
+ "fs2",
+ "hex",
+ "libc",
+ "log",
+ "lz4",
+ "memmap2",
+ "parking_lot",
+ "rand",
+ "siphasher 0.3.11",
+ "snap",
+ "winapi",
 ]
 
 [[package]]
@@ -7329,6 +7377,7 @@ dependencies = [
  "http 1.2.0",
  "kvdb-rocksdb",
  "log",
+ "parity-db",
  "parity-scale-codec",
  "scale-info",
  "serde",
@@ -7358,6 +7407,12 @@ dependencies = [
  "sparse-merkle-tree",
  "utoipa",
 ]
+
+[[package]]
+name = "snap"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1b6b67fb9a61334225b5b790716f609cd58395f895b3fe8b328786812a40bc3b"
 
 [[package]]
 name = "socket2"
