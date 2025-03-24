@@ -64,7 +64,7 @@ const SMT_API: &str = "SMT API";
 #[derive(OpenApi)]
 #[openapi(
         tags(
-            (name = "SMT API", description = "Provides sparse Morkel tree related APIs")
+            (name = "SMT API", description = "Provides sparse Merkel tree related APIs")
         ),
     )]
 struct ApiDoc;
