@@ -43,7 +43,7 @@ impl<
 {
     /// Open the ParityDb database, create it if it does not exist.
     pub fn open<P: AsRef<Path>>(path: P) -> std::io::Result<Self> {
-        let db = ParityDb::open_or_create(path.as_ref(), 1)
+        let db = ParityDb::open_or_create(path.as_ref(), u8::MAX)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))?;
         Ok(Self {
             store: Arc::new(db),
