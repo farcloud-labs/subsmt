@@ -134,14 +134,18 @@ impl<
         Ok(next_root)
     }
 
-    // /// Delete a specific Merkle tree by resetting its column
-    // pub fn clear(&self, col: u8) {
-    //     if let Ok(store) = Arc::get_mut(&self.store) {
-    //         if let Ok(new_store) = store.reset_column(col) {
-    //             *store = new_store;
-    //         }
-    //     }
-    // }
+    /// Delete a specific Merkle tree by clearing its column
+    pub fn clear(&self, col: u8) -> Result<(), Error> {
+        // Use clear_column from ParityDb to clear all data in the column
+        self.store
+            .clear_column(col)
+            .map_err(|e| Error::Store(e.to_string()))?;
+        
+        // Create a new empty tree for this column
+        self.new_tree_with_store(col)?;
+        
+        Ok(())
+    }
 
     /// Verify the Merkle proof.
     pub fn verify(&self, proof: Proof<K, V>) -> bool {
@@ -172,11 +176,10 @@ mod tests {
         let multi_tree =
             MultiSMTParityStore::<SMTKey, SMTValue, Keccak256Hasher>::open(temp_dir.path()).unwrap();
 
-        // Use different columns instead of prefixes
         let tree1_col: u8 = 0;
         let tree2_col: u8 = 1;
-        multi_tree.clear(tree1_col);
-        multi_tree.clear(tree2_col);
+        multi_tree.clear(tree1_col).unwrap();
+        multi_tree.clear(tree2_col).unwrap();
         multi_tree.new_tree_with_store(tree1_col).unwrap();
         multi_tree.new_tree_with_store(tree2_col).unwrap();
 
@@ -253,7 +256,7 @@ mod tests {
         assert_eq!(tree1_root1, tree2_root1);
 
         // Test clear
-        multi_tree.clear(tree1_col);
+        multi_tree.clear(tree1_col).unwrap();
         assert_eq!(
             multi_tree.get_value(tree1_col, tree1_key1.clone()).unwrap(),
             SMTValue::default()

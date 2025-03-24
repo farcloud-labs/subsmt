@@ -92,6 +92,13 @@ impl ParityDb {
             path: self.path,
         })
     }
+
+    /// Clear all data in a column without recreating it
+    pub fn clear_column(&self, column: u8) -> Result<(), StoreError> {
+        let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
+        Db::reset_column(&mut options, column, None)?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -140,5 +147,29 @@ mod tests {
         assert_eq!(store.get(1, b"key2").unwrap(), Some(b"value2".to_vec()));
 
         store.destroy().unwrap();
+    }
+
+    #[test]
+    fn test_clear_column() {
+        let temp_dir = tempdir().unwrap();
+        let store = ParityDb::open_or_create(temp_dir.path(), 2).unwrap();
+
+        // Insert some test data
+        for i in 0..100 {
+            let key = format!("key{}", i).into_bytes();
+            let value = format!("value{}", i).into_bytes();
+            store.insert(0, &key, &value).unwrap();
+            store.insert(1, &key, &value).unwrap();
+        }
+
+        // Clear column 0
+        store.clear_column(0).unwrap();
+
+        // Verify column 0 is empty but column 1 still has data
+        for i in 0..100 {
+            let key = format!("key{}", i).into_bytes();
+            assert_eq!(store.get(0, &key).unwrap(), None);
+            assert!(store.get(1, &key).unwrap().is_some());
+        }
     }
 }
