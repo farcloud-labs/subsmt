@@ -1,134 +1,129 @@
-use parity_db::{Db, Options};
-use std::path::PathBuf;
+use sparse_merkle_tree::{
+    error::Error,
+    traits::{StoreReadOps, StoreWriteOps, Value},
+    BranchKey, BranchNode, H256,
+};
+use std::{marker::PhantomData, sync::Arc};
+use codec::{Decode, Encode};
 
-pub struct ParityStore {
-    db: Db,
-    path: PathBuf,
+use crate::parity_db::ParityDb;
+
+pub struct SMTParityStore {
+    inner: Arc<ParityDb>,
+    col: u8,
 }
 
-#[derive(Debug)]
-pub enum StoreError {
-    DbError(parity_db::Error),
-    InvalidColumnId,
-}
-
-impl From<parity_db::Error> for StoreError {
-    fn from(error: parity_db::Error) -> Self {
-        StoreError::DbError(error)
-    }
-}
-
-impl ParityStore {
-    /// Opens an existing database or creates a new one if it doesn't exist
-    pub fn open_or_create(path: impl Into<PathBuf>, num_columns: u8) -> Result<Self, StoreError> {
-        let path = path.into();
-        let options = Options::with_columns(&path, num_columns);
-        
-        let db = Db::open_or_create(&options)?;
-
-        Ok(ParityStore {
-            db,
-            path,
-        })
-    }
-
-    /// Insert a value into the specified column
-    pub fn insert(&self, column: u8, key: &[u8], value: &[u8]) -> Result<(), StoreError> {
-        self.db.commit(vec![(column, key.to_vec(), Some(value.to_vec()))])?;
-        Ok(())
-    }
-
-    /// Delete a value from the specified column
-    pub fn delete(&self, column: u8, key: &[u8]) -> Result<(), StoreError> {
-        self.db.commit(vec![(column, key.to_vec(), None)])?;
-        Ok(())
-    }
-
-    /// Get a value from the specified column
-    pub fn get(&self, column: u8, key: &[u8]) -> Result<Option<Vec<u8>>, StoreError> {
-        Ok(self.db.get(column, key)?)
-    }
-
-    /// Delete the entire database by removing all files
-    pub fn destroy(self) -> Result<(), StoreError> {
-        // First close the database by dropping it
-        drop(self.db);
-        
-        // Then remove the directory and all its contents
-        if self.path.exists() {
-            std::fs::remove_dir_all(&self.path)
-                .map_err(|e| StoreError::DbError(parity_db::Error::Io(e)))?;
+impl SMTParityStore {
+    pub fn new(db: Arc<ParityDb>, col: u8) -> Self {
+        SMTParityStore {
+            inner: db,
+            col,
         }
-        
-        Ok(())
+    }
+}
+
+impl<V> StoreWriteOps<V> for SMTParityStore
+where
+    V: Value + Into<Vec<u8>>,
+{
+    fn insert_branch(&mut self, node_key: BranchKey, branch: BranchNode) -> Result<(), Error> {
+        self.inner
+            .insert(self.col, &node_key.encode(), &branch.encode())
+            .map_err(|e| Error::Store(e.to_string()))
     }
 
-    /// Reset a column by removing all its data
-    pub fn reset_column(self, column: u8) -> Result<Self, StoreError> {
-        // Create options with same configuration
-        let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
-        
-        // Drop the current database instance
-        drop(self.db);
+    fn insert_leaf(&mut self, leaf_key: H256, leaf: V) -> Result<(), Error> {
+        self.inner
+            .insert(self.col, &leaf_key.encode(), &leaf.into())
+            .map_err(|e| Error::Store(e.to_string()))
+    }
 
-        // Reset the column with default options
-        Db::reset_column(&mut options, column, None)?;
-        
-        // Reopen the database
-        let db = Db::open_or_create(&options)?;
-        
-        Ok(ParityStore {
-            db,
-            path: self.path,
-        })
+    fn remove_branch(&mut self, node_key: &BranchKey) -> Result<(), Error> {
+        self.inner
+            .delete(self.col, &node_key.encode())
+            .map_err(|e| Error::Store(e.to_string()))
+    }
+
+    fn remove_leaf(&mut self, leaf_key: &H256) -> Result<(), Error> {
+        self.inner
+            .delete(self.col, &leaf_key.encode())
+            .map_err(|e| Error::Store(e.to_string()))
+    }
+}
+
+impl<V> StoreReadOps<V> for SMTParityStore
+where
+    V: Value + From<Vec<u8>>,
+{
+    fn get_branch(&self, branch_key: &BranchKey) -> Result<Option<BranchNode>, Error> {
+        self.inner
+            .get(self.col, &branch_key.encode())
+            .map_err(|e| Error::Store(e.to_string()))?
+            .map(|v| BranchNode::decode(&mut v.as_slice()).unwrap())
+            .map_or(Ok(None), |v| Ok(Some(v)))
+    }
+
+    fn get_leaf(&self, leaf_key: &H256) -> Result<Option<V>, Error> {
+        self.inner
+            .get(self.col, &leaf_key.encode())
+            .map_err(|e| Error::Store(e.to_string()))?
+            .map(|v| v.into())
+            .map_or(Ok(None), |v| Ok(Some(v)))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use smt_primitives::kv::{SMTKey, SMTValue};
+    use sparse_merkle_tree::{merge::MergeValue, traits::Value};
     use tempfile::tempdir;
 
     #[test]
-    fn test_basic_operations() {
+    fn test_store() {
+        // 打开数据库
         let temp_dir = tempdir().unwrap();
-        let store = ParityStore::open_or_create(temp_dir.path(), 1).unwrap();
+        let db = ParityDb::open_or_create(temp_dir.path(), 1).unwrap();
+        let mut store = SMTParityStore::new(Arc::new(db), 0);
 
-        // Test insert
-        let key = b"test_key";
-        let value = b"test_value";
-        store.insert(0, key, value).unwrap();
+        // 插入叶子
+        let leaf1_key: H256 = [1u8; 32].to_vec().into();
+        let leaf1 = SMTValue {
+            nonce: 1,
+            balance: 99,
+        };
+        assert_eq!(store.get_leaf(&leaf1_key).unwrap(), None::<SMTValue>);
+        store.insert_leaf(leaf1_key, leaf1.clone()).unwrap();
+        assert_eq!(store.get_leaf(&leaf1_key).unwrap(), Some(leaf1));
+        <SMTParityStore as StoreWriteOps<SMTValue>>::remove_leaf(&mut store, &leaf1_key).unwrap();
+        assert_eq!(store.get_leaf(&leaf1_key).unwrap(), None::<SMTValue>);
 
-        // Test get
-        let retrieved = store.get(0, key).unwrap();
-        assert_eq!(retrieved, Some(value.to_vec()));
-
-        // Test delete
-        store.delete(0, key).unwrap();
-        let retrieved = store.get(0, key).unwrap();
-        assert_eq!(retrieved, None);
-
-        // Test destroy
-        store.destroy().unwrap();
-        assert!(!temp_dir.path().exists());
-    }
-
-    #[test]
-    fn test_reset_column() {
-        let temp_dir = tempdir().unwrap();
-        let store = ParityStore::open_or_create(temp_dir.path(), 2).unwrap();
-
-        // Insert data in both columns
-        store.insert(0, b"key1", b"value1").unwrap();
-        store.insert(1, b"key2", b"value2").unwrap();
-
-        // Reset column 0
-        let store = store.reset_column(0).unwrap();
-
-        // Check that column 0 is empty but column 1 still has data
-        assert_eq!(store.get(0, b"key1").unwrap(), None);
-        assert_eq!(store.get(1, b"key2").unwrap(), Some(b"value2".to_vec()));
-
-        store.destroy().unwrap();
+        // 插入分支节点
+        let node1_key: BranchKey = BranchKey::new(100, [2u8; 32].into());
+        let node1: BranchNode = BranchNode {
+            left: MergeValue::from_h256([3u8; 32].into()),
+            right: MergeValue::from_h256([4u8; 32].into()),
+        };
+        assert_eq!(
+            <SMTParityStore as StoreReadOps<SMTValue>>::get_branch(&store, &node1_key).unwrap(),
+            None::<BranchNode>
+        );
+        <SMTParityStore as StoreWriteOps<SMTValue>>::insert_branch(
+            &mut store,
+            node1_key.clone(),
+            node1.clone(),
+        )
+        .unwrap();
+        assert_eq!(
+            <SMTParityStore as StoreReadOps<SMTValue>>::get_branch(&store, &node1_key).unwrap(),
+            Some(node1.clone())
+        );
+        <SMTParityStore as StoreWriteOps<SMTValue>>::remove_branch(&mut store, &node1_key)
+            .unwrap();
+        assert_eq!(
+            <SMTParityStore as StoreReadOps<SMTValue>>::get_branch(&store, &node1_key).unwrap(),
+            None::<BranchNode>
+        );
     }
 }
+

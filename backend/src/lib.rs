@@ -24,4 +24,5 @@ pub mod error;
 pub mod req;
 pub mod store;
 pub mod cli;
+pub mod parity_db;
 pub mod parity_store;
