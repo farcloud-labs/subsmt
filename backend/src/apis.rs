@@ -198,8 +198,8 @@ pub mod test {
         let multi_tree =
             MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(base_path)).unwrap();
 
-        let tree1: &[u8] = "tree1".as_ref();
-        let tree2: &[u8] = "tree2".as_ref();
+        let tree1: &str = "tree1";
+        let tree2: &str = "tree2";
         multi_tree.clear(tree1.to_string());
         multi_tree.clear(tree2.to_string());
         multi_tree.new_tree_with_store(tree1.to_string()).unwrap();
