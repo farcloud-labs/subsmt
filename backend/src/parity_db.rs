@@ -73,30 +73,32 @@ impl ParityDb {
         Ok(())
     }
 
-    /// Reset a column by removing all its data
-    pub fn reset_column(self, column: u8) -> Result<Self, StoreError> {
-        // Create options with same configuration
-        let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
+    // /// Reset a column by removing all its data
+    // pub fn reset_column(self, column: u8) -> Result<Self, StoreError> {
+    //     // Create options with same configuration
+    //     let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
         
-        // Drop the current database instance
-        drop(self.db);
+    //     // Drop the current database instance
+    //     drop(self.db);
 
-        // Reset the column with default options
-        Db::reset_column(&mut options, column, None)?;
+    //     // Reset the column with default options
+    //     Db::reset_column(&mut options, column, None)?;
         
-        // Reopen the database
-        let db = Db::open_or_create(&options)?;
+    //     // Reopen the database
+    //     let db = Db::open_or_create(&options)?;
         
-        Ok(ParityDb {
-            db,
-            path: self.path,
-        })
-    }
+    //     Ok(ParityDb {
+    //         db,
+    //         path: self.path,
+    //     })
+    // }
 
     /// Clear all data in a column without recreating it
     pub fn clear_column(&self, column: u8) -> Result<(), StoreError> {
         let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
+        // drop(self.db);
         Db::reset_column(&mut options, column, None)?;
+        // self.db.clear_stats(Some(column))?;
         Ok(())
     }
 }

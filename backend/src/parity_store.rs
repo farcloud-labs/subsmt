@@ -10,7 +10,7 @@ use crate::parity_db::ParityDb;
 
 pub struct SMTParityStore {
     inner: Arc<ParityDb>,
-    col: u8,
+    col: u8, // 创建一个表就够了
 }
 
 impl SMTParityStore {

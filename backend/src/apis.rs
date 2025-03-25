@@ -81,7 +81,7 @@ where
 
     /// Create or open a new tree.
     pub fn new_tree_with_store(&self, prefix: String) -> Result<MultiSMT<V, H>> {
-        let db = SMTStore::new(self.store.clone(), Default::default(), prefix);
+        let db = SMTStore::new(self.store.clone(), prefix);
         MultiSMT::new_with_store(db)
     }
 

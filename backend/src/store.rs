@@ -32,15 +32,15 @@ use kvdb_rocksdb::Database;
 
 pub struct SMTStore {
     inner: Arc<Database>,
-    col: u32,
+    // col: u32, // 这个也是用不到 默认值是0
     prefix: String,
 }
 
 impl SMTStore {
-    pub fn new(db: Arc<Database>, col: u32, prefix: impl Into<String>) -> Self {
+    pub fn new(db: Arc<Database>, prefix: impl Into<String>) -> Self {
         SMTStore {
             inner: db,
-            col, // fixme 默认是1
+            // col, 
             prefix: prefix.into(),
         }
     }
@@ -53,7 +53,7 @@ where
     fn insert_branch(&mut self, node_key: BranchKey, branch: BranchNode) -> Result<(), Error> {
         let mut tx = self.inner.transaction();
         tx.put(
-            self.col,
+            Default::default(),
             &[self.prefix.as_bytes(), &node_key.encode()].concat(),
             &branch.encode(),
         );
@@ -66,7 +66,7 @@ where
     fn insert_leaf(&mut self, leaf_key: H256, leaf: V) -> Result<(), Error> {
         let mut tx = self.inner.transaction();
         tx.put(
-            self.col,
+            Default::default(),
             &[self.prefix.as_bytes(), &leaf_key.encode()].concat(),
             &leaf.into(),
         );
@@ -77,7 +77,7 @@ where
 
     fn remove_branch(&mut self, node_key: &BranchKey) -> Result<(), Error> {
         let mut tx = self.inner.transaction();
-        tx.delete(self.col, &[self.prefix.as_bytes(), &node_key.encode()].concat());
+        tx.delete(Default::default(), &[self.prefix.as_bytes(), &node_key.encode()].concat());
         self.inner
             .write(tx)
             .map_err(|e| Error::Store(e.to_string()))
@@ -85,7 +85,7 @@ where
 
     fn remove_leaf(&mut self, leaf_key: &H256) -> Result<(), Error> {
         let mut tx = self.inner.transaction();
-        tx.delete(self.col, &[self.prefix.as_bytes(), &leaf_key.encode()].concat());
+        tx.delete(Default::default(), &[self.prefix.as_bytes(), &leaf_key.encode()].concat());
         self.inner
             .write(tx)
             .map_err(|e| Error::Store(e.to_string()))
@@ -98,14 +98,14 @@ where
 {
     fn get_branch(&self, branch_key: &BranchKey) -> Result<Option<BranchNode>, Error> {
         self.inner
-            .get(self.col, &[self.prefix.as_bytes(), &branch_key.encode()].concat())
+            .get(Default::default(), &[self.prefix.as_bytes(), &branch_key.encode()].concat())
             .map(|s| s.map(|v| BranchNode::decode(&mut v.as_slice()).unwrap()))
             .map_err(|e| Error::Store(e.to_string()))
     }
 
     fn get_leaf(&self, leaf_key: &H256) -> Result<Option<V>, Error> {
         self.inner
-            .get(self.col, &[self.prefix.as_bytes(), leaf_key.as_slice()].concat())
+            .get(Default::default(), &[self.prefix.as_bytes(), leaf_key.as_slice()].concat())
             .map(|s| s.map(|v| v.into()))
             .map_err(|e| Error::Store(e.to_string()))
     }
