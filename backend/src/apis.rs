@@ -43,8 +43,9 @@ use sparse_merkle_tree::{
 };
 use std::{convert::AsRef, sync::Arc};
 use utoipa::{ToSchema, __dev::ComposeSchema};
+// use crate::traits::MSS;
 
-type MultiSMT<'a, V, H> = SparseMerkleTree<H, V, SMTStore<'a>>;
+type MultiSMT<V, H> = SparseMerkleTree<H, V, SMTStore>;
 
 /// Multiple Merkle trees are stored in a KV database.
 pub struct MultiSMTStore<K, V, H> {
@@ -52,48 +53,47 @@ pub struct MultiSMTStore<K, V, H> {
     v: PhantomData<(K, V, H)>,
 }
 
-impl<
-        'a,
-        K: Value + Clone + Serialize + ToSchema + Deserialize<'a> + ComposeSchema + Debug + TypeInfo,
-        V: Default
-            + Value
-            + Into<Vec<u8>>
-            + From<Vec<u8>>
-            + ToSchema
-            + Serialize
-            + Deserialize<'a>
-            + ComposeSchema
-            + PartialEq
-            + Clone
-            + Debug
-            + TypeInfo,
-        H: Hasher + Default,
-    > MultiSMTStore<K, V, H>
+impl<K, V, H> MultiSMTStore<K, V, H>
+where
+    K: Value + Clone + Serialize + ToSchema + Deserialize<'static> + ComposeSchema + Debug + TypeInfo,
+    V: Default
+        + Value
+        + Into<Vec<u8>>
+        + From<Vec<u8>>
+        + ToSchema
+        + Serialize
+        + Deserialize<'static>
+        + ComposeSchema
+        + PartialEq
+        + Clone
+        + Debug
+        + TypeInfo,
+    H: Hasher + Default,
 {
     /// Open the KV database, create it if it does not exist.
     pub fn open<P: AsRef<Path>>(path: P) -> io::Result<Self> {
         let db = Database::open(&Default::default(), path)?;
         Ok(Self {
-            store: db.into(),
-            v: Default::default(),
+            store: Arc::new(db),
+            v: PhantomData,
         })
     }
 
     /// Create or open a new tree.
-    pub fn new_tree_with_store(&'a self, prefix: &'a [u8]) -> Result<MultiSMT<V, H>> {
+    pub fn new_tree_with_store(&self, prefix: String) -> Result<MultiSMT<V, H>> {
         let db = SMTStore::new(self.store.clone(), Default::default(), prefix);
         MultiSMT::new_with_store(db)
     }
 
     /// Insert a value into a specific Merkle tree.
-    pub fn update(&'a self, prefix: &'a [u8], key: K, value: V) -> SMTResult<H256> {
+    pub fn update(&self, prefix: String, key: K, value: V) -> SMTResult<H256> {
         let mut tree = self.new_tree_with_store(prefix)?;
         let h = tree.update(key.to_h256(), value)?;
         Ok(*h)
     }
 
     /// Insert multiple values into a Merkle tree at once.
-    pub fn update_all(&'a self, prefix: &'a [u8], kvs: Vec<(K, V)>) -> SMTResult<H256> {
+    pub fn update_all(&self, prefix: String, kvs: Vec<(K, V)>) -> SMTResult<H256> {
         let kvs = kvs
             .into_iter()
             .map(|(k, v)| Ok((k.to_h256(), v)))
@@ -105,21 +105,21 @@ impl<
     }
 
     /// Get the root hash.
-    pub fn get_root(&'a self, prefix: &'a [u8]) -> Result<H256> {
+    pub fn get_root(&self, prefix: String) -> Result<H256> {
         let tree = self.new_tree_with_store(prefix)?;
         Ok(*tree.root())
     }
 
     /// Get the value of a specific key in a particular tree.
-    pub fn get_value(&'a self, prefix: &'a [u8], key: K) -> Result<V> {
+    pub fn get_value(&self, prefix: String, key: K) -> Result<V> {
         let tree = self.new_tree_with_store(prefix)?;
         let value = tree.get(&key.to_h256())?;
         Ok(value)
     }
 
     /// Get the Merkle proof.
-    pub fn get_merkle_proof(&'a self, prefix: &'a [u8], key: K) -> Result<Proof<K, V>> {
-        let tree = self.new_tree_with_store(prefix)?;
+    pub fn get_merkle_proof(&self, prefix: String, key: K) -> Result<Proof<K, V>> {
+        let tree = self.new_tree_with_store(prefix.clone())?;
         let proof = tree.merkle_proof(vec![key.to_h256()])?;
         let leaves_bitmap = proof.leaves_bitmap();
         let siblings = proof.merkle_path();
@@ -138,20 +138,20 @@ impl<
     }
 
     /// Get the Merkle proof, the return value is `Vec<u8>`, which is not developer-friendly and may be inefficient for on-chain gas or functionality.
-    pub fn get_merkle_proof_old(&'a self, prefix: &'a [u8], keys: Vec<K>) -> SMTResult<Vec<u8>> {
+    pub fn get_merkle_proof_old(&self, prefix: String, keys: Vec<K>) -> SMTResult<Vec<u8>> {
         let tree = self.new_tree_with_store(prefix)?;
         let keys = keys
             .into_iter()
             .map(|k| Ok(k.to_h256()))
             .collect::<Result<Vec<H256>>>()?;
 
-        let proof = tree.merkle_proof(keys.clone()).unwrap();
+        let proof = tree.merkle_proof(keys.clone())?;
         let proof = proof.compile(keys)?;
         Ok(proof.0)
     }
 
     /// Before data is updated, the future value of the root hash can be calculated in advance.
-    pub fn get_next_root(&'a self, old_proof: Vec<u8>, next_kvs: Vec<(K, V)>) -> Result<H256> {
+    pub fn get_next_root(&self, old_proof: Vec<u8>, next_kvs: Vec<(K, V)>) -> Result<H256> {
         let p = CompiledMerkleProof(old_proof);
         let kvs = next_kvs
             .into_iter()
@@ -163,14 +163,14 @@ impl<
     }
 
     /// Delete a specific Merkle tree.
-    pub fn clear(&'a self, prefix: &'a [u8]) {
+    pub fn clear(&self, prefix: String) {
         let mut tx = self.store.transaction();
-        tx.delete_prefix(Default::default(), prefix);
+        tx.delete_prefix(Default::default(), prefix.as_bytes());
         self.store.write(tx).unwrap();
     }
 
     /// Verify the Merkle proof.
-    pub fn verify(&'a self, proof: Proof<K, V>) -> bool {
+    pub fn verify(&self, proof: Proof<K, V>) -> bool {
         let mut res = false;
         if proof.value != V::default() {
             res = smt_verify::<H>(
@@ -200,14 +200,14 @@ pub mod test {
 
         let tree1: &[u8] = "tree1".as_ref();
         let tree2: &[u8] = "tree2".as_ref();
-        multi_tree.clear(tree1);
-        multi_tree.clear(tree2);
-        multi_tree.new_tree_with_store(tree1).unwrap();
-        multi_tree.new_tree_with_store(tree2).unwrap();
+        multi_tree.clear(tree1.to_string());
+        multi_tree.clear(tree2.to_string());
+        multi_tree.new_tree_with_store(tree1.to_string()).unwrap();
+        multi_tree.new_tree_with_store(tree2.to_string()).unwrap();
 
         // 分别取两个tree的root
-        assert_eq!(multi_tree.get_root(tree1).unwrap(), H256::zero());
-        assert_eq!(multi_tree.get_root(tree2).unwrap(), H256::zero());
+        assert_eq!(multi_tree.get_root(tree1.to_string()).unwrap(), H256::zero());
+        assert_eq!(multi_tree.get_root(tree2.to_string()).unwrap(), H256::zero());
 
         // 插入一个tree数据
         let tree1_key1 = SMTKey {
@@ -226,36 +226,36 @@ pub mod test {
         };
 
         assert_eq!(
-            multi_tree.get_value(tree1, tree1_key1.clone()).unwrap(),
+            multi_tree.get_value(tree1.to_string(), tree1_key1.clone()).unwrap(),
             SMTValue::default()
         );
-        assert_eq!(multi_tree.get_root(tree1).unwrap(), H256::zero());
+        assert_eq!(multi_tree.get_root(tree1.to_string()).unwrap(), H256::zero());
         multi_tree
-            .update(tree1, tree1_key1.clone(), tree1_value1.clone())
+            .update(tree1.to_string(), tree1_key1.clone(), tree1_value1.clone())
             .unwrap();
         assert_eq!(
-            multi_tree.get_value(tree1, tree1_key1.clone()).unwrap(),
+            multi_tree.get_value(tree1.to_string(), tree1_key1.clone()).unwrap(),
             tree1_value1.clone()
         );
         let proof = multi_tree
-            .get_merkle_proof(tree1, tree1_key1.clone())
+            .get_merkle_proof(tree1.to_string(), tree1_key1.clone())
             .unwrap();
         assert_eq!(multi_tree.verify(proof), true);
         // remove
         multi_tree
-            .update(tree1, tree1_key1.clone(), SMTValue::default())
+            .update(tree1.to_string(), tree1_key1.clone(), SMTValue::default())
             .unwrap();
         assert_eq!(
-            multi_tree.get_value(tree1, tree1_key1.clone()).unwrap(),
+            multi_tree.get_value(tree1.to_string(), tree1_key1.clone()).unwrap(),
             SMTValue::default()
         );
-        assert_eq!(multi_tree.get_root(tree1).unwrap(), H256::zero());
+        assert_eq!(multi_tree.get_root(tree1.to_string()).unwrap(), H256::zero());
         multi_tree
-            .update(tree1, tree1_key1.clone(), tree1_value1.clone())
+            .update(tree1.to_string(), tree1_key1.clone(), tree1_value1.clone())
             .unwrap();
-        let tree1_root1 = multi_tree.get_root(tree1).unwrap();
+        let tree1_root1 = multi_tree.get_root(tree1.to_string()).unwrap();
         let old_proof = multi_tree
-            .get_merkle_proof_old(tree1, vec![tree1_key2.clone()])
+            .get_merkle_proof_old(tree1.to_string(), vec![tree1_key2.clone()])
             .unwrap();
         let _next_root = multi_tree
             .get_next_root(
@@ -264,48 +264,48 @@ pub mod test {
             )
             .unwrap();
         multi_tree
-            .update(tree1, tree1_key2.clone(), tree1_value2.clone())
+            .update(tree1.to_string(), tree1_key2.clone(), tree1_value2.clone())
             .unwrap();
-        let tree1_root2 = multi_tree.get_root(tree2).unwrap();
+        let tree1_root2 = multi_tree.get_root(tree2.to_string()).unwrap();
         assert_ne!(tree1_root1, tree1_root2);
-        assert_eq!(multi_tree.get_root(tree2).unwrap(), H256::zero());
+        assert_eq!(multi_tree.get_root(tree2.to_string()).unwrap(), H256::zero());
 
         let tree2_root1 = multi_tree
-            .update(tree2, tree1_key1.clone(), tree1_value1.clone())
+            .update(tree2.to_string(), tree1_key1.clone(), tree1_value1.clone())
             .unwrap();
         multi_tree
-            .update(tree2, tree1_key2.clone(), tree1_value2.clone())
+            .update(tree2.to_string(), tree1_key2.clone(), tree1_value2.clone())
             .unwrap();
         assert_eq!(tree1_root1, tree2_root1);
         assert_eq!(
-            multi_tree.get_root(tree1).unwrap(),
-            multi_tree.get_root(tree2).unwrap()
+            multi_tree.get_root(tree1.to_string()).unwrap(),
+            multi_tree.get_root(tree2.to_string()).unwrap()
         );
         let tree2_proof1 = multi_tree
-            .get_merkle_proof(tree2, tree1_key2.clone())
+            .get_merkle_proof(tree2.to_string(), tree1_key2.clone())
             .unwrap();
         assert_eq!(multi_tree.verify(tree2_proof1), true);
 
         // clear
-        multi_tree.clear(tree1);
+        multi_tree.clear(tree1.to_string());
         assert_eq!(
-            multi_tree.get_value(tree1, tree1_key2.clone()).unwrap(),
+            multi_tree.get_value(tree1.to_string(), tree1_key2.clone()).unwrap(),
             SMTValue::default()
         );
         assert_eq!(
-            multi_tree.get_value(tree2, tree1_key2.clone()).unwrap(),
+            multi_tree.get_value(tree2.to_string(), tree1_key2.clone()).unwrap(),
             tree1_value2.clone()
         );
-        multi_tree.clear(tree2);
+        multi_tree.clear(tree2.to_string());
         assert_eq!(
-            multi_tree.get_value(tree2, tree1_key2.clone()).unwrap(),
+            multi_tree.get_value(tree2.to_string(), tree1_key2.clone()).unwrap(),
             SMTValue::default()
         );
         assert_eq!(
-            multi_tree.get_value(tree2, tree1_key1.clone()).unwrap(),
+            multi_tree.get_value(tree2.to_string(), tree1_key1.clone()).unwrap(),
             SMTValue::default()
         );
-        assert_eq!(multi_tree.get_root(tree2).unwrap(), H256::zero());
+        assert_eq!(multi_tree.get_root(tree2.to_string()).unwrap(), H256::zero());
         let mut kvs: Vec<(SMTKey, SMTValue)> = vec![];
 
         for i in 1..2 {
@@ -322,24 +322,24 @@ pub mod test {
 
         for kv in kvs.clone() {
             multi_tree
-                .update(tree2, kv.0.clone(), kv.1.clone())
+                .update(tree2.to_string(), kv.0.clone(), kv.1.clone())
                 .unwrap();
-            let p = multi_tree.get_merkle_proof(tree2, kv.0.clone()).unwrap();
+            let p = multi_tree.get_merkle_proof(tree2.to_string(), kv.0.clone()).unwrap();
             assert_eq!(multi_tree.verify(p), true);
         }
 
-        multi_tree.clear(tree1);
+        multi_tree.clear(tree1.to_string());
         for kv in kvs.clone() {
             multi_tree
-                .update_all(tree1, vec![(kv.0.clone(), kv.1.clone())])
+                .update_all(tree1.to_string(), vec![(kv.0.clone(), kv.1.clone())])
                 .unwrap();
-            let p = multi_tree.get_merkle_proof(tree1, kv.0.clone()).unwrap();
+            let p = multi_tree.get_merkle_proof(tree1.to_string(), kv.0.clone()).unwrap();
             assert_eq!(multi_tree.verify(p), true);
         }
         assert_eq!(
-            multi_tree.get_root(tree1).unwrap(),
-            multi_tree.get_root(tree2).unwrap()
+            multi_tree.get_root(tree1.to_string()).unwrap(),
+            multi_tree.get_root(tree2.to_string()).unwrap()
         );
-        multi_tree.update_all(tree1, kvs.clone()).unwrap();
+        multi_tree.update_all(tree1.to_string(), kvs.clone()).unwrap();
     }
 }

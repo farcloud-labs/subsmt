@@ -87,7 +87,7 @@ async fn update_value(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let root = multi_tree
-        .update(info.prefix.as_ref(), info.key.clone(), info.value.clone())
+        .update(info.prefix.clone(), info.key.clone(), info.value.clone())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:#?}",
@@ -114,7 +114,7 @@ async fn remove_value(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let root = multi_tree
-        .update(info.prefix.as_ref(), info.key.clone(), Default::default())
+        .update(info.prefix.to_string(), info.key.clone(), Default::default())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:#?}",
@@ -141,7 +141,7 @@ async fn get_merkle_proof(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let proof = multi_tree
-        .get_merkle_proof(info.prefix.as_ref(), info.key.clone())
+        .get_merkle_proof(info.prefix.to_string(), info.key.clone())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -168,7 +168,7 @@ async fn get_next_root(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let old_proof = multi_tree
-        .get_merkle_proof_old(info.prefix.as_ref(), vec![info.kv.key.clone()])
+        .get_merkle_proof_old(info.prefix.to_string(), vec![info.kv.key.clone()])
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let next_root = multi_tree
         .get_next_root(
@@ -204,7 +204,7 @@ async fn get_root(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let root = multi_tree
-        .get_root(info.prefix.clone().to_string().as_ref())
+        .get_root(info.prefix.to_string())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -235,7 +235,7 @@ async fn get_value(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let value = multi_tree
-        .get_value(info.prefix.as_ref(), info.key.clone())
+        .get_value(info.prefix.to_string(), info.key.clone())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -292,9 +292,9 @@ async fn clear(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
 
-    multi_tree.clear(info.prefix.as_ref());
+    multi_tree.clear(info.prefix.to_string());
     let root = multi_tree
-        .get_root(info.prefix.as_ref())
+        .get_root(info.prefix.to_string())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!("{:?}", format!("[Clear] info: {:?}, res: {:?}", info, root));
     Ok(HttpResponse::Ok().json(root))
