@@ -15,8 +15,9 @@ LABEL description="A sparse Merkle tree backend compatible with the Polkadot eco
 WORKDIR /smt
 ENV DB_PATH=/data/db
 ENV LOG_PATH=/data/logs
-COPY --from=builder /smt/target/release/smt ./
+COPY --from=builder /smt/target/release/paritydb-smt-backend ./
+COPY --from=builder /smt/target/release/rocksdb-smt-backend ./
 
 EXPOSE 8080
 VOLUME ["/data"]
-ENTRYPOINT ["/bin/bash", "-c", "/smt/smt"]
+# ENTRYPOINT ["/bin/bash", "-c", "/smt/smt"]

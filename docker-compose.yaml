@@ -1,14 +1,25 @@
 version: '1.0.0'
 
 services:
-  smt_backend:
+  paritydb-smt-backend:
     image: yanoctavian/smt:latest
+    entrypoint: ["/smt/paritydb-smt-backend"]
+    volumes:
+      - ./data:/data
+    networks:
+      - smt_network
+    ports:
+      - 8081:8081
+  rocksdb-smt-backend:
+    image: yanoctavian/smt:latest
+    entrypoint: ["/smt/rocksdb-smt-backend"]
     volumes:
       - ./data:/data
     networks:
       - smt_network
     ports:
       - 8080:8080
+
 
   smt_node:
     image: yanoctavian/smt-node:latest

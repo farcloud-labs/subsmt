@@ -309,7 +309,7 @@ async fn main() -> std::io::Result<()> {
     let base_path =env::var("DB_PATH").unwrap();
     let log_path =env::var("LOG_PATH").unwrap();
     let multi_tree = web::Data::new(Mutex::new(
-        MultiSMTParityStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(&base_path), 20).unwrap(),
+        MultiSMTParityStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(&format!("{}/paritydb", base_path)), 20).unwrap(),
     ));
     print!("log path: {:?}", log_path);
 
@@ -349,7 +349,7 @@ async fn main() -> std::io::Result<()> {
             .into_app()
     })
     .shutdown_timeout(30)
-    .bind(("0.0.0.0", 8080))?
+    .bind(("0.0.0.0", 8081))?
     .run();
 
     let graceful_shutdown = async {

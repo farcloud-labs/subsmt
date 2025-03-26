@@ -309,7 +309,7 @@ async fn main() -> std::io::Result<()> {
     let base_path =env::var("DB_PATH").unwrap();
     let log_path =env::var("LOG_PATH").unwrap();
     let multi_tree = web::Data::new(Mutex::new(
-        MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(&base_path)).unwrap(),
+        MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(&format!("{}/rocksdb", base_path))).unwrap(),
     ));
     print!("log path: {:?}", log_path);
 
