@@ -2,6 +2,3 @@
 [submodule "sparse-merkle-tree"]
 	path = sparse-merkle-tree
 	url = https://github.com/farcloud-labs/sparse-merkle-tree
-[submodule "parity-base"]
-	path = parity-base
-	url = https://github.com/farcloud-labs/parity-db.git

@@ -5478,6 +5478,7 @@ dependencies = [
 [[package]]
 name = "parity-db"
 version = "0.5.0"
+source = "git+https://github.com/paritytech/parity-db.git?branch=master#ee51351b21621b2105786832d0b576f0d0d14eec"
 dependencies = [
  "blake2",
  "crc32fast",

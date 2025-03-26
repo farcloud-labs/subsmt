@@ -27,5 +27,4 @@ frame-system = {git="https://github.com/paritytech/polkadot-sdk", branch="stable
 sp-core = { git="https://github.com/paritytech/polkadot-sdk", branch="stable2409", default-features = false }
 sp-io = { git="https://github.com/paritytech/polkadot-sdk", branch="stable2409", default-features = false}
 sp-runtime = { git="https://github.com/paritytech/polkadot-sdk", branch="stable2409", default-features = false }
-parity-db = { path = "./parity-base" }
-
+parity-db = { git = "https://github.com/paritytech/parity-db.git", branch = "master" }
