@@ -1,5 +1,5 @@
-use parity_db::{Db, Options};
-use std::{path::PathBuf, fmt};
+use parity_db::{Db, Options, clear_column};
+use std::{path::PathBuf, fmt, fs};
 
 pub struct ParityDb {
     db: Db,
@@ -95,10 +95,12 @@ impl ParityDb {
 
     /// Clear all data in a column without recreating it
     pub fn clear_column(&self, column: u8) -> Result<(), StoreError> {
-        let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
-        // drop(self.db);
-        Db::reset_column(&mut options, column, None)?;
-        // self.db.clear_stats(Some(column))?;
+        // self.db.num_columns()
+        // let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
+        // // drop(self.db);
+        // Db::reset_column(&mut options, column, None)?;
+        // // self.db.clear_stats(Some(column))?;
+        clear_column(&self.path, column).unwrap();
         Ok(())
     }
 }
@@ -111,7 +113,7 @@ mod tests {
     #[test]
     fn test_basic_operations() {
         let temp_dir = tempdir().unwrap();
-        let store = ParityDb::open_or_create(temp_dir.path(), 1).unwrap();
+        let store = ParityDb::open_or_create("./parity_db/test", 1).unwrap();
 
         // Test insert
         let key = b"test_key";
@@ -135,20 +137,24 @@ mod tests {
     #[test]
     fn test_reset_column() {
         let temp_dir = tempdir().unwrap();
-        let store = ParityDb::open_or_create(temp_dir.path(), 2).unwrap();
+        // println!("temp_dir: {:?}", temp_dir.path());
+        let store = ParityDb::open_or_create("parity-db/test1", 2).unwrap();
 
         // Insert data in both columns
         store.insert(0, b"key1", b"value1").unwrap();
         store.insert(1, b"key2", b"value2").unwrap();
 
         // Reset column 0
-        let store = store.reset_column(0).unwrap();
+        // let store = store.reset_column(0).unwrap();
+        println!("数据库地址: {:?}", store.path);
+        store.clear_column(0).unwrap();
+        // store.db
 
         // Check that column 0 is empty but column 1 still has data
         assert_eq!(store.get(0, b"key1").unwrap(), None);
         assert_eq!(store.get(1, b"key2").unwrap(), Some(b"value2".to_vec()));
 
-        store.destroy().unwrap();
+        // store.destroy().unwrap();
     }
 
     #[test]

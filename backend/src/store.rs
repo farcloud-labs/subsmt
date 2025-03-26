@@ -123,7 +123,7 @@ pub mod test {
         // 打开数据库
         let base_path = "./test_store_db";
         let db = Database::open(&Default::default(), Path::new(base_path)).unwrap();
-        let mut store = SMTStore::new(Arc::new(db), 0, "test");
+        let mut store = SMTStore::new(Arc::new(db), "test");
 
         //插入叶子
         let leaf1_key: H256 = [1u8; 32].to_vec().into();

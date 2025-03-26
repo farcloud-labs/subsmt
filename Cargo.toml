@@ -8,7 +8,8 @@ members = [
     "primitives",
 ]
 exclude = [
-    "sparse-merkle-tree"
+    "sparse-merkle-tree",
+    "parity-base"
 ]
 [workspace.package]
 author = "YanOctavian"
@@ -26,5 +27,5 @@ frame-system = {git="https://github.com/paritytech/polkadot-sdk", branch="stable
 sp-core = { git="https://github.com/paritytech/polkadot-sdk", branch="stable2409", default-features = false }
 sp-io = { git="https://github.com/paritytech/polkadot-sdk", branch="stable2409", default-features = false}
 sp-runtime = { git="https://github.com/paritytech/polkadot-sdk", branch="stable2409", default-features = false }
-parity-db = { git="https://github.com/paritytech/parity-db.git", branch="master", default-features = false }
+parity-db = { path = "./parity-base" }
 
