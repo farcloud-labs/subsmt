@@ -83,7 +83,7 @@ mod tests {
     fn test_store() {
         // 创建数据库实例
         let temp_dir = tempdir().unwrap();
-        let db = ParityDb::new(temp_dir.path());
+        let db = ParityDb::new(temp_dir.path(), 2);
         let mut store = SMTParityStore::new(Arc::new(db), 0);
 
         // 插入叶子
