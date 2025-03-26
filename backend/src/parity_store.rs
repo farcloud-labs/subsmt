@@ -10,7 +10,7 @@ use crate::parity_db::ParityDb;
 
 pub struct SMTParityStore {
     inner: Arc<ParityDb>,
-    col: u8, // 创建一个表就够了
+    col: u8, 
 }
 
 impl SMTParityStore {
@@ -81,9 +81,9 @@ mod tests {
 
     #[test]
     fn test_store() {
-        // 打开数据库
+        // 创建数据库实例
         let temp_dir = tempdir().unwrap();
-        let db = ParityDb::open_or_create(temp_dir.path(), 1).unwrap();
+        let db = ParityDb::new(temp_dir.path());
         let mut store = SMTParityStore::new(Arc::new(db), 0);
 
         // 插入叶子

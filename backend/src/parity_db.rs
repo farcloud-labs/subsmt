@@ -1,8 +1,7 @@
 use parity_db::{Db, Options, clear_column};
-use std::{path::PathBuf, fmt, fs};
+use std::{fmt, fs, path::PathBuf, u8};
 
 pub struct ParityDb {
-    db: Db,
     path: PathBuf,
 }
 
@@ -29,42 +28,46 @@ impl From<parity_db::Error> for StoreError {
 }
 
 impl ParityDb {
+
+    /// create a new ParityDb instance
+    pub fn new(path: impl Into<PathBuf>) -> Self {
+        Self { path: path.into() }
+    }
+
     /// Opens an existing database or creates a new one if it doesn't exist
-    pub fn open_or_create(path: impl Into<PathBuf>, num_columns: u8) -> Result<Self, StoreError> {
+    pub fn open_or_create(path: impl Into<PathBuf>) -> Result<Db, StoreError> {
         let path = path.into();
+        let num_columns = u8::MAX;
         let options = Options::with_columns(&path, num_columns);
         
         let db = Db::open_or_create(&options)?;
-
-        Ok(ParityDb {
-            db,
-            path,
-        })
+        Ok(db)
     }
 
     /// Insert a value into the specified column
     pub fn insert(&self, column: u8, key: &[u8], value: &[u8]) -> Result<(), StoreError> {
-        self.db.commit(vec![(column, key.to_vec(), Some(value.to_vec()))])?;
+        let db = Self::open_or_create(self.path.clone())?;
+        db.commit(vec![(column, key.to_vec(), Some(value.to_vec()))])?;
         Ok(())
     }
 
     /// Delete a value from the specified column
     pub fn delete(&self, column: u8, key: &[u8]) -> Result<(), StoreError> {
-        self.db.commit(vec![(column, key.to_vec(), None)])?;
+        // self.db.commit(vec![(column, key.to_vec(), None)])?;
+        let db = Self::open_or_create(self.path.clone())?;
+        db.commit(vec![(column, key.to_vec(), None)])?;
         Ok(())
     }
 
     /// Get a value from the specified column
     pub fn get(&self, column: u8, key: &[u8]) -> Result<Option<Vec<u8>>, StoreError> {
-        Ok(self.db.get(column, key)?)
+        // Ok(self.db.get(column, key)?)
+        let db = Self::open_or_create(self.path.clone())?;
+        Ok(db.get(column, key)?)
     }
 
     /// Delete the entire database by removing all files
     pub fn destroy(self) -> Result<(), StoreError> {
-        // First close the database by dropping it
-        drop(self.db);
-        
-        // Then remove the directory and all its contents
         if self.path.exists() {
             std::fs::remove_dir_all(&self.path)
                 .map_err(|e| StoreError::DbError(parity_db::Error::Io(e)))?;
@@ -73,33 +76,9 @@ impl ParityDb {
         Ok(())
     }
 
-    // /// Reset a column by removing all its data
-    // pub fn reset_column(self, column: u8) -> Result<Self, StoreError> {
-    //     // Create options with same configuration
-    //     let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
-        
-    //     // Drop the current database instance
-    //     drop(self.db);
-
-    //     // Reset the column with default options
-    //     Db::reset_column(&mut options, column, None)?;
-        
-    //     // Reopen the database
-    //     let db = Db::open_or_create(&options)?;
-        
-    //     Ok(ParityDb {
-    //         db,
-    //         path: self.path,
-    //     })
-    // }
-
     /// Clear all data in a column without recreating it
     pub fn clear_column(&self, column: u8) -> Result<(), StoreError> {
-        // self.db.num_columns()
-        // let mut options = Options::with_columns(&self.path, self.db.num_columns() as u8);
-        // // drop(self.db);
-        // Db::reset_column(&mut options, column, None)?;
-        // // self.db.clear_stats(Some(column))?;
+        // 执行这个之前需要先关闭数据库
         clear_column(&self.path, column).unwrap();
         Ok(())
     }
@@ -113,7 +92,7 @@ mod tests {
     #[test]
     fn test_basic_operations() {
         let temp_dir = tempdir().unwrap();
-        let store = ParityDb::open_or_create("./parity_db/test", 1).unwrap();
+        let store = ParityDb::new(temp_dir.path());
 
         // Test insert
         let key = b"test_key";
@@ -137,30 +116,24 @@ mod tests {
     #[test]
     fn test_reset_column() {
         let temp_dir = tempdir().unwrap();
-        // println!("temp_dir: {:?}", temp_dir.path());
-        let store = ParityDb::open_or_create("parity-db/test1", 2).unwrap();
+        let store = ParityDb::new(temp_dir.path());
 
         // Insert data in both columns
         store.insert(0, b"key1", b"value1").unwrap();
         store.insert(1, b"key2", b"value2").unwrap();
 
-        // Reset column 0
-        // let store = store.reset_column(0).unwrap();
-        println!("数据库地址: {:?}", store.path);
+        // Clear column 0
         store.clear_column(0).unwrap();
-        // store.db
 
-        // Check that column 0 is empty but column 1 still has data
+        // Verify data
         assert_eq!(store.get(0, b"key1").unwrap(), None);
         assert_eq!(store.get(1, b"key2").unwrap(), Some(b"value2".to_vec()));
-
-        // store.destroy().unwrap();
     }
 
     #[test]
     fn test_clear_column() {
         let temp_dir = tempdir().unwrap();
-        let store = ParityDb::open_or_create(temp_dir.path(), 2).unwrap();
+        let store = ParityDb::new(temp_dir.path());
 
         // Insert some test data
         for i in 0..100 {
