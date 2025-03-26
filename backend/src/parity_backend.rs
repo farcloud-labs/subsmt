@@ -36,9 +36,9 @@ use log::{error, info};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use smt_backend_lib::{
-    apis::MultiSMTStore,
+    parity_apis::MultiSMTParityStore,
     error::Error,
-    req::{KVPair, ReqByKVs, ReqByKey, ReqByPrefix, ReqUpdate},
+    parity_req::{KVPair, ReqByKVs, ReqByKey, ReqByPrefix, ReqUpdate},
 };
 use std::env;
 use dotenv::dotenv;
@@ -80,7 +80,7 @@ struct ApiDoc;
 )]
 #[post("/update")]
 async fn update_value(
-    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    multi_tree: web::Data<Mutex<MultiSMTParityStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<ReqUpdate<SMTKey, SMTValue>>,
 ) -> Result<HttpResponse, Error> {
     let mut multi_tree = multi_tree
@@ -107,14 +107,14 @@ async fn update_value(
 )]
 #[post("/remove")]
 async fn remove_value(
-    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    multi_tree: web::Data<Mutex<MultiSMTParityStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<ReqByKey<SMTKey>>,
 ) -> Result<HttpResponse, Error> {
     let mut multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let root = multi_tree
-        .update(info.prefix.to_string(), info.key.clone(), Default::default())
+        .update(info.prefix, info.key.clone(), Default::default())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:#?}",
@@ -134,14 +134,14 @@ async fn remove_value(
 )]
 #[post("/merkle_proof")]
 async fn get_merkle_proof(
-    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    multi_tree: web::Data<Mutex<MultiSMTParityStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<ReqByKey<SMTKey>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let proof = multi_tree
-        .get_merkle_proof(info.prefix.to_string(), info.key.clone())
+        .get_merkle_proof(info.prefix, info.key.clone())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -161,14 +161,14 @@ async fn get_merkle_proof(
 )]
 #[post("/next_root")]
 async fn get_next_root(
-    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    multi_tree: web::Data<Mutex<MultiSMTParityStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<ReqByKVs<KVPair<SMTKey, SMTValue>>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let old_proof = multi_tree
-        .get_merkle_proof_old(info.prefix.to_string(), vec![info.kv.key.clone()])
+        .get_merkle_proof_old(info.prefix, vec![info.kv.key.clone()])
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let next_root = multi_tree
         .get_next_root(
@@ -197,14 +197,14 @@ async fn get_next_root(
 )]
 #[post("/root")]
 async fn get_root(
-    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    multi_tree: web::Data<Mutex<MultiSMTParityStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<ReqByPrefix>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let root = multi_tree
-        .get_root(info.prefix.to_string())
+        .get_root(info.prefix)
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -228,14 +228,14 @@ async fn get_root(
 )]
 #[post("/value")]
 async fn get_value(
-    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    multi_tree: web::Data<Mutex<MultiSMTParityStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<ReqByKey<SMTKey>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let value = multi_tree
-        .get_value(info.prefix.to_string(), info.key.clone())
+        .get_value(info.prefix, info.key.clone())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:?}",
@@ -255,7 +255,7 @@ async fn get_value(
 )]
 #[post("/verify")]
 async fn verify(
-    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    multi_tree: web::Data<Mutex<MultiSMTParityStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<Proof<SMTKey, SMTValue>>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
@@ -285,16 +285,16 @@ async fn verify(
 )]
 #[post("/clear")]
 async fn clear(
-    multi_tree: web::Data<Mutex<MultiSMTStore<SMTKey, SMTValue, Keccak256Hasher>>>,
+    multi_tree: web::Data<Mutex<MultiSMTParityStore<SMTKey, SMTValue, Keccak256Hasher>>>,
     info: web::Json<ReqByPrefix>,
 ) -> Result<HttpResponse, Error> {
     let multi_tree = multi_tree
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
 
-    multi_tree.clear(info.prefix.to_string());
+    multi_tree.clear(info.prefix).unwrap();
     let root = multi_tree
-        .get_root(info.prefix.to_string())
+        .get_root(info.prefix)
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!("{:?}", format!("[Clear] info: {:?}, res: {:?}", info, root));
     Ok(HttpResponse::Ok().json(root))
@@ -303,13 +303,13 @@ async fn clear(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // fixme 
-    let args = Args::parse();
-    let database: String = args.database;
+    // let args = Args::parse();
+    // let database: String = args.database;
     dotenv().ok();
     let base_path =env::var("DB_PATH").unwrap();
     let log_path =env::var("LOG_PATH").unwrap();
     let multi_tree = web::Data::new(Mutex::new(
-        MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(&base_path)).unwrap(),
+        MultiSMTParityStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(&base_path), 20).unwrap(),
     ));
     print!("log path: {:?}", log_path);
 
