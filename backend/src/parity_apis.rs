@@ -239,16 +239,11 @@ mod tests {
             .get_next_root(old_proof, vec![(tree1_key2.clone(), tree1_value2.clone())])
             .unwrap();
 
-        // Update tree2 and verify
-        multi_tree
-            .update(tree2_col, tree1_key1.clone(), tree1_value1.clone())
-            .unwrap();
         let tree2_root1 = multi_tree
-            .update(tree2_col, tree1_key2.clone(), tree1_value2.clone())
+            .update(tree1_col, tree1_key2.clone(), tree1_value2.clone())
             .unwrap();
 
-        // // fixme 为什么相同的数据root不一样？？？？？？？
-        // assert_eq!(tree1_root1, tree2_root1);
+        assert_eq!(_next_root, tree2_root1);
 
         // Test clear
         multi_tree.clear(tree1_col).unwrap();
