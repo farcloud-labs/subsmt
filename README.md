@@ -171,7 +171,7 @@ It can be applied in scenarios where Sparse Merkle Trees are used to save on-cha
 
 ### Clone the project
 ```
-git clone https://github.com/farcloud-labs/subsmt.git
+git clone https://github.com/farcloud-labs/subsmt.git --recurse-submodules
 ```
 
 
