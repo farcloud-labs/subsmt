@@ -43,9 +43,9 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "rocksdb-smt-backend"
-path = "src/rocks_backend.rs"
+path = "src/common-backend/rocks_backend.rs"
 
 [[bin]]
 name = "paritydb-smt-backend"
-path = "src/parity_backend.rs"
+path = "src/common-backend/parity_backend.rs"
 
