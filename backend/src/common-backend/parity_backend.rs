@@ -86,7 +86,7 @@ async fn update_value(
         .lock()
         .map_err(|e| Error::InternalError(e.to_string()))?;
     let root = multi_tree
-        .update(info.prefix.clone(), info.key.clone(), info.value.clone())
+        .update(info.prefix, info.key.clone(), info.value.clone())
         .map_err(|e| Error::InternalError(e.to_string()))?;
     log::info!(
         "{:#?}",

@@ -1,5 +1,5 @@
 use parity_db::{clear_column, Db, Options};
-use std::{fmt, path::PathBuf, u8};
+use std::{fmt, path::PathBuf};
 
 pub struct ParityDb {
     path: PathBuf,
@@ -95,7 +95,7 @@ impl ParityDb {
     pub fn clear_column(&self, column: u8) -> Result<(), StoreError> {
         self.check_column(column)?;
         self.ensure_closed()?;
-        clear_column(&self.path, column).map_err(|e| StoreError::DbError(e))?;
+        clear_column(&self.path, column)?;
         Ok(())
     }
 }
