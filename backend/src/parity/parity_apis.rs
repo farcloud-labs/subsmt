@@ -168,7 +168,10 @@ impl<
 #[cfg(test)]
 mod tests {
     use super::*;
-    use smt_primitives::{kv::{SMTKey, SMTValue}, keccak_hasher::Keccak256Hasher};
+    use smt_primitives::{
+        keccak_hasher::Keccak256Hasher,
+        kv::{SMTKey, SMTValue},
+    };
     use tempfile::tempdir;
 
     #[test]

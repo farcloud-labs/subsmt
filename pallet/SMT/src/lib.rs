@@ -98,9 +98,8 @@ pub mod pallet {
     // Dispatchable functions must be annotated with a weight and must return a DispatchResult.
     #[pallet::call]
     impl<T: Config> Pallet<T> {
-
         /// Verify the Merkle proof provided off-chain.
-        /// 
+        ///
         #[pallet::call_index(0)]
         #[pallet::weight(T::WeightInfo::smt_verify().saturating_mul(1_u64 + proof.siblings.len() as u64))]
         pub fn smt_verify(
