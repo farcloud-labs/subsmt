@@ -4,9 +4,14 @@ This project has undergone comprehensive testing and is suitable for production 
 
 ## Unit test
 
-### Test code link
+### code link
 - https://github.com/farcloud-labs/subsmt/tree/main/backend/src/common-backend
 - https://github.com/farcloud-labs/subsmt/tree/main/backend/src/parity
+- https://github.com/farcloud-labs/subsmt/blob/main/backend/src/parity/parity_apis.rs
+- https://github.com/farcloud-labs/subsmt/blob/main/backend/src/parity/parity_db.rs
+- https://github.com/farcloud-labs/subsmt/blob/main/backend/src/parity/parity_req.rs
+- https://github.com/farcloud-labs/subsmt/blob/main/backend/src/parity/parity_store.rs
+
 
 ### install  Rust environment
 
@@ -21,15 +26,27 @@ git submodule update --init --recursive
 ```
 
 ### build 
+
+#### local build
 ```
 cargo build --release
 ```
 
-or
-
+#### docker build
 ```
 docker buildx build -t smt:latest . --load
 
+```
+### run
+
+#### local run
+```
+cargo run --bin paritydb-smt-backend
+```
+
+#### docker run
+```
+docker-compose up
 ```
 
 
@@ -48,7 +65,19 @@ Generate test report.
 cargo tarpaulin --out Html --output-dir ./docs --exclude-files ./sparse-merkle-tree/*
 
 ```
+Related output:
+```
+|| backend/src/common-backend/parity_backend.rs: 0/86 +0.00%
+|| backend/src/parity/parity_apis.rs: 64/68 +0.00%
+|| backend/src/parity/parity_db.rs: 32/41 +0.00%
+|| backend/src/parity/parity_store.rs: 29/29 +0.00%
+
+```
+> Note: The backend functionality testing has already been implemented in `parity_apis` tests and manual testing, so no additional testing is needed here
+
 > [test report](./tarpaulin-report.html)
+
+
 ## Manual testing
 ### Start Docker
 ```
@@ -59,7 +88,7 @@ docker-compose up
 
 The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
 
-[http://localhost:8080/swagger-ui/#](http://localhost:8080/swagger-ui/#)
+[http://localhost:8081/swagger-ui/#](http://localhost:8080/swagger-ui/#)
 1. `update_value`  
    > Be used to insert, update, or delete a specific Merkle leaf value.
 
