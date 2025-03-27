@@ -19,6 +19,6 @@ COPY --from=builder /smt/target/release/paritydb-smt-backend ./
 COPY --from=builder /smt/target/release/rocksdb-smt-backend ./
 
 EXPOSE 8080
-EXPOSE 8081
+# EXPOSE 8081
 VOLUME ["/data"]
 # ENTRYPOINT ["/bin/bash", "-c", "/smt/smt"]

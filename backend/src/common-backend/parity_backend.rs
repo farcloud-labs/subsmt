@@ -352,7 +352,7 @@ async fn main() -> std::io::Result<()> {
             .into_app()
     })
     .shutdown_timeout(30)
-    .bind(("0.0.0.0", 8081))?
+    .bind(("0.0.0.0", 8080))?
     .run();
 
     let graceful_shutdown = async {
