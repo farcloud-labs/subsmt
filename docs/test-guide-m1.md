@@ -138,8 +138,8 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    Request body:
    ```
    {
-    "address": "test",
-    "prefix": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH"
+    "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
+    "prefix": "test"
     }
 
    ```

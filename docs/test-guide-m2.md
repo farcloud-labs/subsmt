@@ -98,11 +98,11 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
     "balance": "1000000000000",
     "nonce": 1,
-    "prefix": "test"
+    "prefix": "0"
     }
 
     ```
-    ![update value](./images/m1/update_value.jpg)
+    ![update value](./images/m2/update_value.jpg)
 
     reslut:
     ```
@@ -115,10 +115,10 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    ```
    {
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
-    "prefix": "test" 
+    "prefix": "0" 
     }
    ```
-   ![get_value](./images/m1/get_value.jpg)
+   ![get_value](./images/m2/get_value.jpg)
    result:
    ```
    {
@@ -134,10 +134,10 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    ```
    {
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
-    "prefix": "test"
+    "prefix": "0"
     }
    ```
-   ![get_merkel_proof](./images/m1/get_merkle_proof.jpg)
+   ![get_merkel_proof](./images/m2/get_merkel_proof.jpg)
    result:
    ```
     {
@@ -179,12 +179,12 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    Request body:
    ```
    {
-    "address": "test",
-    "prefix": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH"
+    "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
+    "prefix": "0"
     }
 
    ```
-   ![remove_value](./images/m1/remove_value.jpg)
+   ![remove_value](./images/m2/remove_value.jpg)
    Result:
    ```
    "0000000000000000000000000000000000000000000000000000000000000000"
@@ -198,11 +198,11 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
     "balance": "100",
     "nonce": 2,
-    "prefix": "test"
+    "prefix": "0"
     }
 
    ```
-   ![next_root](./images/m1/next_root.jpg)
+   ![next_root](./images/m2/next_root.jpg)
    Result:
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
@@ -216,10 +216,10 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
     "balance": "100",
     "nonce": 2,
-    "prefix": "test"
+    "prefix": "0"
     }
    ```
-   ![update_value1](./images/m1/update_value1.jpg)
+   ![update_value1](./images/m2/update_value1.jpg)
    Result:
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
@@ -229,11 +229,11 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    Request body:
    ```
    {
-    "prefix": "test"
+    "prefix": "0"
     }
 
    ```
-   ![get_root](./images/m1/get_root.jpg)
+   ![get_root](./images/m2/get_root.jpg)
    Result:
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
@@ -244,11 +244,11 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     Request body:
    ```
    {
-    "prefix": "test"
+    "prefix": "0"
     }
 
    ```
-   ![clear](./images/m1/clear.jpg)
+   ![clear](./images/m2/clear.jpg)
    Result:
    ```
    "0000000000000000000000000000000000000000000000000000000000000000"
