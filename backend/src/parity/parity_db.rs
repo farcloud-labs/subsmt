@@ -1,5 +1,5 @@
-use parity_db::{Db, Options, clear_column};
-use std::{fmt, fs, path::PathBuf, u8};
+use parity_db::{clear_column, Db, Options};
+use std::{fmt, path::PathBuf, u8};
 
 pub struct ParityDb {
     path: PathBuf,
@@ -29,10 +29,12 @@ impl From<parity_db::Error> for StoreError {
 }
 
 impl ParityDb {
-
     /// create a new ParityDb instance
     pub fn new(path: impl Into<PathBuf>, num_columns: u8) -> Self {
-        Self { path: path.into(), num_columns }
+        Self {
+            path: path.into(),
+            num_columns,
+        }
     }
 
     /// Opens an existing database or creates a new one if it doesn't exist
@@ -78,7 +80,7 @@ impl ParityDb {
             std::fs::remove_dir_all(&self.path)
                 .map_err(|e| StoreError::DbError(parity_db::Error::Io(e)))?;
         }
-        
+
         Ok(())
     }
 
@@ -93,8 +95,7 @@ impl ParityDb {
     pub fn clear_column(&self, column: u8) -> Result<(), StoreError> {
         self.check_column(column)?;
         self.ensure_closed()?;
-        clear_column(&self.path, column)
-            .map_err(|e| StoreError::DbError(e))?;
+        clear_column(&self.path, column).map_err(|e| StoreError::DbError(e))?;
         Ok(())
     }
 }

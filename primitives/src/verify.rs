@@ -127,7 +127,7 @@ fn into_merge_value<H: Hasher + Default>(key: H256, value: H256, height: u8) -> 
 /// Verify the Merkle proof,  
 /// including the verification when there is only one leaf (which differs slightly from multi-leaf cases).
 pub fn verify<H: Hasher + Default>(
-    path: H256, 
+    path: H256,
     value_hash: H256,
     leave_bitmap: H256,
     siblings: Vec<MergeValue>,

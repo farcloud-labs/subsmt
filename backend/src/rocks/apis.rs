@@ -55,7 +55,14 @@ pub struct MultiSMTStore<K, V, H> {
 
 impl<K, V, H> MultiSMTStore<K, V, H>
 where
-    K: Value + Clone + Serialize + ToSchema + Deserialize<'static> + ComposeSchema + Debug + TypeInfo,
+    K: Value
+        + Clone
+        + Serialize
+        + ToSchema
+        + Deserialize<'static>
+        + ComposeSchema
+        + Debug
+        + TypeInfo,
     V: Default
         + Value
         + Into<Vec<u8>>
@@ -206,8 +213,14 @@ pub mod test {
         multi_tree.new_tree_with_store(tree2.to_string()).unwrap();
 
         // 分别取两个tree的root
-        assert_eq!(multi_tree.get_root(tree1.to_string()).unwrap(), H256::zero());
-        assert_eq!(multi_tree.get_root(tree2.to_string()).unwrap(), H256::zero());
+        assert_eq!(
+            multi_tree.get_root(tree1.to_string()).unwrap(),
+            H256::zero()
+        );
+        assert_eq!(
+            multi_tree.get_root(tree2.to_string()).unwrap(),
+            H256::zero()
+        );
 
         // 插入一个tree数据
         let tree1_key1 = SMTKey {
@@ -226,15 +239,22 @@ pub mod test {
         };
 
         assert_eq!(
-            multi_tree.get_value(tree1.to_string(), tree1_key1.clone()).unwrap(),
+            multi_tree
+                .get_value(tree1.to_string(), tree1_key1.clone())
+                .unwrap(),
             SMTValue::default()
         );
-        assert_eq!(multi_tree.get_root(tree1.to_string()).unwrap(), H256::zero());
+        assert_eq!(
+            multi_tree.get_root(tree1.to_string()).unwrap(),
+            H256::zero()
+        );
         multi_tree
             .update(tree1.to_string(), tree1_key1.clone(), tree1_value1.clone())
             .unwrap();
         assert_eq!(
-            multi_tree.get_value(tree1.to_string(), tree1_key1.clone()).unwrap(),
+            multi_tree
+                .get_value(tree1.to_string(), tree1_key1.clone())
+                .unwrap(),
             tree1_value1.clone()
         );
         let proof = multi_tree
@@ -246,10 +266,15 @@ pub mod test {
             .update(tree1.to_string(), tree1_key1.clone(), SMTValue::default())
             .unwrap();
         assert_eq!(
-            multi_tree.get_value(tree1.to_string(), tree1_key1.clone()).unwrap(),
+            multi_tree
+                .get_value(tree1.to_string(), tree1_key1.clone())
+                .unwrap(),
             SMTValue::default()
         );
-        assert_eq!(multi_tree.get_root(tree1.to_string()).unwrap(), H256::zero());
+        assert_eq!(
+            multi_tree.get_root(tree1.to_string()).unwrap(),
+            H256::zero()
+        );
         multi_tree
             .update(tree1.to_string(), tree1_key1.clone(), tree1_value1.clone())
             .unwrap();
@@ -268,7 +293,10 @@ pub mod test {
             .unwrap();
         let tree1_root2 = multi_tree.get_root(tree2.to_string()).unwrap();
         assert_ne!(tree1_root1, tree1_root2);
-        assert_eq!(multi_tree.get_root(tree2.to_string()).unwrap(), H256::zero());
+        assert_eq!(
+            multi_tree.get_root(tree2.to_string()).unwrap(),
+            H256::zero()
+        );
 
         let tree2_root1 = multi_tree
             .update(tree2.to_string(), tree1_key1.clone(), tree1_value1.clone())
@@ -289,23 +317,34 @@ pub mod test {
         // clear
         multi_tree.clear(tree1.to_string());
         assert_eq!(
-            multi_tree.get_value(tree1.to_string(), tree1_key2.clone()).unwrap(),
+            multi_tree
+                .get_value(tree1.to_string(), tree1_key2.clone())
+                .unwrap(),
             SMTValue::default()
         );
         assert_eq!(
-            multi_tree.get_value(tree2.to_string(), tree1_key2.clone()).unwrap(),
+            multi_tree
+                .get_value(tree2.to_string(), tree1_key2.clone())
+                .unwrap(),
             tree1_value2.clone()
         );
         multi_tree.clear(tree2.to_string());
         assert_eq!(
-            multi_tree.get_value(tree2.to_string(), tree1_key2.clone()).unwrap(),
+            multi_tree
+                .get_value(tree2.to_string(), tree1_key2.clone())
+                .unwrap(),
             SMTValue::default()
         );
         assert_eq!(
-            multi_tree.get_value(tree2.to_string(), tree1_key1.clone()).unwrap(),
+            multi_tree
+                .get_value(tree2.to_string(), tree1_key1.clone())
+                .unwrap(),
             SMTValue::default()
         );
-        assert_eq!(multi_tree.get_root(tree2.to_string()).unwrap(), H256::zero());
+        assert_eq!(
+            multi_tree.get_root(tree2.to_string()).unwrap(),
+            H256::zero()
+        );
         let mut kvs: Vec<(SMTKey, SMTValue)> = vec![];
 
         for i in 1..2 {
@@ -324,7 +363,9 @@ pub mod test {
             multi_tree
                 .update(tree2.to_string(), kv.0.clone(), kv.1.clone())
                 .unwrap();
-            let p = multi_tree.get_merkle_proof(tree2.to_string(), kv.0.clone()).unwrap();
+            let p = multi_tree
+                .get_merkle_proof(tree2.to_string(), kv.0.clone())
+                .unwrap();
             assert_eq!(multi_tree.verify(p), true);
         }
 
@@ -333,13 +374,17 @@ pub mod test {
             multi_tree
                 .update_all(tree1.to_string(), vec![(kv.0.clone(), kv.1.clone())])
                 .unwrap();
-            let p = multi_tree.get_merkle_proof(tree1.to_string(), kv.0.clone()).unwrap();
+            let p = multi_tree
+                .get_merkle_proof(tree1.to_string(), kv.0.clone())
+                .unwrap();
             assert_eq!(multi_tree.verify(p), true);
         }
         assert_eq!(
             multi_tree.get_root(tree1.to_string()).unwrap(),
             multi_tree.get_root(tree2.to_string()).unwrap()
         );
-        multi_tree.update_all(tree1.to_string(), kvs.clone()).unwrap();
+        multi_tree
+            .update_all(tree1.to_string(), kvs.clone())
+            .unwrap();
     }
 }

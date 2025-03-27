@@ -161,7 +161,6 @@ impl Value for SMTValue {
     }
 }
 
-
 impl From<SMTValue> for Vec<u8> {
     fn from(value: SMTValue) -> Self {
         value.encode()

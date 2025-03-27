@@ -1,4 +1,3 @@
-
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -6,5 +5,4 @@ use clap::Parser;
 pub struct Args {
     #[arg(short, long, help = "paritydb or rocksdb")]
     pub database: String,
-
 }

@@ -1,24 +1,21 @@
+use codec::{Decode, Encode};
 use sparse_merkle_tree::{
     error::Error,
     traits::{StoreReadOps, StoreWriteOps, Value},
     BranchKey, BranchNode, H256,
 };
-use std::{marker::PhantomData, sync::Arc};
-use codec::{Decode, Encode};
+use std::sync::Arc;
 
 use crate::parity_db::ParityDb;
 
 pub struct SMTParityStore {
     inner: Arc<ParityDb>,
-    col: u8, 
+    col: u8,
 }
 
 impl SMTParityStore {
     pub fn new(db: Arc<ParityDb>, col: u8) -> Self {
-        SMTParityStore {
-            inner: db,
-            col,
-        }
+        SMTParityStore { inner: db, col }
     }
 }
 
@@ -118,12 +115,10 @@ mod tests {
             <SMTParityStore as StoreReadOps<SMTValue>>::get_branch(&store, &node1_key).unwrap(),
             Some(node1.clone())
         );
-        <SMTParityStore as StoreWriteOps<SMTValue>>::remove_branch(&mut store, &node1_key)
-            .unwrap();
+        <SMTParityStore as StoreWriteOps<SMTValue>>::remove_branch(&mut store, &node1_key).unwrap();
         assert_eq!(
             <SMTParityStore as StoreReadOps<SMTValue>>::get_branch(&store, &node1_key).unwrap(),
             None::<BranchNode>
         );
     }
 }
-

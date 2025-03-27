@@ -98,7 +98,6 @@ pub mod pallet {
     // Dispatchable functions must be annotated with a weight and must return a DispatchResult.
     #[pallet::call]
     impl<T: Config> Pallet<T> {
-
         /**
          * Verify the Merkle proof provided off-chain.
          */

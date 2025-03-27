@@ -1,7 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 #![allow(unexpected_cfgs)]
 
-
 #[ink::contract]
 mod smt {
     use smt_primitives::{
@@ -35,9 +34,7 @@ mod smt {
         SMTVerifyFaild,
     }
 
-
     impl Smt {
-
         #[ink(constructor)]
         pub fn new() -> Self {
             Self::default()
@@ -151,10 +148,9 @@ mod smt {
 
         /// The End-to-End test `Result` type.
         type E2EResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-        
+
         #[ink_e2e::test]
         async fn it_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-
             let mut constructor = SmtRef::new();
             let contract = client
                 .instantiate("smt", &ink_e2e::bob(), &mut constructor)

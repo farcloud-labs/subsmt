@@ -19,9 +19,9 @@
 //! Implement persistent storage for SMT.  
 //! A single database can store multiple Merkle trees, and they do not interfere with each other.
 
-pub mod error;
 pub mod cli;
+pub mod error;
 pub mod parity;
 pub mod rocks;
-pub use rocks::*;
 pub use parity::*;
+pub use rocks::*;

@@ -28,26 +28,28 @@ use actix_web::{
     cookie::time::util::weeks_in_year, get, post, web, App, HttpResponse, HttpServer, Responder,
     ResponseError,
 };
+use clap::Parser;
 use codec::{Decode, Encode};
+use dotenv::dotenv;
 use ethers::utils::keccak256;
 use flexi_logger::{Age, Cleanup, Criterion, Logger, Naming, WriteMode};
 use http::status::{InvalidStatusCode, StatusCode};
 use log::{error, info};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
+use smt_backend_lib::cli::Args;
 use smt_backend_lib::{
-    parity_apis::MultiSMTParityStore,
     error::Error,
+    parity_apis::MultiSMTParityStore,
     parity_req::{KVPair, ReqByKVs, ReqByKey, ReqByPrefix, ReqUpdate},
 };
-use std::env;
-use dotenv::dotenv;
 use smt_primitives::{
     keccak_hasher::Keccak256Hasher,
     kv::*,
     verify::{verify as smt_verify, Proof},
 };
 use sparse_merkle_tree::{traits::Value, H256};
+use std::env;
 use std::{future, path::Path, result::Result, sync::Mutex};
 use thiserror::Error as ThisError;
 use tokio::signal::ctrl_c;
@@ -55,9 +57,6 @@ use utoipa::{IntoParams, OpenApi, ToSchema};
 use utoipa_actix_web::AppExt;
 use utoipa_redoc::Redoc;
 use utoipa_swagger_ui::SwaggerUi;
-use smt_backend_lib::cli::Args;
-use clap::Parser;
-
 
 const SMT_API: &str = "SMT API";
 
@@ -302,14 +301,18 @@ async fn clear(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // fixme 
+    // fixme
     // let args = Args::parse();
     // let database: String = args.database;
     dotenv().ok();
-    let base_path =env::var("DB_PATH").unwrap();
-    let log_path =env::var("LOG_PATH").unwrap();
+    let base_path = env::var("DB_PATH").unwrap();
+    let log_path = env::var("LOG_PATH").unwrap();
     let multi_tree = web::Data::new(Mutex::new(
-        MultiSMTParityStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(&format!("{}/paritydb", base_path)), 20).unwrap(),
+        MultiSMTParityStore::<SMTKey, SMTValue, Keccak256Hasher>::open(
+            Path::new(&format!("{}/paritydb", base_path)),
+            20,
+        )
+        .unwrap(),
     ));
     print!("log path: {:?}", log_path);
 

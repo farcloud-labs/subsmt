@@ -1,19 +1,20 @@
-use crate::parity_store::SMTParityStore;
 use crate::parity_db::ParityDb;
+use crate::parity_store::SMTParityStore;
+use scale_info::TypeInfo;
+use serde::{Deserialize, Serialize};
 use smt_primitives::{
-    keccak_hasher::Keccak256Hasher,
+    // keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
 };
 use sparse_merkle_tree::{
-    merge::MergeValue,
-    traits::{Hasher, Value},
-    SparseMerkleTree, H256,
     error::{Error, Result as SMTResult},
+    // merge::MergeValue,
+    traits::{Hasher, Value},
     CompiledMerkleProof,
+    SparseMerkleTree,
+    H256,
 };
 use std::{fmt::Debug, marker::PhantomData, path::Path, sync::Arc};
-use scale_info::TypeInfo;
-use serde::{Deserialize, Serialize};
 use utoipa::{ToSchema, __dev::ComposeSchema};
 
 type MultiSMT<V, H> = SparseMerkleTree<H, V, SMTParityStore>;
@@ -25,7 +26,14 @@ pub struct MultiSMTParityStore<K, V, H> {
 }
 
 impl<
-        K: Value + Clone + Serialize + ToSchema + Deserialize<'static> + ComposeSchema + Debug + TypeInfo,
+        K: Value
+            + Clone
+            + Serialize
+            + ToSchema
+            + Deserialize<'static>
+            + ComposeSchema
+            + Debug
+            + TypeInfo,
         V: Default
             + Value
             + Into<Vec<u8>>
@@ -168,7 +176,8 @@ mod tests {
         // Create multi_tree
         let temp_dir = tempdir().unwrap();
         let multi_tree =
-            MultiSMTParityStore::<SMTKey, SMTValue, Keccak256Hasher>::open(temp_dir.path(), 2).unwrap();
+            MultiSMTParityStore::<SMTKey, SMTValue, Keccak256Hasher>::open(temp_dir.path(), 2)
+                .unwrap();
 
         let tree1_col: u8 = 0;
         let tree2_col: u8 = 1;
