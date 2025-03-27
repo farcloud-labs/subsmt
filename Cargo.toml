@@ -2,9 +2,9 @@
 [workspace]
 resolver = "2"
 members = [
-    "pallet/smt",
+    "pallet/SMT",
     "backend",
-    "ink-contract/smt",
+    "ink-contract/SMT",
     "primitives",
 ]
 exclude = [
