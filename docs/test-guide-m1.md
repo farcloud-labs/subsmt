@@ -61,7 +61,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     }
 
     ```
-    ![update value](./images/update_value.jpg)
+    ![update value](./images/m1/update_value.jpg)
 
     reslut:
     ```
@@ -77,7 +77,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "prefix": "test" 
     }
    ```
-   ![get_value](./images/get_value.jpg)
+   ![get_value](./images/m1/get_value.jpg)
    result:
    ```
    {
@@ -96,7 +96,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "prefix": "test"
     }
    ```
-   ![get_merkel_proof](./images/get_merkle_proof.jpg)
+   ![get_merkel_proof](./images/m1/get_merkle_proof.jpg)
    result:
    ```
     {
@@ -127,7 +127,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "siblings": []
     }
    ```
-   ![verify](./images/verify.jpg)
+   ![verify](./images/m1/verify.jpg)
    Result:
    ```
    true
@@ -143,7 +143,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     }
 
    ```
-   ![remove_value](./images/remove_value.jpg)
+   ![remove_value](./images/m1/remove_value.jpg)
    Result:
    ```
    "0000000000000000000000000000000000000000000000000000000000000000"
@@ -161,7 +161,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     }
 
    ```
-   ![next_root](./images/next_root.jpg)
+   ![next_root](./images/m1/next_root.jpg)
    Result:
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
@@ -178,7 +178,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "prefix": "test"
     }
    ```
-   ![update_value1](./images/update_value1.jpg)
+   ![update_value1](./images/m1/update_value1.jpg)
    Result:
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
@@ -192,7 +192,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     }
 
    ```
-   ![get_root](./images/get_root.jpg)
+   ![get_root](./images/m1/get_root.jpg)
    Result:
    ```
    "6f4c5710e5ed2982d6c409d8b43693176086bfde7f01aeba64731a8a84a82ca2"
@@ -207,7 +207,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     }
 
    ```
-   ![clear](./images/clear.jpg)
+   ![clear](./images/m1/clear.jpg)
    Result:
    ```
    "0000000000000000000000000000000000000000000000000000000000000000"
@@ -233,7 +233,7 @@ Submit the Merkle proof obtained in step 3 to the blockchain for verification.
 
 > Note: the path, value_hash, root, and leaf_bitmap here should have the `0x` prefix.
 
-![verify_on_chain](./images/verify_on_chain.jpg)
+![verify_on_chain](./images/m1/verify_on_chain.jpg)
 
 
 
