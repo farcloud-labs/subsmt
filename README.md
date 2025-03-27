@@ -247,6 +247,12 @@ docker run -it --name smt-backend -p 8080:8080 smt:latest
 docker-compose down
 ```
 
+## More information
+
+- [About SubSMT](./docs/about subsmt.md)
+- [Customize your backend](./docs/customize_your_backend.md)
+- [Test guide 1](./docs/test-guide-m1.md)
+- [Test guide 2](./docs/test-guide-m2.md)
 ## License
 This project is licensed under the LICENSE_APACHE2. See the [LICENSE](./LICENSE) file for details.
 
