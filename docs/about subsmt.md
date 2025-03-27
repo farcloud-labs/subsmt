@@ -124,4 +124,4 @@ SubSMT continues to evolve with planned features including:
 
 SubSMT provides a robust, efficient, and production-ready solution for off-chain data storage with on-chain verification in the Polkadot ecosystem. Its modular design, comprehensive testing, and focus on performance make it an ideal choice for projects requiring secure off-chain data management.
 
-For detailed implementation examples and API documentation, please refer to our [test guides](./test-guide-m1.md) and [technical documentation](./test-guide-m2.md).
+For detailed implementation examples and API documentation, please refer to our [Readme](https://github.com/farcloud-labs/subsmt/blob/main/README.md) and [test guide m1](https://github.com/farcloud-labs/subsmt/blob/main/docs/test-guide-m1.md) and [test guide m2](https://github.com/farcloud-labs/subsmt/blob/main/docs/test-guide-m2.md)
