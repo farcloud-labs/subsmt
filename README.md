@@ -205,7 +205,7 @@ or
 #### Manual Testing
 [http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui/)
 
-![swagger-ui](./docs/images/swagger.jpg)
+![swagger-ui](./docs/images/m1/swagger.jpg)
 
 #### Unit Test Case
 
