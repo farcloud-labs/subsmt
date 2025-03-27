@@ -88,7 +88,7 @@ docker-compose up
 
 The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
 
-[http://localhost:8081/swagger-ui/#](http://localhost:8080/swagger-ui/#)
+[http://localhost:8081/swagger-ui/#](http://localhost:8081/swagger-ui/#)
 1. `update_value`  
    > Be used to insert, update, or delete a specific Merkle leaf value.
 
@@ -98,7 +98,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
     "balance": "1000000000000",
     "nonce": 1,
-    "prefix": "0"
+    "prefix": 0
     }
 
     ```
@@ -115,7 +115,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    ```
    {
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
-    "prefix": "0" 
+    "prefix": 0
     }
    ```
    ![get_value](./images/m2/get_value.jpg)
@@ -134,7 +134,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    ```
    {
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
-    "prefix": "0"
+    "prefix": 0
     }
    ```
    ![get_merkel_proof](./images/m2/get_merkel_proof.jpg)
@@ -180,7 +180,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    ```
    {
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
-    "prefix": "0"
+    "prefix": 0
     }
 
    ```
@@ -198,7 +198,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
     "balance": "100",
     "nonce": 2,
-    "prefix": "0"
+    "prefix": 0
     }
 
    ```
@@ -216,7 +216,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     "address": "1H4GsGKaAv6VCwgx7gRgPm9AmCKqzEDjb2GyWoERj9xBRAH",
     "balance": "100",
     "nonce": 2,
-    "prefix": "0"
+    "prefix": 0
     }
    ```
    ![update_value1](./images/m2/update_value1.jpg)
@@ -229,7 +229,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
    Request body:
    ```
    {
-    "prefix": "0"
+    "prefix": 0
     }
 
    ```
@@ -244,7 +244,7 @@ The `prefix` is the name of the Merkle tree, and each Merkle tree is different.
     Request body:
    ```
    {
-    "prefix": "0"
+    "prefix": 0
     }
 
    ```
