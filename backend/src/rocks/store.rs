@@ -32,7 +32,6 @@ use kvdb_rocksdb::Database;
 
 pub struct SMTStore {
     inner: Arc<Database>,
-    // col: u32, // 这个也是用不到 默认值是0
     prefix: String,
 }
 

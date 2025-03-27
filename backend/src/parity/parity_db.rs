@@ -12,7 +12,7 @@ pub enum StoreError {
     InvalidColumnId,
 }
 
-// 实现 Display trait
+// Display trait
 impl fmt::Display for StoreError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
