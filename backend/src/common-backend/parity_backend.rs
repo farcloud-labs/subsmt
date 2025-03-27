@@ -58,7 +58,7 @@ use utoipa_actix_web::AppExt;
 use utoipa_redoc::Redoc;
 use utoipa_swagger_ui::SwaggerUi;
 
-const SMT_API: &str = "SMT API";
+const SMT_API: &str = "SMT API (ParityDb)";
 
 #[derive(OpenApi)]
 #[openapi(
