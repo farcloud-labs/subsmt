@@ -72,8 +72,8 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use smt_primitives::kv::{SMTKey, SMTValue};
-    use sparse_merkle_tree::{merge::MergeValue, traits::Value};
+    use smt_primitives::kv::{SMTValue};
+    use sparse_merkle_tree::{merge::MergeValue};
     use tempfile::tempdir;
 
     #[test]

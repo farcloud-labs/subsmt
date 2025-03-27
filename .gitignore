@@ -22,4 +22,6 @@ logs
 /target
 .idea
 pallet/SMT/smt_mock_db
+/backend/apis_test_db
+/ink-contract/SMT/smt_ink_test_db
 

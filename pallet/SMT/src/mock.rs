@@ -20,7 +20,7 @@ pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
         MultiSMTStore::<SMTKey, SMTValue, Keccak256Hasher>::open(Path::new(base_path)).unwrap();
     // 创建一个tree
     let tree = "tree1";
-    multi_tree.clear(tree.as_ref());
+    multi_tree.clear(tree.to_string());
     let mut kvs: Vec<(SMTKey, SMTValue)> = vec![];
 
     for i in 0..size {
@@ -37,14 +37,14 @@ pub fn creat_db_and_get_proof(size: u8) -> Vec<Proof<SMTKey, SMTValue>> {
 
     for kv in kvs.clone() {
         multi_tree
-            .update(tree.as_ref(), kv.0.clone(), kv.1.clone())
+            .update(tree.to_string(), kv.0.clone(), kv.1.clone())
             .unwrap();
     }
 
     let mut proofs: Vec<Proof<SMTKey, SMTValue>> = vec![];
     for kv in kvs.clone() {
         let proof = multi_tree
-            .get_merkle_proof(tree.as_ref(), kv.0.clone())
+            .get_merkle_proof(tree.to_string(), kv.0.clone())
             .unwrap();
         proofs.push(proof);
     }

@@ -168,7 +168,7 @@ impl<
 #[cfg(test)]
 mod tests {
     use super::*;
-    use smt_primitives::kv::{SMTKey, SMTValue};
+    use smt_primitives::{kv::{SMTKey, SMTValue}, keccak_hasher::Keccak256Hasher};
     use tempfile::tempdir;
 
     #[test]
@@ -239,7 +239,7 @@ mod tests {
         multi_tree
             .update(tree1_col, tree1_key1.clone(), tree1_value1.clone())
             .unwrap();
-        let tree1_root1 = multi_tree.get_root(tree1_col).unwrap();
+        let _tree1_root1 = multi_tree.get_root(tree1_col).unwrap();
 
         let old_proof = multi_tree
             .get_merkle_proof_old(tree1_col, vec![tree1_key2.clone()])
