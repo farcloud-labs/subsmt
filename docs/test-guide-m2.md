@@ -59,6 +59,11 @@ cargo test -- --nocapture
 ```
 ### Obtain test coverage report
 
+Install tarpaulin
+
+```
+cargo install cargo-tarpaulin
+```
 Generate test report.
 
 ```
