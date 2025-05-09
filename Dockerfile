@@ -1,7 +1,7 @@
 # build stage: where we create binary
 FROM rust:1.81 AS builder
 
-RUN apt update && apt install -y make clang pkg-config libssl-dev protobuf-compiler build-essential git curl llvm make
+RUN apt update && apt install -y make clang pkg-config libssl-dev protobuf-compiler build-essential git curl llvm make  g++ cmake
 WORKDIR /smt
 COPY . /smt
 RUN cargo build --release
