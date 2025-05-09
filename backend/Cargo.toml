@@ -2,7 +2,7 @@
 name = "smt-backend"
 version = "0.1.0"
 edition.workspace = true
-author.workspace = true
+# author = "YanOctavian"
 license.workspace = true
 repository.workspace = true
 
