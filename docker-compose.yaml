@@ -10,15 +10,15 @@ services:
       - smt_network
     ports:
       - 8081:8080
-  # rocksdb-smt-backend:
-  #   image: yanoctavian/smt:latest
-  #   entrypoint: ["/smt/rocksdb-smt-backend"]
-  #   volumes:
-  #     - ./data:/data
-  #   networks:
-  #     - smt_network
-  #   ports:
-  #     - 8080:8080
+  rocksdb-smt-backend:
+    image: yanoctavian/smt:latest
+    entrypoint: ["/smt/rocksdb-smt-backend"]
+    volumes:
+      - ./data:/data
+    networks:
+      - smt_network
+    ports:
+      - 8080:8080
 
 
   smt_node:
