@@ -45,6 +45,11 @@ cargo run --bin paritydb-smt-backend
 ```
 
 #### docker run
+
+```
+docker rmi -f yanoctavian/smt:latest
+```
+> Remove the image yanoctavian/smt:latest if it exists, and make sure you get the latest version of the image.
 ```
 docker-compose up
 ```

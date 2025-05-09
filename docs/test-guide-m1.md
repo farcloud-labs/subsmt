@@ -30,6 +30,12 @@ cargo test -- --nocapture
 ```
 ### Obtain test coverage report
 
+Install tarpaulin
+
+```
+cargo install cargo-tarpaulin
+```
+
 Generate test report.
 
 ```
@@ -39,6 +45,10 @@ cargo tarpaulin --out Html --output-dir ./docs --exclude-files ./sparse-merkle-t
 > [test report](./tarpaulin-report.html)
 ## Manual testing
 ### Start Docker
+```
+docker rmi -f yanoctavian/smt:latest
+```
+   > Remove the image yanoctavian/smt:latest if it exists, and make sure you get the latest version of the image.
 ```
 docker-compose up
 ```
