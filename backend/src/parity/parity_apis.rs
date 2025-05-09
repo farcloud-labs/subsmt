@@ -2,6 +2,7 @@ use crate::parity_db::ParityDb;
 use crate::parity_store::SMTParityStore;
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
 use smt_primitives::{
     // keccak_hasher::Keccak256Hasher,
     verify::{verify as smt_verify, Proof},
@@ -21,7 +22,7 @@ type MultiSMT<V, H> = SparseMerkleTree<H, V, SMTParityStore>;
 
 /// Multiple Merkle trees are stored in a ParityDb database
 pub struct MultiSMTParityStore<K, V, H> {
-    store: Arc<ParityDb>,
+    store: Arc<Mutex<ParityDb>>,
     v: PhantomData<(K, V, H)>,
 }
 
@@ -53,7 +54,7 @@ impl<
     pub fn open<P: AsRef<Path>>(path: P, num_columns: u8) -> std::io::Result<Self> {
         let db = ParityDb::new(path.as_ref(), num_columns);
         Ok(Self {
-            store: Arc::new(db),
+            store: Arc::new(Mutex::new(db)),
             v: Default::default(),
         })
     }
@@ -143,7 +144,7 @@ impl<
 
     /// Delete a specific Merkle tree by clearing its column
     pub fn clear(&self, col: u8) -> Result<(), Error> {
-        self.store
+        self.store.lock().unwrap()
             .clear_column(col)
             .map_err(|e| Error::Store(e.to_string()))?;
         Ok(())

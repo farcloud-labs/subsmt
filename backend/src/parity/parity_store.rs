@@ -7,14 +7,15 @@ use sparse_merkle_tree::{
 use std::sync::Arc;
 
 use crate::parity_db::ParityDb;
+use std::sync::Mutex;
 
 pub struct SMTParityStore {
-    inner: Arc<ParityDb>,
+    inner: Arc<Mutex<ParityDb>>,
     col: u8,
 }
 
 impl SMTParityStore {
-    pub fn new(db: Arc<ParityDb>, col: u8) -> Self {
+    pub fn new(db: Arc<Mutex<ParityDb>>, col: u8) -> Self {
         SMTParityStore { inner: db, col }
     }
 }
@@ -24,25 +25,25 @@ where
     V: Value + Into<Vec<u8>>,
 {
     fn insert_branch(&mut self, node_key: BranchKey, branch: BranchNode) -> Result<(), Error> {
-        self.inner
+        self.inner.lock().unwrap()
             .insert(self.col, &node_key.encode(), &branch.encode())
             .map_err(|e| Error::Store(e.to_string()))
     }
 
     fn insert_leaf(&mut self, leaf_key: H256, leaf: V) -> Result<(), Error> {
-        self.inner
+        self.inner.lock().unwrap()
             .insert(self.col, &leaf_key.encode(), &leaf.into())
             .map_err(|e| Error::Store(e.to_string()))
     }
 
     fn remove_branch(&mut self, node_key: &BranchKey) -> Result<(), Error> {
-        self.inner
+        self.inner.lock().unwrap()
             .delete(self.col, &node_key.encode())
             .map_err(|e| Error::Store(e.to_string()))
     }
 
     fn remove_leaf(&mut self, leaf_key: &H256) -> Result<(), Error> {
-        self.inner
+        self.inner.lock().unwrap()
             .delete(self.col, &leaf_key.encode())
             .map_err(|e| Error::Store(e.to_string()))
     }
@@ -53,7 +54,7 @@ where
     V: Value + From<Vec<u8>>,
 {
     fn get_branch(&self, branch_key: &BranchKey) -> Result<Option<BranchNode>, Error> {
-        self.inner
+        self.inner.lock().unwrap()
             .get(self.col, &branch_key.encode())
             .map_err(|e| Error::Store(e.to_string()))?
             .map(|v| BranchNode::decode(&mut v.as_slice()).unwrap())
@@ -61,7 +62,7 @@ where
     }
 
     fn get_leaf(&self, leaf_key: &H256) -> Result<Option<V>, Error> {
-        self.inner
+        self.inner.lock().unwrap()
             .get(self.col, &leaf_key.encode())
             .map_err(|e| Error::Store(e.to_string()))?
             .map(|v| v.into())
@@ -80,8 +81,8 @@ mod tests {
     fn test_store() {
         // 创建数据库实例
         let temp_dir = tempdir().unwrap();
-        let db = ParityDb::new(temp_dir.path(), 2);
-        let mut store = SMTParityStore::new(Arc::new(db), 0);
+        let db = Arc::new(Mutex::new(ParityDb::new(temp_dir.path(), 2)));
+        let mut store = SMTParityStore::new(db, 0);
 
         // 插入叶子
         let leaf1_key: H256 = [1u8; 32].to_vec().into();

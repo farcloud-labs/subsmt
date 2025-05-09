@@ -2,6 +2,7 @@ use parity_db::{clear_column, Db, Options};
 use std::{fmt, path::PathBuf};
 
 pub struct ParityDb {
+    db: Option<Db>,
     path: PathBuf,
     num_columns: u8,
 }
@@ -30,11 +31,23 @@ impl From<parity_db::Error> for StoreError {
 
 impl ParityDb {
     /// create a new ParityDb instance
-    pub fn new(path: impl Into<PathBuf>, num_columns: u8) -> Self {
+    pub fn new(path: impl Into<PathBuf> + Clone, num_columns: u8) -> Self {
+        let options = Options::with_columns(&path.clone().into(), num_columns);
+        let db = Db::open_or_create(&options).unwrap();
         Self {
             path: path.into(),
             num_columns,
+            db: Some(db),
         }
+    }
+
+    fn ensure_db_exsist(&mut self) -> Result<(), StoreError> {
+        if self.db.is_none() {
+            let db = self.open_or_create()?;
+            self.db = Some(db);
+        }
+
+        Ok(())
     }
 
     /// Opens an existing database or creates a new one if it doesn't exist
@@ -52,26 +65,29 @@ impl ParityDb {
     }
 
     /// Insert a value into the specified column
-    pub fn insert(&self, column: u8, key: &[u8], value: &[u8]) -> Result<(), StoreError> {
+    pub fn insert(&mut self, column: u8, key: &[u8], value: &[u8]) -> Result<(), StoreError> {
         self.check_column(column)?;
-        let db = self.open_or_create()?;
-        db.commit(vec![(column, key.to_vec(), Some(value.to_vec()))])?;
+        self.ensure_db_exsist()?;
+        // let db = self.open_or_create()?;
+        self.db.as_mut().unwrap().commit(vec![(column, key.to_vec(), Some(value.to_vec()))])?;
         Ok(())
     }
 
     /// Delete a value from the specified column
-    pub fn delete(&self, column: u8, key: &[u8]) -> Result<(), StoreError> {
+    pub fn delete(&mut self, column: u8, key: &[u8]) -> Result<(), StoreError> {
         self.check_column(column)?;
-        let db = self.open_or_create()?;
-        db.commit(vec![(column, key.to_vec(), None)])?;
+        self.ensure_db_exsist()?;
+        // let db = self.open_or_create()?;
+        self.db.as_mut().unwrap().commit(vec![(column, key.to_vec(), None)])?;
         Ok(())
     }
 
     /// Get a value from the specified column
-    pub fn get(&self, column: u8, key: &[u8]) -> Result<Option<Vec<u8>>, StoreError> {
+    pub fn get(&mut self, column: u8, key: &[u8]) -> Result<Option<Vec<u8>>, StoreError> {
         self.check_column(column)?;
-        let db = self.open_or_create()?;
-        Ok(db.get(column, key)?)
+        self.ensure_db_exsist()?;
+        // let db = self.open_or_create()?;
+        Ok(self.db.as_mut().unwrap().get(column, key)?)
     }
 
     /// Delete the entire database by removing all files
@@ -85,14 +101,15 @@ impl ParityDb {
     }
 
     /// Ensure the database is properly closed before operations like clear_column
-    fn ensure_closed(&self) -> Result<(), StoreError> {
+    fn ensure_closed(&mut self) -> Result<(), StoreError> {
+        self.db = None;
         let db = self.open_or_create()?;
         drop(db);
         Ok(())
     }
 
     /// Clear all data in a column without recreating it
-    pub fn clear_column(&self, column: u8) -> Result<(), StoreError> {
+    pub fn clear_column(&mut self, column: u8) -> Result<(), StoreError> {
         self.check_column(column)?;
         self.ensure_closed()?;
         clear_column(&self.path, column)?;
@@ -108,7 +125,7 @@ mod tests {
     #[test]
     fn test_basic_operations() {
         let temp_dir = tempdir().unwrap();
-        let store = ParityDb::new(temp_dir.path(), 2);
+        let mut store = ParityDb::new(temp_dir.path(), 2);
 
         // Test insert
         let key = b"test_key";
@@ -132,7 +149,7 @@ mod tests {
     #[test]
     fn test_reset_column() {
         let temp_dir = tempdir().unwrap();
-        let store = ParityDb::new(temp_dir.path(), 2);
+        let mut store = ParityDb::new(temp_dir.path(), 2);
 
         // Insert data in both columns
         store.insert(0, b"key1", b"value1").unwrap();
@@ -149,7 +166,7 @@ mod tests {
     #[test]
     fn test_clear_column() {
         let temp_dir = tempdir().unwrap();
-        let store = ParityDb::new(temp_dir.path(), 2);
+        let mut store = ParityDb::new(temp_dir.path(), 2);
 
         // Insert some test data
         for i in 0..100 {
@@ -173,7 +190,7 @@ mod tests {
     #[test]
     fn test_column_bounds() {
         let temp_dir = tempdir().unwrap();
-        let store = ParityDb::new(temp_dir.path(), 2);
+        let mut store = ParityDb::new(temp_dir.path(), 2);
 
         // Test inserting to invalid column
         let result = store.insert(2, b"key", b"value");
