@@ -91,6 +91,10 @@ Related output:
 ## Manual testing
 ### Start Docker
 ```
+docker rmi -f yanoctavian/smt:latest
+```
+> Remove the image yanoctavian/smt:latest if it exists, and make sure you get the latest version of the image.
+```
 docker-compose up
 ```
 
